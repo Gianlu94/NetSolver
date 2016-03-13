@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c557a1e4-3abc-4852-afc8-5f475bdc5498" name="Default" comment="" />
+    <list default="true" id="c557a1e4-3abc-4852-afc8-5f475bdc5498" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
     <ignored path="NetSolver.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -534,12 +536,12 @@
       <workItem from="1457855311050" duration="127000" />
       <workItem from="1457855612842" duration="117000" />
       <workItem from="1457855790558" duration="250000" />
-      <workItem from="1457856101122" duration="134000" />
+      <workItem from="1457856101122" duration="548000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="628000" />
+    <option name="totallyTimeSpent" value="1042000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1301" y="-4" width="1301" height="772" extended-state="6" />
