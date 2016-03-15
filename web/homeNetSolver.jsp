@@ -25,7 +25,7 @@
 		</div>
 		<hr>
 	
-		<div class="panel panel-default col-md-6 col-md-offset-1">
+		<div class="panel panel-default col-md-10 col-md-offset-1">
 			<div class="panel-heading ">
                 <ul class="nav panel-tabs">
 					<li><button type="button" href="#tab1"  data-toggle="tab" 
@@ -58,7 +58,7 @@
 			</div>
 		</div>
 		
-		<div class="panel panel-default col-md-6 col-md-offset-1">
+		<div class="panel panel-default col-md-10 col-md-offset-1">
 			<div class="panel-heading">
 				<h4>Your solution</h4>
 				<ul class="nav nav nav-tabs nav-tabs-horizontal">
@@ -72,6 +72,26 @@
 			<div class="panel-body contentPanelHomeSolutionProblem">
 				<div class="tab-content">
 					<div class="tab-pane active" id="hostsD">
+						<table class="table table-hover">
+							<thead>
+							  <tr>
+								<th>Name</th>
+								<th>Ip address</th>
+								<th>Netmask</th>
+								<th>Gateway</th>
+								<th>Service</th>
+							  </tr>
+							</thead>
+							<tbody>
+							  <tr>
+								<td><input type="text" name='name0'  placeholder='Host Name' class="form-control"/></td>
+								<td><input type="text" name='ip1'  placeholder='Ip address' class="form-control"/></td>
+								<td><input type="text" name='net1'  placeholder='NetMask' class="form-control"/></td>
+								<td><input type="text" name='gat1'  placeholder='Gateway' class="form-control"/></td>
+								<td><input type="text" name='ser1'  placeholder='Service' class="form-control"/></td>
+							  </tr>
+							</tbody>
+						  </table>
 					</div>
 					<div class="tab-pane" id="switchD">
 						To develop
@@ -87,6 +107,8 @@
 					</div>
 				</div>
 			</div>
+			<button id="add_row" class="btn btn-success pull-left">Add Row</button>
+			<button id="delete_row" class="btn btn-danger pull-right">Delete Row</button>
 		</div>
 		
 		
