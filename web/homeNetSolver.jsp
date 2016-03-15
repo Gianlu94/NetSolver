@@ -28,7 +28,7 @@
 		<div class="panel panel-default col-md-10 col-md-offset-1">
 			<div class="panel-heading ">
                 <ul class="nav panel-tabs">
-					<li><button type="button" href="#tab1"  data-toggle="tab" 
+					<li><button id="getP" type="button" href="#tab1"  data-toggle="tab" 
 						class="btn btn-primary pull-left">Get A Problem</button>
 					</li>
 					<li><button type="button" href="#tab2"  data-toggle="tab" 
@@ -58,7 +58,7 @@
 			</div>
 		</div>
 		
-		<div class="panel panel-default col-md-10 col-md-offset-1">
+		<div class="panel panel-default col-md-10 col-md-offset-1" id="panelYourSolution">
 			<div class="panel-heading">
 				<h4>Your solution</h4>
 				<ul class="nav nav nav-tabs nav-tabs-horizontal">
@@ -72,7 +72,7 @@
 			<div class="panel-body contentPanelHomeSolutionProblem">
 				<div class="tab-content">
 					<div class="tab-pane active" id="hostsD">
-						<table class="table table-hover">
+						<table class="table table-hover" id="tableH">
 							<thead>
 							  <tr>
 								<th>Name</th>
@@ -83,12 +83,12 @@
 							  </tr>
 							</thead>
 							<tbody>
-							  <tr>
+							  <tr id="row0">
 								<td><input type="text" name='name0'  placeholder='Host Name' class="form-control"/></td>
-								<td><input type="text" name='ip1'  placeholder='Ip address' class="form-control"/></td>
-								<td><input type="text" name='net1'  placeholder='NetMask' class="form-control"/></td>
-								<td><input type="text" name='gat1'  placeholder='Gateway' class="form-control"/></td>
-								<td><input type="text" name='ser1'  placeholder='Service' class="form-control"/></td>
+								<td><input type="text" name='ip0'  placeholder='Ip address' class="form-control"/></td>
+								<td><input type="text" name='net0'  placeholder='NetMask' class="form-control"/></td>
+								<td><input type="text" name='gat0'  placeholder='Gateway' class="form-control"/></td>
+								<td><input type="text" name='ser0'  placeholder='Service' class="form-control"/></td>
 							  </tr>
 							</tbody>
 						  </table>
