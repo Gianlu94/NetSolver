@@ -59,19 +59,26 @@ var Octopus = {
 
 
 var ViewHome = {
+	param:"",
+	
 	init : function(){
 		$(".dropdown-menu li a").click(function(){
 			//alert(this.text);
 			//$(".btnD:first-child").text($(this).text())
+			//ViewHome.param = this.text();
+			//alert(ViewHome.param);
+			
 			$(".btnD:first-child").html($(this).text()+"<span class='caret'></span>");
 			$(".btnD:first-child").val($(this).text());
+			ViewHome.param=($(this).text());
+			//alert(ViewHome.param);
+			//ViewHome.param = this.text();
 		});
 		
 		$("#getP").click(function(){
 			$("#panelYourSolution").show();
 			var xhr  = new XMLHttpRequest();
-			xhr.open('GET',"http://localhost:3000/Tracer",true)
-			xhr.send();
+			xhr.open('POST',"http://localhost:3000/Tracer",true)
 			xhr.addEventListener("readystatechange", processRequest, false);
 			function processRequest(e) {
 				if (xhr.readyState == 4 && xhr.status == 200) {
@@ -79,6 +86,7 @@ var ViewHome = {
 					$("#extended").append(xhr.responseText);
 				}	
 			}
+			xhr.send(ViewHome.param);
 		});
 		
 		$("#panelYourSolution").hide();
