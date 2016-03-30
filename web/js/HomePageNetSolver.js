@@ -60,6 +60,13 @@ var Octopus = {
 
 var ViewHome = {
 	init : function(){
+		$(".dropdown-menu li a").click(function(){
+			//alert(this.text);
+			//$(".btnD:first-child").text($(this).text())
+			$(".btnD:first-child").html($(this).text()+"<span class='caret'></span>");
+			$(".btnD:first-child").val($(this).text());
+		});
+		
 		$("#getP").click(function(){
 			$("#panelYourSolution").show();
 			var xhr  = new XMLHttpRequest();

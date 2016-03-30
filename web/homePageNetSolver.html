@@ -12,7 +12,7 @@ and open the template in the editor.
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>	
 		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 		<link href="./css/general.css" rel="stylesheet">
-		<script src="/HomePageNetSolver.js"></script>
+		<script src="js/HomePageNetSolver.js"></script>
 	</head>
 	<body>
 		<div class="container-fluid">
@@ -26,6 +26,17 @@ and open the template in the editor.
 		<div class="panel panel-default col-md-10 col-md-offset-1">
 			<div class="panel-heading ">
                 <ul class="nav panel-tabs">
+					<h4 class="nobreak">Problem difficulty</h4>
+						<div class="dropdownD" >
+							<button class="btn btnD dropdown-toggle" 
+									type="button" data-toggle="dropdown">
+							<span class="caret"></span></button>
+							<ul class="dropdown-menu" id="dropdownDI">
+								<li><a href="#" data-value="1">1</a></li>
+								<li><a href="#" data-value="2">2</a></li>
+								<li><a href="#" data-value="3">3</a></li>
+							</ul>
+						</div>
 					<li><button id="getP" type="button" href="#tab1"  data-toggle="tab" 
 						class="btn btn-primary pull-left">Get A Problem</button>
 					</li>
