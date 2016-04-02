@@ -86,7 +86,7 @@ var ViewHome = {
 					$("#extended").append(xhr.responseText);
 				}	
 			}
-			xhr.send(ViewHome.param);
+			xhr.send({"difficulty":ViewHome.param});
 		});
 		
 		$("#panelYourSolution").hide();
