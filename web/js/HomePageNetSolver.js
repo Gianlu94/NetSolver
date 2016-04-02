@@ -78,7 +78,11 @@ var ViewHome = {
 		$("#getP").click(function(){
 			$("#panelYourSolution").show();
 			var xhr  = new XMLHttpRequest();
-			xhr.open('POST',"http://localhost:3000/Tracer",true)
+			//var param = "difficulty="+ViewHome.param;
+			xhr.open('GET',"http://localhost:3000/Tracer/?data="+JSON.stringify({'difficulty':ViewHome.param}),true);
+			//xhr.open('POST',"http://localhost:3000/Tracer",true);
+			xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+			//xhr.setRequestHeader('Content-Type','application/json;charset=UTF-8');
 			xhr.addEventListener("readystatechange", processRequest, false);
 			function processRequest(e) {
 				if (xhr.readyState == 4 && xhr.status == 200) {
@@ -86,7 +90,11 @@ var ViewHome = {
 					$("#extended").append(xhr.responseText);
 				}	
 			}
-			xhr.send({"difficulty":ViewHome.param});
+
+			//var data = {'difficulty':'zero'};
+			xhr.send();
+			//xhr.send("data="+JSON.stringify({difficulty:'zero'}));
+			//xhr.send("data="+JSON.stringify({'difficulty':'zero'}));//+JSON.stringify(data));
 		});
 		
 		$("#panelYourSolution").hide();
