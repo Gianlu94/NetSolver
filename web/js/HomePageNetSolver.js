@@ -56,7 +56,18 @@ var Octopus = {
 }
 
 
-
+var XmlViewCreator = {
+	element: function(name,content){
+		var xml;
+		if (!content){
+			xml='<' + name + '/>';
+		}
+		else {
+			xml='<'+ name + '>' + content + '</' + name + '>';
+		}
+		return xml;
+	}
+}
 
 var ViewHome = {
 	param:"",
@@ -103,7 +114,8 @@ var ViewHome = {
 			$("#extended").load("./text.txt");
 		});
 		
-		$("#add_row").click(function(){
+		$("#add_row").click(function(e){
+			e.preventDefault();
 			var row = Octopus.incrementRow();
 			//alert("***ROW  "+ row);
 			var rowH = "<tr id='row"+row+"'>"+
@@ -120,13 +132,58 @@ var ViewHome = {
 			$("#tableH").append(rowH);
 		});
 		
-		$("#delete_row").click(function(){
+		$("#delete_row").click(function(e){
+			e.preventDefault();
 			var row = Octopus.getRow();
 			//alert("***ROW" + row);
 			$("#row"+row).remove();
 			//alert("***ROW" + row);
 			Octopus.decrement();
 			
+		});
+		
+		var createXml = function(){
+			var children = document.getElementById("hostConfiguration").children.length;
+			//alert("Children number "+children);
+			var hostConfigurationXml;
+			//hostConfigurationXml="<UserSolution>\n<Pippa>1</Pippa><Hosts>\n";
+			//hostConfigurationXml="<Hosts>\n";
+			for (var i = 0;i<children;i++){
+				var hName = $("#name"+i).val();
+				var hIpAddr = $("#ip"+i).val();
+				var hNetM = $("#net"+i).val();
+				var hGat = $("#gat"+i).val();
+				var hSer = $("#ser"+i).val();
+				hostConfigurationXml = "<Host>\n"+XmlViewCreator.element("Name",hName)+"\n"+
+							XmlViewCreator.element("Ip",hIpAddr)+"\n"+
+							XmlViewCreator.element("Netmask",hNetM)+"\n"+
+							XmlViewCreator.element("Gateway",hGat)+"\n"+
+							XmlViewCreator.element("Service",hSer)+"\n"
+							+"</Host>\n";
+				//XmlViewCreator.element()
+			}
+			//hostConfigurationXml = hostConfigurationXml + hosts +"</Hosts>\n</UserSolution>";	
+			//hostConfigurationXml = hostConfigurationXml+"</Hosts>";	
+			return hostConfigurationXml;
+		};
+		
+		$("#NetworkConfList").on('submit', function(e){ 
+			e.preventDefault();
+			var hostConfigurationXml = createXml();
+			var xhr  = new XMLHttpRequest();
+			xhr.open('POST',"http://localhost:3000/Solution",true);
+			//xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			//xhr.setRequestHeader("Content-length", xmldata.length);
+			xhr.addEventListener("readystatechange", processRequest, false);
+			function processRequest(e) {
+				if (xhr.readyState == 4 && xhr.status == 200) {
+					
+				}	
+			}
+
+			//var data = {'difficulty':'zero'};
+			xhr.send(hostConfigurationXml);
+			console.log(hostConfigurationXml);
 		});
 		
 		$("#extended").append("ciiancsnfvbsfbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbfbfbffbf\n\

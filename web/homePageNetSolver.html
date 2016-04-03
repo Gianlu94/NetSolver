@@ -11,8 +11,8 @@ and open the template in the editor.
 		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>	
 		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-		<link href="./css/general.css" rel="stylesheet">
-		<script src="js/HomePageNetSolver.js"></script>
+		<link href="/general.css" rel="stylesheet">
+		<script src="./js/HomePageNetSolver.js"></script>
 	</head>
 	<body>
 		<div class="container-fluid">
@@ -67,6 +67,7 @@ and open the template in the editor.
 			</div>
 		</div>
 		
+		<form>
 		<div class="panel panel-default col-md-10 col-md-offset-1" id="panelYourSolution">
 			<div class="panel-heading">
 				<h4>Your solution</h4>
@@ -89,15 +90,16 @@ and open the template in the editor.
 								<th>Netmask</th>
 								<th>Gateway</th>
 								<th>Service</th>
+								<th><button id="checkSolution" type="submit" class="btn btn-info pull-right">Check</button></th>
 							  </tr>
 							</thead>
-							<tbody>
+							<tbody id="hostConfiguration">
 							  <tr id="row0">
-								<td><input type="text" name='name0'  placeholder='Host Name' class="form-control"/></td>
-								<td><input type="text" name='ip0'  placeholder='Ip address' class="form-control"/></td>
-								<td><input type="text" name='net0'  placeholder='NetMask' class="form-control"/></td>
-								<td><input type="text" name='gat0'  placeholder='Gateway' class="form-control"/></td>
-								<td><input type="text" name='ser0'  placeholder='Service' class="form-control"/></td>
+								<td><input type="text" id="name0" name='name0'  placeholder='Host Name' class="form-control"/></td>
+								<td><input type="text" id="ip0" name='ip0'  placeholder='Ip address' class="form-control"/></td>
+								<td><input type="text" id="net0" name='net0'  placeholder='NetMask' class="form-control"/></td>
+								<td><input type="text" id="gat0" name='gat0'  placeholder='Gateway' class="form-control"/></td>
+								<td><input type="text" id="ser0" name='ser0'  placeholder='Service' class="form-control"/></td>
 							  </tr>
 							</tbody>
 						  </table>
@@ -119,6 +121,7 @@ and open the template in the editor.
 			<button id="add_row" class="btn btn-success pull-left">Add Row</button>
 			<button id="delete_row" class="btn btn-danger pull-right">Delete Row</button>
 		</div>
+		</form>
 		
 		
 	</div>
