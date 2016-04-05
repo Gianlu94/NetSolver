@@ -148,7 +148,7 @@ var ViewHome = {
 			var children = document.getElementById("hostConfiguration").children.length;
 			//alert("Children number "+children);
 			var hostConfigurationXml;
-			hostConfigurationXml="<UserSolution>\n<Hosts>\n<Number>\n"+children+"</Number>\n";
+			hostConfigurationXml="<UserSolution>\n<Hosts>\n<Number>"+children+"</Number>\n";
 			//hostConfigurationXml="<Hosts>\n";
 			for (var i = 0;i<children;i++){
 				var hName = $("#name"+i).val();
@@ -186,9 +186,11 @@ var ViewHome = {
 					console.log("OKKOKOKOK");
 					$("#hostH").removeClass("active");
 					$("#hostsDe").removeClass("active");
-					//$("#reportDe").empty();
 					$("#reportH").addClass("active");
 					$("#reportDe").addClass("active");
+					console.log("Server Response ",xhr.responseText);
+					$("#reportDe").empty();
+					$("#reportDe").html(xhr.responseText);
 				}	
 			}
 
