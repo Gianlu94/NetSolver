@@ -10,6 +10,9 @@ var XmlWriter = require('xml-writer');
 var xmlparser = require('express-xml-bodyparser');
 var xml2js = require('xml2js');
 var util = require('util');
+var xpath = require("xpath");
+var DOMParser = require('xmldom').DOMParser
+var Netmask = require('netmask').Netmask
 
 var parser = new xml2js.Parser();
 var difficultyP="";
@@ -83,6 +86,7 @@ function createXmlProblem(arrayXml){
   	if (err) return console.log(err);
   		console.log("Creation oks");
 	});
+	console.log("Creation oks");
 	//console.log(xw.toString());
 }
 function DifficultyFile (difficulty,req,res) {
@@ -90,7 +94,7 @@ function DifficultyFile (difficulty,req,res) {
 	switch (difficulty){
 		case '1' :
 			fs.readFile(path.join(__dirname+"/Traces/Trace1/trac1.txt"), function(err, file) { 
-			difficultyP="/Traces/Trace1/trac1.txt";
+			difficultyP="/Traces/Trace1/trac1.xml";
             if(err) {  
                 // write an error response or nothing here  
                 return;  
@@ -125,12 +129,51 @@ function DifficultyFile (difficulty,req,res) {
 }
 
 function checkUserSolution (req,res){
+	var htmlResponse ="<h3>List of errors </h3>";
+	var parser = new DOMParser();
+	var userSFile = parser.parseFromString(req.body, "application/xml")
 	switch (difficultyP) {
-		case "/Traces/Trace1/trac1.txt":
+		case "/Traces/Trace1/trac1.xml":
 			console.log("Problem oks");
+			fs.readFile(path.join(__dirname+difficultyP), function(err, file) { 
+            	if(err) {  
+                	// write an error response or nothing here  
+                	return;  
+            	}else{
+            		var fileString = file.toString();
+            		var doc = parser.parseFromString(fileString, "application/xml");
+            		var network = (xpath.select("//Network/text()",doc)).toString();
+            		var hostP = (xpath.select("//Hosts/text()",doc)).toString();
+            		var hostU = (xpath.select("//Number/text()",userSFile)).toString();
+					console.log("***Problem hosts "+ hostP );
+            		console.log("***User hosts "+ hostU );
+            		if (hostP != hostU){
+            			htmlResponse = htmlResponse + "<ul><li>Numbers of host is not equal</li></ul>";	
+            		}
+            		else {
+            			var block = new Netmask(network);
+            			console.log("***Rete " + block.mask);
+	            		var listHosts = (xpath.select("//Host",userSFile));
+	            		//console.log("List hosts" + listHosts);
+            			for (var i = 0; i < hostP; i++){
+            				console.log(listHosts[i].localName);
+            				var ip = (xpath.select("//"+listHosts[i].localName+"/Ip",userSFile))
+            				//var ip = (xpath.select("/"+listHosts[i].localName+"/Ip/text()",userSFile)).toString();
+            				console.log("Host ip "+ i +"Ip address" + ip[i].firstChild.data);
+            			}
+            			
+            		}
+            		
+            		
+            		//console.log("Document parsed ", doc);
+            		//console.log("***Network "+ (xpath.select("//Network/text()",doc)).toString());
+            		   //res.writeHead(200, { 'Content-Type': 'text/html' });  
+            			res.send(htmlResponse);  
+            		
+            	}
+            });
 			break;
 		default : 
-			console.log("Cacca");
 			break;
 	}
 	console.log("*DDDD ",difficultyP);
