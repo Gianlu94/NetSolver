@@ -119,15 +119,15 @@ var ViewHome = {
 			var row = Octopus.incrementRow();
 			//alert("***ROW  "+ row);
 			var rowH = "<tr id='row"+row+"'>"+
-						"<td><input type='text' name='name"+row+
+						"<td><input type='text' id='name"+row+"' name = 'nam"+row+
 						"' placeholder='HostName' class='form-control'/></td>"+
-						"<td><input type='text' name='ip"+row+
+						"<td><input type='text' id='ip"+row+"' name = 'i"+row+
 						"' placeholder='Ip address' class='form-control'/></td>"+
-						"<td><input type='text' name='net"+row+
+						"<td><input type='text' id='net"+row+"' name = 'ne"+row+
 						"' placeholder='Netmask' class='form-control'/></td>"+
-						"<td><input type='text' name='gat"+row+
+						"<td><input type='text' id='gat"+row+"' name = 'ga"+row+
 						"' placeholder='Gateway' class='form-control'/></td>"+
-						"<td><input type='text' name='ser"+row+
+						"<td><input type='text' id='ser"+row+"' name = 'se"+row+
 						"' placeholder='Service' class='form-control'/></td>";
 			$("#tableH").append(rowH);
 		});
@@ -142,19 +142,24 @@ var ViewHome = {
 			
 		});
 		
+		
+		
 		var createXml = function(){
 			var children = document.getElementById("hostConfiguration").children.length;
 			//alert("Children number "+children);
 			var hostConfigurationXml;
-			//hostConfigurationXml="<UserSolution>\n<Pippa>1</Pippa><Hosts>\n";
+			hostConfigurationXml="<UserSolution>\n<Hosts>\n<Number>\n"+children+"</Number>\n";
 			//hostConfigurationXml="<Hosts>\n";
 			for (var i = 0;i<children;i++){
 				var hName = $("#name"+i).val();
+				//alert("#name"+i+"Hname ",hName);
+				//alert("#ip"+i+"Hname ",hName);
 				var hIpAddr = $("#ip"+i).val();
 				var hNetM = $("#net"+i).val();
 				var hGat = $("#gat"+i).val();
 				var hSer = $("#ser"+i).val();
-				hostConfigurationXml = "<Host>\n"+XmlViewCreator.element("Name",hName)+"\n"+
+				//ViewHome.assignErrorCheck(i);
+				hostConfigurationXml = hostConfigurationXml+"<Host>\n"+XmlViewCreator.element("Name",hName)+"\n"+
 							XmlViewCreator.element("Ip",hIpAddr)+"\n"+
 							XmlViewCreator.element("Netmask",hNetM)+"\n"+
 							XmlViewCreator.element("Gateway",hGat)+"\n"+
@@ -162,10 +167,11 @@ var ViewHome = {
 							+"</Host>\n";
 				//XmlViewCreator.element()
 			}
-			//hostConfigurationXml = hostConfigurationXml + hosts +"</Hosts>\n</UserSolution>";	
+			hostConfigurationXml = hostConfigurationXml+"</Hosts>\n</UserSolution>";	
 			//hostConfigurationXml = hostConfigurationXml+"</Hosts>";	
 			return hostConfigurationXml;
 		};
+		
 		
 		$("#NetworkConfList").on('submit', function(e){ 
 			e.preventDefault();
