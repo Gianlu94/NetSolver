@@ -7,12 +7,21 @@ var url = require("url");
 var path = require("path");
 var fs = require("fs");
 var XmlWriter = require('xml-writer');
+var xmlparser = require('express-xml-bodyparser');
+var xml2js = require('xml2js');
+var util = require('util');
 
+var parser = new xml2js.Parser();
+var difficultyP="";
+
+//app.use(xmlparser());
 /*app.use(bodyParser.urlencoded({
   extended: false
-}));*/
+}));
 //configure express to use body-parser as midlle-ware
-//app.use(bodyParser.json());
+app.use(bodyParser.json());
+*/
+app.use(bodyParser.text());
 
 /*app.use(express.static(path.join(__dirname+"/NetSolver/web/bootstrap/css/bootstrap.min.css")));
 app.use(express.static(path.join(__dirname+"/NetSolver/web/bootstrap/js/jquery-2.1.0.min.js")));
@@ -27,6 +36,7 @@ app.use(express.static('/NetSolver/web/js'));
 //define static files
 app.use(express.static(__dirname+"/NetSolver/web/css" ));
 app.use(express.static(__dirname+"/NetSolver/web/js" ));
+
 
 
 function createXmlProblem(arrayXml){
@@ -49,7 +59,7 @@ function createXmlProblem(arrayXml){
 	xw.startDocument();
 	xw.startElement('NetworkProblem');
 	for(var i = 0; i < arrayXml.length;i++) {
-		console.log(arrayXml[i]+"\n");
+		//console.log(arrayXml[i]+"\n");
    		switch (arrayXml[i]){
    			case "-network" :
    				xw.startElement('Network');
@@ -58,7 +68,10 @@ function createXmlProblem(arrayXml){
    		    	break;
    		    case "-hosts" :
    		    	xw.startElement('Hosts');
+   		    	//var numberHosts = Math.floor((Math.random() * 3) + 1);
    				xw.text(arrayXml[i+1]);
+   				//console.log("***NNNNNH ",numberHosts);
+   				//xw.text(numberHosts);
    		    	xw.endElement();
    		    	break;
    		    default : break;
@@ -76,7 +89,8 @@ function DifficultyFile (difficulty,req,res) {
 	console.log("PARAM "+ difficulty);
 	switch (difficulty){
 		case '1' :
-			fs.readFile(path.join(__dirname+"/Traces/Trace1/trac1.txt"), function(err, file) {  
+			fs.readFile(path.join(__dirname+"/Traces/Trace1/trac1.txt"), function(err, file) { 
+			difficultyP="/Traces/Trace1/trac1.txt";
             if(err) {  
                 // write an error response or nothing here  
                 return;  
@@ -91,7 +105,8 @@ function DifficultyFile (difficulty,req,res) {
    		    			arrayXml = arrayXml +"-network "+array[i];
    		    			break;
    		    		case "-hosts-" :
-   		    			array[i]="5 hosts";
+   		    			var numberHosts = Math.floor((Math.random() * 3) + 1);
+   		    			array[i]= numberHosts+" hosts";
    		    			arrayXml = arrayXml +" -hosts "+array[i];
    		    			break;
    		    		default : 
@@ -99,7 +114,7 @@ function DifficultyFile (difficulty,req,res) {
    		    	}
    		    	arrayClient = arrayClient +" "+array[i];
     		}
-    		console.log(arrayXml);
+    		//console.log(arrayXml);
     		createXmlProblem(arrayXml.split(" "));
             res.writeHead(200, { 'Content-Type': 'text/html' });  
             res.end(arrayClient.toString(), "utf-8");  
@@ -108,6 +123,19 @@ function DifficultyFile (difficulty,req,res) {
 		default : break;
 	}
 }
+
+function checkUserSolution (req,res){
+	switch (difficultyP) {
+		case "/Traces/Trace1/trac1.txt":
+			console.log("Problem oks");
+			break;
+		default : 
+			console.log("Cacca");
+			break;
+	}
+	console.log("*DDDD ",difficultyP);
+}
+
 //manage  the request of a network problem
 app.get("/Tracer", function(req,res){
 	var url2 = url.parse(req.url);
@@ -115,6 +143,20 @@ app.get("/Tracer", function(req,res){
 	var obj = JSON.parse(queryObj.data);
 	var difficulty = obj.difficulty;
 	DifficultyFile(difficulty,req,res);
+});
+
+//solution of  network problem
+app.post("/Solution", function(req, res){
+	/*console.log("Request received");
+	console.log("Request"+req.body);
+	parser.parseString(req.body, function (err, result) {
+    	console.log(util.inspect(result, false, null));
+    	console.dir(result.UserSolution.Hosts[0].Host[0].Name[0]);
+    	console.dir(result.UserSolution.Hosts[0].Host[1].Name[0]);
+    */
+    checkUserSolution(req,res);
+
+	//console.dir(req.body);
 });
 
 //load homePage
