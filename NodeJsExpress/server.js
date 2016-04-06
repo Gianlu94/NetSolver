@@ -13,6 +13,7 @@ var util = require('util');
 var xpath = require("xpath");
 var DOMParser = require('xmldom').DOMParser
 var Netmask = require('netmask').Netmask
+var ipM = require("ip");
 
 var parser = new xml2js.Parser();
 var difficultyP="";
@@ -105,7 +106,7 @@ function DifficultyFile (difficulty,req,res) {
    		    for(var i = 0; i < array.length;i++) {
    		    	switch (array[i]){
    		    		case "-network-" :
-   		    			array[i]="192.168.100.0/28";
+   		    			array[i]="192.168.100.000/28";
    		    			arrayXml = arrayXml +"-network "+array[i];
    		    			break;
    		    		case "-hosts-" :
@@ -128,12 +129,51 @@ function DifficultyFile (difficulty,req,res) {
 	}
 }
 
+function checkIfIsValidAddress (ipA, htmlResponse,network){
+	
+	console.log("Network : ", network);
+	var block = new Netmask(network);
+	if (!(ipM.isV4Format(ipA))){
+		htmlResponse = htmlResponse + "<li> Error : "+ipA + " is not a valid IPV4 Address</li>";		
+	}
+	else if(ipA == block.base){
+		htmlResponse = htmlResponse + "<li> Error : "+ipA + " is the Network Address</li>";		
+	}
+	else if(ipA == block.mask){
+		htmlResponse = htmlResponse + "<li> Error : "+ipA + " is the Netmask</li>";		
+	}
+	else if(ipA == block.broadcast){
+		htmlResponse = htmlResponse + "<li> Error : "+ipA + " is the BroadCast Address</li>";		
+	}
+	else if(!block.contains(ipA)){
+		htmlResponse = htmlResponse + "<li> Error : "+ipA + " doesn't belong to the network : " + network +"</li>";		
+	} 
+	console.log("Ipa : "+ ipA);  
+	console.log("Base : "+ block.base);
+	console.log("Last : "+ block.last);  
+	console.log("Netmask : "+ block.mask);
+	console.log("Broadcast : "+ block.broadcast);      
+	console.log("Gateway : "+ block.last);   
+	
+	return htmlResponse
+	//console.log("Block Base : ", block.base);
+}
+
+function checkDuplicateAddress (ipA, hostArray, hostArrayDuplicate){
+	if (hostArray.indexOf(ipA) != -1){
+		if (hostArrayDuplicate.indexOf(ipA) == -1){
+			hostArrayDuplicate.push(ipA);
+		}
+	}
+}
+
 function checkUserSolution (req,res){
 	var htmlResponse ="<h3>List of errors </h3>";
 	var parser = new DOMParser();
 	var userSFile = parser.parseFromString(req.body, "application/xml")
 	switch (difficultyP) {
 		case "/Traces/Trace1/trac1.xml":
+			var passed = false;
 			console.log("Problem oks");
 			fs.readFile(path.join(__dirname+difficultyP), function(err, file) { 
             	if(err) {  
@@ -145,23 +185,40 @@ function checkUserSolution (req,res){
             		var network = (xpath.select("//Network/text()",doc)).toString();
             		var hostP = (xpath.select("//Hosts/text()",doc)).toString();
             		var hostU = (xpath.select("//Number/text()",userSFile)).toString();
-					console.log("***Problem hosts "+ hostP );
-            		console.log("***User hosts "+ hostU );
+					//console.log("***Problem hosts "+ hostP );
+            		//console.log("***User hosts "+ hostU );
             		if (hostP != hostU){
-            			htmlResponse = htmlResponse + "<ul><li>Numbers of host is not equal</li></ul>";	
+            			htmlResponse = htmlResponse + "<ul><li>Numbers of host is not equal</li>";
             		}
             		else {
-            			var block = new Netmask(network);
-            			console.log("***Rete " + block.mask);
-	            		var listHosts = (xpath.select("//Host",userSFile));
-	            		//console.log("List hosts" + listHosts);
-            			for (var i = 0; i < hostP; i++){
-            				console.log(listHosts[i].localName);
-            				var ip = (xpath.select("//"+listHosts[i].localName+"/Ip",userSFile))
-            				//var ip = (xpath.select("/"+listHosts[i].localName+"/Ip/text()",userSFile)).toString();
-            				console.log("Host ip "+ i +"Ip address" + ip[i].firstChild.data);
-            			}
-            			
+		        			//var block = new Netmask(network);
+		        			//console.log("***Rete " + block.mask);
+			        		var listHosts = (xpath.select("//Host",userSFile));
+			        		htmlResponse = "<ul>";
+			        		var hostArray = [];
+			        		var hostArrayDuplicate = [];
+			        		//console.log("List hosts" + listHosts);
+		        			for (var i = 0; i < hostP; i++){
+		        				//console.log(listHosts[i].localName);
+		        				var ipA = (xpath.select("//"+listHosts[i].localName+"/Ip",userSFile))
+		        				htmlResponse = checkIfIsValidAddress(ipA[i].firstChild.data,htmlResponse,network);
+		        				checkDuplicateAddress(ipA[i].firstChild.data,hostArray,hostArrayDuplicate);
+		        				hostArray.push(ipA[i].firstChild.data);
+		        				//var ip = (xpath.select("/"+listHosts[i].localName+"/Ip/text()",userSFile)).toString();
+		        				//console.log("Host ip "+ i +"Ip address" + ipA[i].firstChild.data);
+		        				//hostArray
+            				}
+            				//htmlResponse = htmlResponse + "</ul>";
+            				if (hostArrayDuplicate.length !=0){
+            					for (var i=0; i< hostArrayDuplicate.length ;i++){
+            						htmlResponse = htmlResponse + "<li> The following ip address " + hostArrayDuplicate[i] + " appears more than one time</li>";
+            					}
+            				}
+            				else{
+            				
+            				}
+            				htmlResponse = htmlResponse + "</ul>";
+            	
             		}
             		
             		
