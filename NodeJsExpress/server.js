@@ -167,6 +167,15 @@ function checkDuplicateAddress (ipA, hostArray, hostArrayDuplicate){
 	}
 }
 
+function checkIfIsValidNetmask (netmask, htmlResponse, network){
+	var block = new Netmask(network);	
+	if(netmask != block.mask){
+		htmlResponse = htmlResponse + "<li> Error : "+netmask + " is not the Netmask</li>";		
+	}
+	return htmlResponse;
+}
+
+
 function checkUserSolution (req,res){
 	var htmlResponse ="<h3>List of errors </h3>";
 	var parser = new DOMParser();
@@ -200,8 +209,13 @@ function checkUserSolution (req,res){
 			        		//console.log("List hosts" + listHosts);
 		        			for (var i = 0; i < hostP; i++){
 		        				//console.log(listHosts[i].localName);
-		        				var ipA = (xpath.select("//"+listHosts[i].localName+"/Ip",userSFile))
+		        				var ipA = (xpath.select("//"+listHosts[i].localName+"/Ip",userSFile));
+		        				var getW = (xpath.select("//"+listHosts[i].localName+"/Gateway",userSFile));
+		        				var netM =	(xpath.select("//"+listHosts[i].localName+"/Netmask",userSFile));
+		        				
 		        				htmlResponse = checkIfIsValidAddress(ipA[i].firstChild.data,htmlResponse,network);
+		        				htmlResponse = checkIfIsValidAddress(getW[i].firstChild.data,htmlResponse,network);
+		        				htmlResponse = checkIfIsValidNetmask(netM[i].firstChild.data,htmlResponse,network)
 		        				checkDuplicateAddress(ipA[i].firstChild.data,hostArray,hostArrayDuplicate);
 		        				hostArray.push(ipA[i].firstChild.data);
 		        				//var ip = (xpath.select("/"+listHosts[i].localName+"/Ip/text()",userSFile)).toString();
@@ -215,7 +229,7 @@ function checkUserSolution (req,res){
             					}
             				}
             				else{
-            				
+            					htmlResponse = htmlResponse + "<h5>No errors occured</h5>";
             				}
             				htmlResponse = htmlResponse + "</ul>";
             	
