@@ -10,11 +10,20 @@ $(document).ready(function(){
 var Model = {
 	init : function(){
 		this.row=0;
+		this.rowS=0;
 	},
 	
-	incrementAndGet : function(){
-		this.row++;
-		return this.row;
+	incrementAndGet : function(w){
+		switch (w){
+			case 'h' :
+				this.row++;
+				return this.row;
+			case 's' :
+				this.rowS++;
+				return this.rowS;
+			default : break;
+				
+		}
 	},
 	
 	decrement : function(){
@@ -32,7 +41,7 @@ var Model = {
 			return -1;
 		}
 	}
-}
+};
 
 var Octopus = {
 	
@@ -41,8 +50,8 @@ var Octopus = {
 		ViewHome.init();
 	},
 	
-	incrementRow : function(){
-		return Model.incrementAndGet();
+	incrementRow : function(w){
+		return Model.incrementAndGet(w);
 	},
 	
 	decrement : function(){
@@ -67,13 +76,34 @@ var XmlViewCreator = {
 		}
 		return xml;
 	}
-}
+};
 
 var ViewHome = {
 	param:"",
 	
 	init : function(){
-		$(".dropdown-menu li a").click(function(){
+		
+		
+		var assignValueByDropDown = function (id,btnCl){
+			$("#"+id+ " li a").click(function(){
+				//alert(this.text);
+				//$(".btnD:first-child").text($(this).text())
+				//ViewHome.param = this.text();
+				//alert(ViewHome.param);
+
+				$("."+btnCl+":first-child").html($(this).text()+"<span class='caret'> </span>");
+				$("."+btnCl+":first-child").val($(this).text());
+				ViewHome.param=($(this).text());
+				//alert(ViewHome.param);
+				//ViewHome.param = this.text();
+			});
+		};
+		
+		assignValueByDropDown("dropdownDI","btnD");
+		assignValueByDropDown("dropdownSP","btnSP");
+		assignValueByDropDown("dropdownST","btnST");
+		
+		/*$("#dropdownDI li a").click(function(){
 			//alert(this.text);
 			//$(".btnD:first-child").text($(this).text())
 			//ViewHome.param = this.text();
@@ -85,6 +115,7 @@ var ViewHome = {
 			//alert(ViewHome.param);
 			//ViewHome.param = this.text();
 		});
+		*/
 		
 		$("#getP").click(function(){
 			$("#panelYourSolution").show();
@@ -114,7 +145,71 @@ var ViewHome = {
 			$("#extended").load("./text.txt");
 		});
 		
-		$("#add_row").click(function(e){
+		var addRow = function(id,appendTo){
+			$("#"+id).click(function(e){
+				e.preventDefault();
+				var rowD;
+				switch (id){
+					case "add_rowH" :
+						var row = Octopus.incrementRow("h");
+						rowD = "<tr id='row"+row+"'>"+
+							"<td><input type='text' id='name"+row+"' name = 'nam"+row+
+							"' placeholder='HostName' class='form-control'/></td>"+
+							"<td><input type='text' id='ip"+row+"' name = 'i"+row+
+							"' placeholder='Ip address' class='form-control'/></td>"+
+							"<td><input type='text' id='net"+row+"' name = 'ne"+row+
+							"' placeholder='Netmask' class='form-control'/></td>"+
+							"<td><input type='text' id='gat"+row+"' name = 'ga"+row+
+							"' placeholder='Gateway' class='form-control'/></td>"+
+							"<td><input type='text' id='ser"+row+"' name = 'se"+row+
+							"' placeholder='Service' class='form-control'/></td>";
+						break;
+					case "add_rowS" :
+						var row = Octopus.incrementRow("s");
+						rowD = "<tr id='srow"+row+"'>"+
+							"<td><input type='text' id='sname"+row+"' name = 'snam"+row+
+							"' placeholder='Switch Name' class='form-control'/></td>"+
+							"<td><div class='dropdown'>"+
+								"<button class='btn btnSp btn-default dropdown-toggle'"+
+								"type='button' data-toggle='dropdown'>Port number"+
+								 "<span class='caret'></span></button>"+
+								 "<ul class='dropdown-menu' id='dropdownSP'>"+
+									"<li><a href='#' data-value='1'>1</a></li>"+
+									"<li><a href='#' data-value='1'>2</a></li>"+
+									"<li><a href='#' data-value='1'>3</a></li>"+
+									"<li><a href='#' data-value='1'>4</a></li>"+
+									"<li><a href='#' data-value='1'>5</a></li>"+
+									"<li><a href='#' data-value='1'>6</a></li>"+
+									"<li><a href='#' data-value='1'>7</a></li>"+
+									"<li><a href='#' data-value='1'>8</a></li>"+
+								"</ul>"+
+								"</div>"+
+							"</td>"+
+							"<td>"+
+							"<div class='dropdown'>"+
+								"<button class='btn btnST btn-default "+
+									"dropdown-toggle' type='button'"+
+										"data-toggle='dropdown'>Type"+
+											"<span class='caret'></span>"+
+												"</button>"+
+												"<ul class='dropdown-menu' id='dropdownST'>"+
+													"<li><a href='#' "+ 
+														"data-value='straight'>straight</a></li>"+
+													"<li><a href='#' data-value='cross'>cross</a></li>"+
+												"</ul>"+
+							"</div></td>"
+							;
+							
+						break;
+					default : break;
+				}
+				$("#"+appendTo).append(rowD);	
+			});
+		};
+		
+		addRow("add_rowH","tableH");
+		addRow("add_rowS","tableS");
+		/*$("#add_row").click(function(e){
 			e.preventDefault();
 			var row = Octopus.incrementRow();
 			//alert("***ROW  "+ row);
@@ -131,7 +226,7 @@ var ViewHome = {
 						"' placeholder='Service' class='form-control'/></td>";
 			$("#tableH").append(rowH);
 		});
-		
+		*/
 		$("#delete_row").click(function(e){
 			e.preventDefault();
 			var row = Octopus.getRow();
@@ -207,5 +302,5 @@ var ViewHome = {
 		vfsvfsfvfsvsf\n\
 		cdvdvd");
 	}
-}
+};
 
