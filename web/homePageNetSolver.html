@@ -12,7 +12,7 @@ and open the template in the editor.
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>	
 		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 		<link href="/general.css" rel="stylesheet">
-		<script src="/HomePageNetSolver.js"></script>
+		<script src="./js//HomePageNetSolver.js"></script>
 	</head>
 	<body>
 		<div class="container-fluid">
@@ -103,10 +103,55 @@ and open the template in the editor.
 									<td><input type="text" id="ser0" name='se0'  placeholder='Service' class="form-control"/></td>
 								  </tr>
 								</tbody>
-							  </table>
+							</table>
+							<button id="add_rowH" class="btn btn-success pull-left">Add Row</button>
+							<button id="delete_rowH" class="btn btn-danger pull-right">Delete Row</button>
 						</div>
 						<div class="tab-pane" id="switchDe">
-							To develop
+							<table class="table table-hover" id="tableS">
+								<thead>
+								  <tr>
+									<th>Name</th>
+									<th>Switch port</th>
+									<th>Type of connection</th>
+									<th>Connect to</th>
+									<th><button id="checkSolution" type="submit" class="btn btn-info pull-right">Check</button></th>
+								  </tr>
+								</thead>
+								<tbody id="switchConfiguration">
+								  <tr id="srow0">
+									<td><input type="text" id="sname0" name='snam0'  placeholder='Switch Name' class="form-control"/></td>
+									<td>
+										<div class="dropdown">
+											<button class="btn btnSP btn-default dropdown-toggle" type="button" data-toggle="dropdown">Port number
+											<span class="caret"></span></button>
+												<ul class="dropdown-menu" id="dropdownSP">
+													<li><a href="#" data-value="1">1</a></li>
+													<li><a href="#" data-value="2">2</a></li>
+													<li><a href="#" data-value="3">3</a></li>
+													<li><a href="#" data-value="4">4</a></li>
+													<li><a href="#" data-value="5">5</a></li>
+													<li><a href="#" data-value="6">6</a></li>
+													<li><a href="#" data-value="7">7</a></li>
+													<li><a href="#" data-value="8">8</a></li>
+												</ul>
+										</div>
+									</td>
+									<td>
+										<div class="dropdown">
+											<button class="btn btnST btn-default dropdown-toggle" type="button" data-toggle="dropdown">Type
+											<span class="caret"></span></button>
+												<ul class="dropdown-menu" id="dropdownST">
+													<li><a href="#" data-value="straight">straight</a></li>
+													<li><a href="#" data-value="cross">cross</a></li>
+												</ul>
+										</div>
+									</td>
+								  </tr>
+								</tbody>
+							  </table>
+							<button id="add_rowS" class="btn btn-success pull-left">Add Row</button>
+							<button id="delete_rowS" class="btn btn-danger pull-right">Delete Row</button>
 						</div>
 						<div class="tab-pane" id="routersDe">
 							To develop
@@ -122,8 +167,6 @@ and open the template in the editor.
 						</div>
 					</div>
 				</div>
-				<button id="add_row" class="btn btn-success pull-left">Add Row</button>
-				<button id="delete_row" class="btn btn-danger pull-right">Delete Row</button>
 			</div>
 		</form>
 		
