@@ -145,6 +145,7 @@ var ViewHome = {
 			$("#extended").load("./text.txt");
 		});
 		
+		//function to add new Host/Switch
 		var addRow = function(id,appendTo){
 			$("#"+id).click(function(e){
 				e.preventDefault();
@@ -152,7 +153,7 @@ var ViewHome = {
 				switch (id){
 					case "add_rowH" :
 						var row = Octopus.incrementRow("h");
-						rowD = "<tr id='row"+row+"'>"+
+						rowD = "<tr id='row"+row+"' class='notSelectedH"+row+"' >"+
 							"<td><input type='text' id='name"+row+"' name = 'nam"+row+
 							"' placeholder='HostName' class='form-control'/></td>"+
 							"<td><input type='text' id='ip"+row+"' name = 'i"+row+
@@ -221,6 +222,22 @@ var ViewHome = {
 			});
 		};
 		
+		
+		$(".btnSD").click(function(){
+			var children = document.getElementById("hostConfiguration").children.length;
+			$("#dropdownSD").empty();
+			for (var i=0;i < children; i++){
+				if($("#row"+i).hasClass("notSelectedH"+i)){
+					var nameH = $("#name"+i).val();
+					//alert(nameH);
+					var hostHtml = "<li>"+
+										"<a href='#' data-value='"+nameH+"' >"+nameH+
+										"</a>"+
+									"</li>";
+					$("#dropdownSD").append(hostHtml);
+				}
+			}
+		});
 		addRow("add_rowH","tableH");
 		addRow("add_rowS","tableS");
 		/*$("#add_row").click(function(e){
