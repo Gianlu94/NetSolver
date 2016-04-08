@@ -178,7 +178,7 @@ var ViewHome = {
 						var row = Octopus.incrementRow("h");
 						rowD = "<tr id='row"+row+"' class='notSelectedH"+row+"' >"+
 							"<td><input type='text' id='name"+row+"' name = 'nam"+row+
-							"' placeholder='HostName' class='form-control'/></td>"+
+							"' placeholder='HostName' class='form-control' value='Host_"+row+"' /></td>"+
 							"<td><input type='text' id='ip"+row+"' name = 'i"+row+
 							"' placeholder='Ip address' class='form-control'/></td>"+
 							"<td><input type='text' id='net"+row+"' name = 'ne"+row+
@@ -193,7 +193,7 @@ var ViewHome = {
 						var row = Octopus.incrementRow("s");
 						rowD = "<tr id='srow"+row+"'>"+
 							"<td><input type='text' id='sname"+row+"' name = 'snam"+row+
-							"' placeholder='Switch Name' class='form-control'/></td>"+
+							"' placeholder='Switch Name' class='form-control' value='Switch_"+row+"'/></td>"+
 							"<td><div class='dropdown'>"+
 								"<button class='btn btnSP"+row+" btn-default dropdown-toggle'"+
 								"type='button' data-toggle='dropdown'>Port number"+
@@ -231,14 +231,17 @@ var ViewHome = {
 												"</button>"+
 												"<ul class='dropdown-menu' id='dropdownSD"+row+"' >"+
 												"</ul>"+
-							"</div></td>"
+							"</div></td>"+
+							"<td>"+
+								"<button id='add_row_connection'"+row+"' class='btn btn-success pull-left'>+</button>"+
+							"</td>"
 							;
 							$("#"+appendTo).append(rowD);
 							assignValueByDropDown("dropdownSP"+row,"btnSP"+row);
 							assignValueByDropDown("dropdownST"+row,"btnST"+row);
 							
 							break;
-						case "" :
+						case "add_row_connection0" :
 							
 							
 							
@@ -248,6 +251,7 @@ var ViewHome = {
 			});
 		};
 		
+		//function to delete row Host/Switch
 		var deleteRow = (function (id){
 			$("#"+id).click(function(e){
 				e.preventDefault();
@@ -283,8 +287,10 @@ var ViewHome = {
 				}
 			}
 		});
+		
 		addRow("add_rowH","tableH");
 		addRow("add_rowS","tableS");
+		//addRow("add_row_connection0","tableS");
 		deleteRow("delete_rowH");
 		deleteRow("delete_rowS");
 		
