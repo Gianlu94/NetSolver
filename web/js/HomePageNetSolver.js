@@ -26,19 +26,42 @@ var Model = {
 		}
 	},
 	
-	decrement : function(){
-		if (this.row >= 1){
-			this.row--;
-			//alert("***Decrement"+this.row);
+	decrement : function(w){
+		switch (w){
+			case 'h' :
+				if (this.row >= 1){
+					this.row--;
+					//alert("***Decrement"+this.row);
+				}
+			case 's' :
+				if (this.row >= 1){
+					this.row--;
+					//alert("***Decrement"+this.row);
+				}
+				
+			default : break;
+				
 		}
 	},
 	
-	rowIndex : function(){
-		if (this.row > 0){
-			return this.row;
-		}
-		else{
-			return -1;
+	rowIndex : function(w){
+		switch (w){
+			case 'h' :
+				if (this.row > 0){
+					return this.row;
+				}
+				else{
+					return -1;
+				}
+			case 's' :
+				if (this.rowS > 0){
+					return this.rowS;
+				}
+				else{
+					return -1;
+				}
+			default : break;
+				
 		}
 	}
 };
@@ -54,12 +77,12 @@ var Octopus = {
 		return Model.incrementAndGet(w);
 	},
 	
-	decrement : function(){
-		Model.decrement();
+	decrement : function(w){
+		Model.decrement(w);
 	},
 	
-	getRow : function(){
-		return Model.rowIndex();
+	getRow : function(w){
+		return Model.rowIndex(w);
 	}
 	
 }
@@ -214,13 +237,35 @@ var ViewHome = {
 							assignValueByDropDown("dropdownSP"+row,"btnSP"+row);
 							assignValueByDropDown("dropdownST"+row,"btnST"+row);
 							
+							break;
+						case "" :
 							
 							
-						break;
+							
+							break;
 					default : break;
 				}
 			});
 		};
+		
+		var deleteRow = (function (id){
+			$("#"+id).click(function(e){
+				e.preventDefault();
+				switch (id){
+					case "delete_rowH" :
+						var row = Octopus.getRow('h');
+						$("#row"+row).remove();
+						Octopus.decrement('h');
+						break;
+					case "delete_rowS" :
+						var row = Octopus.getRow('s');
+						$("#srow"+row).remove();
+						Octopus.decrement('s');
+						break;
+					default : break;
+				}
+			});
+		});
 		
 		
 		$(".btnSD").click(function(){
@@ -240,35 +285,8 @@ var ViewHome = {
 		});
 		addRow("add_rowH","tableH");
 		addRow("add_rowS","tableS");
-		/*$("#add_row").click(function(e){
-			e.preventDefault();
-			var row = Octopus.incrementRow();
-			//alert("***ROW  "+ row);
-			var rowH = "<tr id='row"+row+"'>"+
-						"<td><input type='text' id='name"+row+"' name = 'nam"+row+
-						"' placeholder='HostName' class='form-control'/></td>"+
-						"<td><input type='text' id='ip"+row+"' name = 'i"+row+
-						"' placeholder='Ip address' class='form-control'/></td>"+
-						"<td><input type='text' id='net"+row+"' name = 'ne"+row+
-						"' placeholder='Netmask' class='form-control'/></td>"+
-						"<td><input type='text' id='gat"+row+"' name = 'ga"+row+
-						"' placeholder='Gateway' class='form-control'/></td>"+
-						"<td><input type='text' id='ser"+row+"' name = 'se"+row+
-						"' placeholder='Service' class='form-control'/></td>";
-			$("#tableH").append(rowH);
-		});
-		*/
-		$("#delete_row").click(function(e){
-			e.preventDefault();
-			var row = Octopus.getRow();
-			//alert("***ROW" + row);
-			$("#row"+row).remove();
-			//alert("***ROW" + row);
-			Octopus.decrement();
-			
-		});
-		
-		
+		deleteRow("delete_rowH");
+		deleteRow("delete_rowS");
 		
 		var createXml = function(){
 			var children = document.getElementById("hostConfiguration").children.length;
