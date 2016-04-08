@@ -163,6 +163,7 @@ var ViewHome = {
 							"' placeholder='Gateway' class='form-control'/></td>"+
 							"<td><input type='text' id='ser"+row+"' name = 'se"+row+
 							"' placeholder='Service' class='form-control'/></td>";
+						$("#"+appendTo).append(rowD);
 						break;
 					case "add_rowS" :
 						var row = Octopus.incrementRow("s");
@@ -170,10 +171,10 @@ var ViewHome = {
 							"<td><input type='text' id='sname"+row+"' name = 'snam"+row+
 							"' placeholder='Switch Name' class='form-control'/></td>"+
 							"<td><div class='dropdown'>"+
-								"<button class='btn btnSp btn-default dropdown-toggle'"+
+								"<button class='btn btnSP"+row+" btn-default dropdown-toggle'"+
 								"type='button' data-toggle='dropdown'>Port number"+
 								 "<span class='caret'></span></button>"+
-								 "<ul class='dropdown-menu' id='dropdownSP'>"+
+								 "<ul class='dropdown-menu' id='dropdownSP"+row+"' >"+
 									"<li><a href='#' data-value='1'>1</a></li>"+
 									"<li><a href='#' data-value='1'>2</a></li>"+
 									"<li><a href='#' data-value='1'>3</a></li>"+
@@ -187,23 +188,27 @@ var ViewHome = {
 							"</td>"+
 							"<td>"+
 							"<div class='dropdown'>"+
-								"<button class='btn btnST btn-default "+
+								"<button  class='btn btnST"+row+" btn-default "+
 									"dropdown-toggle' type='button'"+
 										"data-toggle='dropdown'>Type"+
 											"<span class='caret'></span>"+
 												"</button>"+
-												"<ul class='dropdown-menu' id='dropdownST'>"+
+												"<ul class='dropdown-menu' id='dropdownST"+row+"' >"+
 													"<li><a href='#' "+ 
 														"data-value='straight'>straight</a></li>"+
 													"<li><a href='#' data-value='cross'>cross</a></li>"+
 												"</ul>"+
 							"</div></td>"
 							;
+							$("#"+appendTo).append(rowD);
+							assignValueByDropDown("dropdownSP"+row,"btnSP"+row);
+							assignValueByDropDown("dropdownST"+row,"btnST"+row);
+							
+							
 							
 						break;
 					default : break;
 				}
-				$("#"+appendTo).append(rowD);	
 			});
 		};
 		
