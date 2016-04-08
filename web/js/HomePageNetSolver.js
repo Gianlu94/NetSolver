@@ -198,6 +198,15 @@ var ViewHome = {
 														"data-value='straight'>straight</a></li>"+
 													"<li><a href='#' data-value='cross'>cross</a></li>"+
 												"</ul>"+
+							"</div><td>"+
+							"<div class='dropdown'>"+
+								"<button  class='btn btnSD"+row+" btn-default "+
+									"dropdown-toggle' type='button'"+
+										"data-toggle='dropdown'>Hosts/Devices"+
+											"<span class='caret'></span>"+
+												"</button>"+
+												"<ul class='dropdown-menu' id='dropdownSD"+row+"' >"+
+												"</ul>"+
 							"</div></td>"
 							;
 							$("#"+appendTo).append(rowD);
