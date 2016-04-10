@@ -34,8 +34,8 @@ var Model = {
 					//alert("***Decrement"+this.row);
 				}
 			case 's' :
-				if (this.row >= 1){
-					this.row--;
+				if (this.rowS >= 1){
+					this.rowS--;
 					//alert("***Decrement"+this.row);
 				}
 				
@@ -175,7 +175,7 @@ var ViewHome = {
 				var rowD;
 				switch (id){
 					case "add_rowH" :
-						var row = Octopus.incrementRow("h");
+						var row = Octopus.incrementRow('h');
 						rowD = "<tr id='row"+row+"' class='notSelectedH"+row+"' >"+
 							"<td><input type='text' id='name"+row+"' name = 'nam"+row+
 							"' placeholder='HostName' class='form-control' value='Host_"+row+"' /></td>"+
@@ -190,7 +190,7 @@ var ViewHome = {
 						$("#"+appendTo).append(rowD);
 						break;
 					case "add_rowS" :
-						var row = Octopus.incrementRow("s");
+						var row = Octopus.incrementRow('s');
 						rowD = "<tr id='srow"+row+"'>"+
 							"<td><input type='text' id='sname"+row+"' name = 'snam"+row+
 							"' placeholder='Switch Name' class='form-control' value='Switch_"+row+"'/></td>"+
@@ -200,13 +200,13 @@ var ViewHome = {
 								 "<span class='caret'></span></button>"+
 								 "<ul class='dropdown-menu' id='dropdownSP"+row+"' >"+
 									"<li><a href='#' data-value='1'>1</a></li>"+
-									"<li><a href='#' data-value='1'>2</a></li>"+
-									"<li><a href='#' data-value='1'>3</a></li>"+
-									"<li><a href='#' data-value='1'>4</a></li>"+
-									"<li><a href='#' data-value='1'>5</a></li>"+
-									"<li><a href='#' data-value='1'>6</a></li>"+
-									"<li><a href='#' data-value='1'>7</a></li>"+
-									"<li><a href='#' data-value='1'>8</a></li>"+
+									"<li><a href='#' data-value='2'>2</a></li>"+
+									"<li><a href='#' data-value='3'>3</a></li>"+
+									"<li><a href='#' data-value='4'>4</a></li>"+
+									"<li><a href='#' data-value='5'>5</a></li>"+
+									"<li><a href='#' data-value='6'>6</a></li>"+
+									"<li><a href='#' data-value='7'>7</a></li>"+
+									"<li><a href='#' data-value='8'>8</a></li>"+
 								"</ul>"+
 								"</div>"+
 							"</td>"+
@@ -241,8 +241,16 @@ var ViewHome = {
 							assignValueByDropDown("dropdownST"+row,"btnST"+row);
 							
 							break;
-						case "add_row_connection0" :
-							
+						case "add_row_connection" :
+							/*var position = Octopus.getRow('s');
+							if (position == -1)
+								position+=1;
+							$(".btnSP").each(function(){
+								console.log("Val "+$(this).val());
+							});
+							*/
+							//console.log("***Position " + position );
+							//console.log("***CHildren " + $("#dropdownSP"+position).find('a').size());
 							
 							
 							break;
@@ -290,7 +298,7 @@ var ViewHome = {
 		
 		addRow("add_rowH","tableH");
 		addRow("add_rowS","tableS");
-		//addRow("add_row_connection0","tableS");
+		addRow("add_row_connection","tableS");
 		deleteRow("delete_rowH");
 		deleteRow("delete_rowS");
 		
