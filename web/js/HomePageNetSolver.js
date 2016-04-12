@@ -196,10 +196,10 @@ var ViewHome = {
 							"<td><input type='text' id='sname"+row+"' name = 'snam"+row+
 							"' placeholder='Switch Name' class='form-control' value='Switch_"+row+"'/></td>"+
 							"<td><div class='dropdown'>"+
-								"<button class='btn btnSP"+row+" btn-default dropdown-toggle'"+
+								"<button class='btn btnSP"+row+rowSupport+" btn-default dropdown-toggle'"+
 								"type='button' data-toggle='dropdown'>Port number"+
 								 "<span class='caret'></span></button>"+
-								 "<ul class='dropdown-menu' id='dropdownSP"+row+"' >"+
+								 "<ul class='dropdown-menu' id='dropdownSP"+row+rowSupport+"' >"+
 									"<li><a href='#' data-value='1'>1</a></li>"+
 									"<li><a href='#' data-value='2'>2</a></li>"+
 									"<li><a href='#' data-value='3'>3</a></li>"+
@@ -213,24 +213,24 @@ var ViewHome = {
 							"</td>"+
 							"<td>"+
 							"<div class='dropdown'>"+
-								"<button  class='btn btnST"+row+" btn-default "+
+								"<button  class='btn btnST"+row+rowSupport+" btn-default "+
 									"dropdown-toggle' type='button'"+
 										"data-toggle='dropdown'>Type"+
 											"<span class='caret'></span>"+
 												"</button>"+
-												"<ul class='dropdown-menu' id='dropdownST"+row+"' >"+
+												"<ul class='dropdown-menu' id='dropdownST"+row+rowSupport+"' >"+
 													"<li><a href='#' "+ 
 														"data-value='straight'>straight</a></li>"+
 													"<li><a href='#' data-value='cross'>cross</a></li>"+
 												"</ul>"+
 							"</div><td>"+
 							"<div class='dropdown'>"+
-								"<button  class='btn btnSD"+row+" btn-default "+
+								"<button  class='btn btnSD"+row+rowSupport+" btn-default "+
 									"dropdown-toggle' type='button'"+
 										"data-toggle='dropdown'>Hosts/Devices"+
 											"<span class='caret'></span>"+
 												"</button>"+
-												"<ul class='dropdown-menu' id='dropdownSD"+row+"' >"+
+												"<ul class='dropdown-menu' id='dropdownSD"+row+rowSupport+"' >"+
 												"</ul>"+
 							"</div></td>"+
 							"<td>"+
@@ -238,8 +238,8 @@ var ViewHome = {
 							"</td>"
 							;
 							$("#"+appendTo).append(rowD);
-							assignValueByDropDown("dropdownSP"+row,"btnSP"+row);
-							assignValueByDropDown("dropdownST"+row,"btnST"+row);
+							assignValueByDropDown("dropdownSP"+row+rowSupport,"btnSP"+row+rowSupport);
+							assignValueByDropDown("dropdownST"+row+rowSupport,"btnST"+row+rowSupport);
 							addSubRow("add_row_connection"+row+rowSupport,"srow"+row+rowSupport);
 							
 							break;
@@ -312,6 +312,8 @@ var ViewHome = {
 					$(rowD).insertAfter("#srow"+last2_1+last1);
 					last1++;
 					addSubRow("add_row_connection"+last2_1+last1,"srow"+last2_1+last1);
+					assignValueByDropDown("dropdownSP"+last2_1+last1,"btnSP"+last2_1+last1);
+					assignValueByDropDown("dropdownST"+last2_1+last1,"btnST"+last2_1+last1);
 					//$("#switchConfiguration").append(rowD);
 				}
 				//console.log("***Position " + position );
