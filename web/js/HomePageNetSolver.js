@@ -122,9 +122,9 @@ var ViewHome = {
 			});
 		};
 		
-		assignValueByDropDown("dropdownDI","btnD");
-		assignValueByDropDown("dropdownSP","btnSP");
-		assignValueByDropDown("dropdownST","btnST");
+		assignValueByDropDown("dropdownDI","btnD00");
+		assignValueByDropDown("dropdownSP","btnSP00");
+		assignValueByDropDown("dropdownST","btnST00");
 		
 		/*$("#dropdownDI li a").click(function(){
 			//alert(this.text);
@@ -191,7 +191,8 @@ var ViewHome = {
 						break;
 					case "add_rowS" :
 						var row = Octopus.incrementRow('s');
-						rowD = "<tr id='srow"+row+"'>"+
+						var rowSupport = row-row;
+						rowD = "<tr id='srow"+row+rowSupport+"'>"+
 							"<td><input type='text' id='sname"+row+"' name = 'snam"+row+
 							"' placeholder='Switch Name' class='form-control' value='Switch_"+row+"'/></td>"+
 							"<td><div class='dropdown'>"+
@@ -233,29 +234,89 @@ var ViewHome = {
 												"</ul>"+
 							"</div></td>"+
 							"<td>"+
-								"<button id='add_row_connection'"+row+"' class='btn btn-success pull-left'>+</button>"+
+								"<button id='add_row_connection"+row+rowSupport+"' class='btn btn-success pull-left'>+</button>"+
 							"</td>"
 							;
 							$("#"+appendTo).append(rowD);
 							assignValueByDropDown("dropdownSP"+row,"btnSP"+row);
 							assignValueByDropDown("dropdownST"+row,"btnST"+row);
+							addSubRow("add_row_connection"+row+rowSupport,"srow"+row+rowSupport);
 							
 							break;
-						case "add_row_connection" :
-							/*var position = Octopus.getRow('s');
-							if (position == -1)
-								position+=1;
-							$(".btnSP").each(function(){
-								console.log("Val "+$(this).val());
-							});
-							*/
-							//console.log("***Position " + position );
-							//console.log("***CHildren " + $("#dropdownSP"+position).find('a').size());
 							
-							
-							break;
 					default : break;
 				}
+			});
+		};
+		
+		var addSubRow = function (id,srow){
+			$("#"+id).click(function(e){
+				e.preventDefault();
+				var rowD;
+				var last2 = id.slice(-2);
+				var last2_1 = last2.charAt(0);
+				var last1 = parseInt(id.slice(-1));
+				if (last1==-1){
+					last1++;
+				}
+				console.log("Last 2 "+last2);
+				console.log("Penultuim "+last2_1);
+				console.log("Ultimo "+last1);
+				if (last1 < 7){
+					$("#add_row_connection"+last2_1+last1).hide();
+					last1++;	
+					rowD = "<tr id='srow"+last2_1+last1+"' ><td></td><td><div class='dropdown'>"+
+						"<button class='btn btnSP"+last2_1+last1+" btn-default dropdown-toggle'"+
+						"type='button' data-toggle='dropdown'>Port number"+
+						"<span class='caret'></span></button>"+
+							"<ul class='dropdown-menu' id='dropdownSP"+last2_1+last1+"' >"+
+								"<li><a href='#' data-value='1'>1</a></li>"+
+								"<li><a href='#' data-value='2'>2</a></li>"+
+								"<li><a href='#' data-value='3'>3</a></li>"+
+								"<li><a href='#' data-value='4'>4</a></li>"+
+								"<li><a href='#' data-value='5'>5</a></li>"+
+								"<li><a href='#' data-value='6'>6</a></li>"+
+								"<li><a href='#' data-value='7'>7</a></li>"+
+								"<li><a href='#' data-value='8'>8</a></li>"+
+							"</ul>"+
+							"</div>"+
+						"</td>"+
+						"<td>"+
+							"<div class='dropdown'>"+
+								"<button  class='btn btnST"+last2_1+last1+" btn-default "+
+									"dropdown-toggle' type='button'"+
+										"data-toggle='dropdown'>Type"+
+											"<span class='caret'></span>"+
+												"</button>"+
+												"<ul class='dropdown-menu' id='dropdownST"+last2_1+last1+"' >"+
+													"<li><a href='#' "+ 
+														"data-value='straight'>straight</a></li>"+
+													"<li><a href='#' data-value='cross'>cross</a></li>"+
+												"</ul>"+
+							"</div>\n\
+						<td>"+
+							"<div class='dropdown'>"+
+								"<button  class='btn btnSD"+last2_1+last1+" btn-default "+
+									"dropdown-toggle' type='button'"+
+										"data-toggle='dropdown'>Hosts/Devices"+
+											"<span class='caret'></span>"+
+												"</button>"+
+												"<ul class='dropdown-menu' id='dropdownSD"+last2_1+last1+"' >"+
+												"</ul>"+
+							"</div></td>"+
+						"<td>"+
+							"<button id='add_row_connection"+last2_1+last1+"' class='btn btn-success pull-left'>+</button>"+
+						"</td></tr>";
+					console.log("**SROW",srow);
+					last1--;
+					$(rowD).insertAfter("#srow"+last2_1+last1);
+					last1++;
+					addSubRow("add_row_connection"+last2_1+last1,"srow"+last2_1+last1);
+					//$("#switchConfiguration").append(rowD);
+				}
+				//console.log("***Position " + position );
+				//console.log("***CHildren " + $("#dropdownSP"+position).find('a').size());
+				
 			});
 		};
 		
@@ -298,7 +359,7 @@ var ViewHome = {
 		
 		addRow("add_rowH","tableH");
 		addRow("add_rowS","tableS");
-		addRow("add_row_connection","tableS");
+		addSubRow("add_row_connection00","srow00");
 		deleteRow("delete_rowH");
 		deleteRow("delete_rowS");
 		
