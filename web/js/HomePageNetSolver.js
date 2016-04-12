@@ -327,6 +327,21 @@ var ViewHome = {
 			});
 		};
 		
+		//function to delete the children of a switch (from its id)
+		var deleteFollowingChildren = function(id,row){
+			console.log("***id :"+id+" *****row :"+row);
+			//
+			last1=0;
+			//console.log("Children to eliminate :"+parseInt(last1));
+			while ($("#srow"+row+last1).length){
+				//console.log("Children exists :"+last1);
+				$("#srow"+row+last1).remove();
+				last1++;
+			}
+			
+		};
+		
+		
 		//function to delete row Host/Switch
 		var deleteRow = (function (id){
 			$("#"+id).click(function(e){
@@ -339,7 +354,12 @@ var ViewHome = {
 						break;
 					case "delete_rowS" :
 						var row = Octopus.getRow('s');
-						$("#srow"+row).remove();
+						var rowSupport = row-row;
+						//var last1 = parseInt(id.slice(-1));
+						
+						deleteFollowingChildren(id,row);
+						console.log("Rows"+row+rowSupport);
+						$("#srow"+row+rowSupport).remove();
 						Octopus.decrement('s');
 						break;
 					default : break;
