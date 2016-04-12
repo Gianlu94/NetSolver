@@ -8,6 +8,9 @@ and open the template in the editor.
     Author     : gianluke
 */
 
+.delete_row_connection{
+	margin-left: 10px;
+}
 #titleHome{
 	font-size:55px;
 }

@@ -241,6 +241,7 @@ var ViewHome = {
 							assignValueByDropDown("dropdownSP"+row+rowSupport,"btnSP"+row+rowSupport);
 							assignValueByDropDown("dropdownST"+row+rowSupport,"btnST"+row+rowSupport);
 							addSubRow("add_row_connection"+row+rowSupport,"srow"+row+rowSupport);
+							deleteSubRow("delete_row_connection"+row+rowSupport);
 							
 							break;
 							
@@ -249,6 +250,7 @@ var ViewHome = {
 			});
 		};
 		
+		//function to add subrows Switches
 		var addSubRow = function (id,srow){
 			$("#"+id).click(function(e){
 				e.preventDefault();
@@ -306,12 +308,15 @@ var ViewHome = {
 							"</div></td>"+
 						"<td>"+
 							"<button id='add_row_connection"+last2_1+last1+"' class='btn btn-success pull-left'>+</button>"+
+							"<button id='delete_row_connection"+last2_1+last1+"' class='btn btn-danger pull-left delete_row_connection'>-</button>"+
 						"</td></tr>";
 					console.log("**SROW",srow);
 					last1--;
+					$("#delete_row_connection"+last2_1+last1).hide();
 					$(rowD).insertAfter("#srow"+last2_1+last1);
 					last1++;
 					addSubRow("add_row_connection"+last2_1+last1,"srow"+last2_1+last1);
+					deleteSubRow("delete_row_connection"+last2_1+last1);
 					assignValueByDropDown("dropdownSP"+last2_1+last1,"btnSP"+last2_1+last1);
 					assignValueByDropDown("dropdownST"+last2_1+last1,"btnST"+last2_1+last1);
 					//$("#switchConfiguration").append(rowD);
@@ -341,6 +346,19 @@ var ViewHome = {
 				}
 			});
 		});
+		
+		var deleteSubRow = function(id){
+			$("#"+id).click(function(e){
+				e.preventDefault();
+				var last2 = id.slice(-2);
+				var last2_1 = last2.charAt(0);
+				var last1 = parseInt(id.slice(-1));
+				$("#srow"+last2_1+last1).remove();
+				last1--;
+				$("#add_row_connection"+last2_1+last1).show();
+				$("#delete_row_connection"+last2_1+last1).show();	
+			});
+		}
 		
 		
 		$(".btnSD").click(function(){
