@@ -103,29 +103,56 @@ var XmlViewCreator = {
 
 var ViewHome = {
 	param:"",
+	switchSelection:"",
 	
 	init : function(){
 		
 		
 		var assignValueByDropDown = function (id,btnCl){
+			switch (btnCl){
+				case "btnD" :
+					ViewHome.param=($(this).text());
+					break;
+				default : 
+					console.log("****ID : "+id+" btnCl: "+btnCl);
+					break;
+					
+			}
+			
 			$("#"+id+ " li a").click(function(){
 				//alert(this.text);
 				//$(".btnD:first-child").text($(this).text())
 				//ViewHome.param = this.text();
 				//alert(ViewHome.param);
-
+					
 				$("."+btnCl+":first-child").html($(this).text()+"<span class='caret'> </span>");
 				$("."+btnCl+":first-child").val($(this).text());
-				ViewHome.param=($(this).text());
+				console.log("ID "+$(this).text());
+				
 				//alert(ViewHome.param);
 				//ViewHome.param = this.text();
 			});
+			
+			/*$("#"+id).click(function(){
+				//alert(this.text);
+				//$(".btnD:first-child").text($(this).text())
+				//ViewHome.param = this.text();
+				//alert(ViewHome.param);
+					
+				$("."+btnCl+":first-child").html($(this).text()+"<span class='caret'> </span>");
+				$("."+btnCl+":first-child").val($(this).text());
+				console.log("ID "+$(this).text());
+				
+				//alert(ViewHome.param);
+				//ViewHome.param = this.text();
+			});
+				*/
 		};
 		
-		assignValueByDropDown("dropdownDI","btnD00");
+		assignValueByDropDown("dropdownDI","btnD");
 		assignValueByDropDown("dropdownSP","btnSP00");
 		assignValueByDropDown("dropdownST","btnST00");
-		
+		//assignValueByDropDown("dropdownSD00","btnSD00");
 		/*$("#dropdownDI li a").click(function(){
 			//alert(this.text);
 			//$(".btnD:first-child").text($(this).text())
@@ -176,7 +203,7 @@ var ViewHome = {
 				switch (id){
 					case "add_rowH" :
 						var row = Octopus.incrementRow('h');
-						rowD = "<tr id='row"+row+"' class='notSelectedH"+row+"' >"+
+						rowD = "<tr id='row"+row+"' class='notSelectedH' >"+
 							"<td><input type='text' id='name"+row+"' name = 'nam"+row+
 							"' placeholder='HostName' class='form-control' value='Host_"+row+"' /></td>"+
 							"<td><input type='text' id='ip"+row+"' name = 'i"+row+
@@ -242,6 +269,8 @@ var ViewHome = {
 							assignValueByDropDown("dropdownST"+row+rowSupport,"btnST"+row+rowSupport);
 							addSubRow("add_row_connection"+row+rowSupport,"srow"+row+rowSupport);
 							deleteSubRow("delete_row_connection"+row+rowSupport);
+							seeDevice("btnSD"+row+rowSupport);
+							assignConnnect("dropdownSD"+row+rowSupport);
 							
 							break;
 							
@@ -319,6 +348,8 @@ var ViewHome = {
 					deleteSubRow("delete_row_connection"+last2_1+last1);
 					assignValueByDropDown("dropdownSP"+last2_1+last1,"btnSP"+last2_1+last1);
 					assignValueByDropDown("dropdownST"+last2_1+last1,"btnST"+last2_1+last1);
+					seeDevice("btnSD"+last2_1+last1);
+					assignConnnect("dropdownSD"+last2_1+last1);
 					//$("#switchConfiguration").append(rowD);
 				}
 				//console.log("***Position " + position );
@@ -381,27 +412,59 @@ var ViewHome = {
 		}
 		
 		
-		$(".btnSD").click(function(){
-			var children = document.getElementById("hostConfiguration").children.length;
-			$("#dropdownSD").empty();
-			for (var i=0;i < children; i++){
-				if($("#row"+i).hasClass("notSelectedH"+i)){
-					var nameH = $("#name"+i).val();
-					//alert(nameH);
-					var hostHtml = "<li>"+
-										"<a href='#' data-value='"+nameH+"' >"+nameH+
-										"</a>"+
-									"</li>";
-					$("#dropdownSD").append(hostHtml);
+		var seeDevice = function(id){
+			$("."+id).click(function(){
+				var children = document.getElementById("hostConfiguration").children.length;
+				//$("#dropdownSD").empty();
+				$("."+id).parent().find("ul").empty();
+				//console.log("Parent :",$("."+id).parent()[0]);
+				//console.log("Ul :",$("."+id).parent().find("ul")[0]);
+				for (var i=0;i < children; i++){
+					if($("#row"+i).hasClass("notSelectedH")){
+						//$("#row"+i).removeClass("notSelectedH"+i);
+						//$("#row"+i).hasClass("SelectedH"+i);
+						var nameH = $("#name"+i).val();
+						//alert(nameH);
+						var hostHtml = "<li>"+
+											"<a href='#' data-value='"+i+"' >"+nameH+
+											"</a>"+
+										"</li>";
+						$("."+id).parent().find("ul").append(hostHtml);		
+						//$("#dropdownSD").append(hostHtml);
+					}
 				}
-			}
-		});
+			});
+		};
+		
+		var assignConnnect = function(id){
+			$("#"+id).on("click","li a", function(){
+				//extract last two character of the id
+				var last2 = id.slice(-2);
+				//previous selected
+				$("#row"+ViewHome.switchSelection).removeClass("SelectedH");
+				$("#row"+ViewHome.switchSelection).addClass("notSelectedH");
+
+				$("."+"btnSD"+last2+":first-child").html($(this).text()+"<span class='caret'> </span>");
+				$("."+"btnSD"+last2+":first-child").val($(this).text());
+				//new Selection
+				var index = $(this).attr('data-value');
+				ViewHome.switchSelection = index;
+				$("#row"+index).removeClass("notSelectedH");
+				$("#row"+index).addClass("SelectedH");
+
+			  // console.log("*****"+$(this).attr('data-value'));
+			});
+		};
 		
 		addRow("add_rowH","tableH");
 		addRow("add_rowS","tableS");
-		addSubRow("add_row_connection00","srow00");
+
 		deleteRow("delete_rowH");
 		deleteRow("delete_rowS");
+		//First row
+		addSubRow("add_row_connection00","srow00");
+		seeDevice("btnSD00");
+		assignConnnect("dropdownSD00");
 		
 		var createXml = function(){
 			var children = document.getElementById("hostConfiguration").children.length;
