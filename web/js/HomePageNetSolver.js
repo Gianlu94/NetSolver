@@ -191,9 +191,9 @@ var ViewHome = {
 		
 		$("#panelYourSolution").hide();
 		
-		$("#getP").click(function(){
+		/*$("#getP").click(function(){
 			$("#extended").load("./text.txt");
-		});
+		});*/
 		
 		//function to add new Host/Switch
 		var addRow = function(id,appendTo){
@@ -254,9 +254,7 @@ var ViewHome = {
 							"<div class='dropdown'>"+
 								"<button  class='btn btnSD"+row+rowSupport+" btn-default "+
 									"dropdown-toggle' type='button'"+
-										"data-toggle='dropdown'>Hosts/Devices"+
-											"<span class='caret'></span>"+
-												"</button>"+
+										"data-toggle='dropdown'>Hosts/Devices<span class='caret'></span></button>"+
 												"<ul class='dropdown-menu' id='dropdownSD"+row+rowSupport+"' >"+
 												"</ul>"+
 							"</div></td>"+
@@ -279,20 +277,45 @@ var ViewHome = {
 			});
 		};
 		
+		var getPartLength = function(code){
+			if (isNaN(parseInt(code.slice(-3)))){
+				return 2;
+			}
+			else{
+				return 3;
+			}
+		};
+		
+		var getSwitchPart = function(length,id){
+			if (length == 2){
+				var last2 = id.slice(-2);
+				return last2[0];
+				
+			}
+			else if (length == 3){
+				
+				var last3 = id.slice(-3);
+				var pair = last3[0]+""+last3[1];
+				return pair;
+				//return pair;
+			}
+		};
+		
 		//function to add subrows Switches
 		var addSubRow = function (id,srow){
 			$("#"+id).click(function(e){
 				e.preventDefault();
 				var rowD;
-				var last2 = id.slice(-2);
-				var last2_1 = last2.charAt(0);
+				var length = getPartLength(id);
+				var last2_1 = getSwitchPart(length,id);
 				var last1 = parseInt(id.slice(-1));
 				if (last1==-1){
 					last1++;
 				}
-				console.log("Last 2 "+last2);
-				console.log("Penultuim "+last2_1);
+				console.log("Last 1 "+last1);
+				/*console.log("Penultuim "+last2_1);
 				console.log("Ultimo "+last1);
+				*/
 				if (last1 < 7){
 					$("#add_row_connection"+last2_1+last1).hide();
 					last1++;	
@@ -329,9 +352,7 @@ var ViewHome = {
 							"<div class='dropdown'>"+
 								"<button  class='btn btnSD"+last2_1+last1+" btn-default "+
 									"dropdown-toggle' type='button'"+
-										"data-toggle='dropdown'>Hosts/Devices"+
-											"<span class='caret'></span>"+
-												"</button>"+
+										"data-toggle='dropdown'>Hosts/Devices<span class='caret'></span></button>"+
 												"<ul class='dropdown-menu' id='dropdownSD"+last2_1+last1+"' >"+
 												"</ul>"+
 							"</div></td>"+
@@ -401,8 +422,8 @@ var ViewHome = {
 		var deleteSubRow = function(id){
 			$("#"+id).click(function(e){
 				e.preventDefault();
-				var last2 = id.slice(-2);
-				var last2_1 = last2.charAt(0);
+				var length = getPartLength(id);
+				var last2_1 = getSwitchPart(length,id);
 				var last1 = parseInt(id.slice(-1));
 				$("#srow"+last2_1+last1).remove();
 				last1--;
@@ -439,19 +460,46 @@ var ViewHome = {
 		var assignConnnect = function(id){
 			$("#"+id).on("click","li a", function(){
 				//extract last two character of the id
+				
 				var last2 = id.slice(-2);
 				//previous selected
-				$("#row"+ViewHome.switchSelection).removeClass("SelectedH");
-				$("#row"+ViewHome.switchSelection).addClass("notSelectedH");
+				var previouSelected = $(".btnSD"+last2).text();
+				//alert("*PR "+previouSelected+"");
+				
+				//var quest = "input[value='"+previouSelected+"']";
+				/*if ($( "[value='Host_0']" ).hasClass("SelectedH")){
+					alert("Hello");
+				}
+				*/
+			  
+				if (previouSelected!="Hosts/Devices"){
+					if($("[value="+previouSelected+"]").parent().parent().hasClass("SelectedH")){
+						$("[value="+previouSelected+"]").parent().parent().removeClass("SelectedH");
+						$("[value="+previouSelected+"]").parent().parent().addClass("notSelectedH");
+					}
+					else{
+						
+					}
+					
+					
+				}
+			   //console.log("VALORE :"+$("[value=Host_0]")[0]);
+			    
+				
+				//$("#row"+last2).removeClass("SelectedH");
+				//$("#row"+last2).addClass("notSelectedH");
 
+				
 				$("."+"btnSD"+last2+":first-child").html($(this).text()+"<span class='caret'> </span>");
 				$("."+"btnSD"+last2+":first-child").val($(this).text());
 				//new Selection
-				var index = $(this).attr('data-value');
-				ViewHome.switchSelection = index;
-				$("#row"+index).removeClass("notSelectedH");
-				$("#row"+index).addClass("SelectedH");
-
+				
+				//ViewHome.switchSelection = index;
+				
+				$("#row"+last2.charAt(0)).removeClass("notSelectedH");
+				//alert("#row"+last2.charAt(0));
+				$("#row"+last2.charAt(0)).addClass("SelectedH");
+				
 			  // console.log("*****"+$(this).attr('data-value'));
 			});
 		};
