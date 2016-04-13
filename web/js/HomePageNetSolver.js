@@ -316,6 +316,14 @@ var ViewHome = {
 			
 		};
 		
+		var releaseHost = function(host){
+			if (host!="Hosts/Devices"){
+				var hostPart=getHostPart(host);
+				$("#row"+hostPart).removeClass("SelectedH");
+				$("#row"+hostPart).addClass("notSelectedH");
+			}
+		};
+		
 		//function to add subrows Switches
 		var addSubRow = function (id,srow){
 			$("#"+id).click(function(e){
@@ -399,11 +407,18 @@ var ViewHome = {
 			console.log("***id :"+id+" *****row :"+row);
 			//
 			last1=0;
+			lastC = row +""+ last1;
 			//console.log("Children to eliminate :"+parseInt(last1));
-			while ($("#srow"+row+last1).length){
+			while ($("#srow"+lastC).length){
 				//console.log("Children exists :"+last1);
-				$("#srow"+row+last1).remove();
+				
+				//alert(lastC);
+				//alert($("#btnSD"+lastC).);
+				releaseHost($(".btnSD"+lastC).text());
+				//alert(text);
+				$("#srow"+lastC).remove();
 				last1++;
+				lastC = row + "" +last1;
 			}
 			
 		};
@@ -425,8 +440,8 @@ var ViewHome = {
 						//var last1 = parseInt(id.slice(-1));
 						
 						deleteFollowingChildren(id,row);
-						console.log("Rows"+row+rowSupport);
-						$("#srow"+row+rowSupport).remove();
+						//console.log("Rows"+row+rowSupport);
+						//$("#srow"+row+rowSupport).remove();
 						Octopus.decrement('s');
 						break;
 					default : break;
@@ -440,6 +455,8 @@ var ViewHome = {
 				var length = getPartLength(id);
 				var last2_1 = getSwitchPart(length,id);
 				var last1 = parseInt(id.slice(-1));
+				
+				releaseHost($(".btnSD"+last2_1+""+last1).text());
 				$("#srow"+last2_1+last1).remove();
 				last1--;
 				$("#add_row_connection"+last2_1+last1).show();
