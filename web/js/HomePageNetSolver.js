@@ -301,6 +301,21 @@ var ViewHome = {
 			}
 		};
 		
+		var getHostPart = function(host){
+			if (isNaN(parseInt(host.slice(-3)))){
+				if(isNaN(parseInt(host.slice(-2)))){
+					return host.slice(-1);
+				}
+				else{
+					return host.slice(-2);
+				}
+			}
+			else{
+				return host.slice(-3);
+			}
+			
+		};
+		
 		//function to add subrows Switches
 		var addSubRow = function (id,srow){
 			$("#"+id).click(function(e){
@@ -457,21 +472,20 @@ var ViewHome = {
 			});
 		};
 		
+		//function to assign available devices (for a switch)
 		var assignConnnect = function(id){
 			$("#"+id).on("click","li a", function(){
-				//extract last two character of the id
+				//extract last characters of the id
+				var length = getPartLength(id);
+				var last2 = getSwitchPart(length,id);
+				var last1 = id.slice(-1);
+				var lastC = last2+""+last1;
 				
-				var last2 = id.slice(-2);
-				//previous selected
-				var previouSelected = $(".btnSD"+last2).text();
-				//alert("*PR "+previouSelected+"");
+				//previous selected (value on the button)
+				var previouSelected = $(".btnSD"+lastC).text();
+				//alert("*PR "+previouSelected);
 				
-				//var quest = "input[value='"+previouSelected+"']";
-				/*if ($( "[value='Host_0']" ).hasClass("SelectedH")){
-					alert("Hello");
-				}
-				*/
-			  
+				//The element is now available
 				if (previouSelected!="Hosts/Devices"){
 					if($("[value="+previouSelected+"]").parent().parent().hasClass("SelectedH")){
 						$("[value="+previouSelected+"]").parent().parent().removeClass("SelectedH");
@@ -483,24 +497,18 @@ var ViewHome = {
 					
 					
 				}
-			   //console.log("VALORE :"+$("[value=Host_0]")[0]);
-			    
-				
-				//$("#row"+last2).removeClass("SelectedH");
-				//$("#row"+last2).addClass("notSelectedH");
+			   
 
+				//setting the value of the button
+				$("."+"btnSD"+lastC+":first-child").html($(this).text()+"<span class='caret'> </span>");
+				$("."+"btnSD"+lastC+":first-child").val($(this).text());
 				
-				$("."+"btnSD"+last2+":first-child").html($(this).text()+"<span class='caret'> </span>");
-				$("."+"btnSD"+last2+":first-child").val($(this).text());
-				//new Selection
+				//The new selected element is not available
+				var hostPart=getHostPart($(this).text());
+				$("#row"+hostPart).removeClass("notSelectedH");
+				$("#row"+hostPart).addClass("SelectedH");
 				
-				//ViewHome.switchSelection = index;
-				
-				$("#row"+last2.charAt(0)).removeClass("notSelectedH");
-				//alert("#row"+last2.charAt(0));
-				$("#row"+last2.charAt(0)).addClass("SelectedH");
-				
-			  // console.log("*****"+$(this).attr('data-value'));
+			  
 			});
 		};
 		
