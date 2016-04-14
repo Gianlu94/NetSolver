@@ -404,7 +404,7 @@ var ViewHome = {
 		
 		//function to delete the children of a switch (from its id)
 		var deleteFollowingChildren = function(id,row){
-			console.log("***id :"+id+" *****row :"+row);
+			//console.log("***id :"+id+" *****row :"+row);
 			//
 			last1=0;
 			lastC = row +""+ last1;
@@ -431,7 +431,10 @@ var ViewHome = {
 				switch (id){
 					case "delete_rowH" :
 						var row = Octopus.getRow('h');
+						var hostN = $("#name"+row).val();
 						$("#row"+row).remove();
+						//alert("'button:contains("+hostN+")'")
+						$("button:contains("+hostN+")").text("Hosts/Devices");
 						Octopus.decrement('h');
 						break;
 					case "delete_rowS" :
@@ -508,11 +511,6 @@ var ViewHome = {
 						$("[value="+previouSelected+"]").parent().parent().removeClass("SelectedH");
 						$("[value="+previouSelected+"]").parent().parent().addClass("notSelectedH");
 					}
-					else{
-						
-					}
-					
-					
 				}
 			   
 
