@@ -124,7 +124,7 @@ var ViewHome = {
 				//$(".btnD:first-child").text($(this).text())
 				//ViewHome.param = this.text();
 				//alert(ViewHome.param);
-					
+				console.log("I'm here");
 				$("."+btnCl+":first-child").html($(this).text()+"<span class='caret'> </span>");
 				$("."+btnCl+":first-child").val($(this).text());
 				console.log("ID "+$(this).text());
@@ -150,9 +150,10 @@ var ViewHome = {
 		};
 		
 		assignValueByDropDown("dropdownDI","btnD");
-		assignValueByDropDown("dropdownSP","btnSP00");
+		//assignValueByDropDown("dropdownSP00","btnSP00");
+		
 		assignValueByDropDown("dropdownST","btnST00");
-		//assignValueByDropDown("dropdownSD00","btnSD00");
+		assignValueByDropDown("dropdownSD00","btnSD00");
 		/*$("#dropdownDI li a").click(function(){
 			//alert(this.text);
 			//$(".btnD:first-child").text($(this).text())
@@ -263,12 +264,16 @@ var ViewHome = {
 							"</td>"
 							;
 							$("#"+appendTo).append(rowD);
-							assignValueByDropDown("dropdownSP"+row+rowSupport,"btnSP"+row+rowSupport);
+							//assignValueByDropDown("dropdownSP"+row+rowSupport,"btnSP"+row+rowSupport);
 							assignValueByDropDown("dropdownST"+row+rowSupport,"btnST"+row+rowSupport);
 							addSubRow("add_row_connection"+row+rowSupport,"srow"+row+rowSupport);
 							deleteSubRow("delete_row_connection"+row+rowSupport);
+							
 							seeDevice("btnSD"+row+rowSupport);
 							assignConnnect("dropdownSD"+row+rowSupport);
+							
+							portsAvailable("btnSP"+row+rowSupport);
+							assignPort("dropdownSP"+row+rowSupport);
 							
 							break;
 							
@@ -390,10 +395,15 @@ var ViewHome = {
 					last1++;
 					addSubRow("add_row_connection"+last2_1+last1,"srow"+last2_1+last1);
 					deleteSubRow("delete_row_connection"+last2_1+last1);
-					assignValueByDropDown("dropdownSP"+last2_1+last1,"btnSP"+last2_1+last1);
+					//assignValueByDropDown("dropdownSP"+last2_1+last1,"btnSP"+last2_1+last1);
+					
 					assignValueByDropDown("dropdownST"+last2_1+last1,"btnST"+last2_1+last1);
+					
 					seeDevice("btnSD"+last2_1+last1);
 					assignConnnect("dropdownSD"+last2_1+last1);
+					
+					portsAvailable("btnSP"+last2_1+last1);
+					assignPort("dropdownSP"+last2_1+last1);
 					//$("#switchConfiguration").append(rowD);
 				}
 				//console.log("***Position " + position );
@@ -434,7 +444,9 @@ var ViewHome = {
 						var hostN = $("#name"+row).val();
 						$("#row"+row).remove();
 						//alert("'button:contains("+hostN+")'")
-						$("button:contains("+hostN+")").text("Hosts/Devices");
+						$("button:contains("+hostN+")").html("Hosts/Devices"+
+						"<span class='caret'> </span>");
+						
 						Octopus.decrement('h');
 						break;
 					case "delete_rowS" :
@@ -470,8 +482,12 @@ var ViewHome = {
 		
 		var seeDevice = function(id){
 			$("."+id).click(function(){
+				//number hosts
 				var children = document.getElementById("hostConfiguration").children.length;
-				//$("#dropdownSD").empty();
+				var length = getPartLength(id);
+				var last2_1 = getSwitchPart(length,id);
+				var last1 = parseInt(id.slice(-1));
+				
 				$("."+id).parent().find("ul").empty();
 				//console.log("Parent :",$("."+id).parent()[0]);
 				//console.log("Ul :",$("."+id).parent().find("ul")[0]);
@@ -489,6 +505,86 @@ var ViewHome = {
 						//$("#dropdownSD").append(hostHtml);
 					}
 				}
+			});
+		};
+		
+		var getPortsAvailable = function(id){
+			var arrayPorts=[1, 2, 3, 4, 5, 6, 7, 8];
+			
+			
+			
+			var length = getPartLength(id);
+			
+			var last2_1 = getSwitchPart(length,id);
+			console.log("Last2_1 "+last2_1);
+			//the last part is the port
+			var last1 = parseInt(id.slice(-1));
+			var last0 = last1 - last1;
+			
+			var exit = false;
+			
+			for (var i = 0; i<8 && !exit; i++){
+				var classP = ".btnSP"+last2_1+""+i;
+				if($(classP).length){
+					value = $(classP).text();
+					console.log("VALUE "+value);
+					if (!isNaN(parseInt(value))){
+						var index = arrayPorts.indexOf(parseInt(value));
+						console.log("INDEX "+index);
+						arrayPorts.splice(index,1);
+						//console.log("ok");
+					}
+				}
+				else{
+					exit = true;
+				}
+			}
+			
+			/*for (var i=0; i< arrayPorts.length;i++){
+				console.log("*** length "+" value "+arrayPorts.length);
+			}
+			*/
+		   return arrayPorts;
+			
+			
+		};
+		
+		//function to manage ports' availability
+		var portsAvailable = function(id){
+			$("."+id).click(function(){
+				
+				
+				var arrayPorts = getPortsAvailable(id);
+				 
+				$("."+id).parent().find("ul").empty();
+				//console.log("Parent :",$("."+id).parent()[0]);
+				//console.log("Ul :",$("."+id).parent().find("ul")[0]);
+				for (var i=0;i < arrayPorts.length; i++){
+					
+						
+						//alert(nameH);
+						//alert(arrayPorts[i]);
+						var hostHtml = "<li>"+
+											"<a href='#' data-value='"+arrayPorts[i]+"' >"+arrayPorts[i]+
+											"</a>"+
+										"</li>";
+						$("."+id).parent().find("ul").append(hostHtml);	
+						
+						//$("#dropdownSD").append(hostHtml);
+				}
+				
+			});
+		};
+		
+		var assignPort = function(id){
+			$("#"+id).on("click","li a", function(){
+				var length = getPartLength(id);
+				var last2 = getSwitchPart(length,id);
+				var last1 = id.slice(-1);
+				var lastC = last2+""+last1;
+				
+				$("."+"btnSP"+lastC+":first-child").html($(this).text()+"<span class='caret'> </span>");
+				$("."+"btnSP"+lastC+":first-child").val($(this).text());
 			});
 		};
 		
@@ -534,8 +630,12 @@ var ViewHome = {
 		deleteRow("delete_rowS");
 		//First row
 		addSubRow("add_row_connection00","srow00");
+		
 		seeDevice("btnSD00");
 		assignConnnect("dropdownSD00");
+		
+		portsAvailable("btnSP00");
+		assignPort("dropdownSP00")
 		
 		var createXml = function(){
 			var children = document.getElementById("hostConfiguration").children.length;
@@ -592,13 +692,9 @@ var ViewHome = {
 			console.log(hostConfigurationXml);
 		});
 		
-		$("#extended").append("ciiancsnfvbsfbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbfbfbffbf\n\
-		fbffbffbbbbbbbbbbbbbbbbbbbb\n\
-		vffvsfvvvvvvvvvvvvf");
+		$("#extended").append("");
 	
-		$("#compact").append("dvsfvfsvfsvsfvfsvfv\n\
-		vfsvfsfvfsvsf\n\
-		cdvdvd");
+		$("#compact").append("");
 	}
 };
 
