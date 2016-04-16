@@ -72,6 +72,18 @@ var Model = {
 	
 	deleteSwitch : function(id){
 		SwitchInterface.deleteSwitch(id);
+	},
+	
+	setSwitchPort : function(id,port){
+		SwitchInterface.SetSwitchPort(id,port);
+	},
+	
+	getSwitchPorts : function(id){
+		return SwitchInterface.getSwitchPorts(id);
+	},
+	
+	releaseSwitchPort : function(id, port){
+		SwitchInterface.releaseSwitchPort(id, port);
 	}
 	
 };
@@ -101,6 +113,18 @@ var Octopus = {
 	
 	deleteSwitch : function(id){
 		Model.deleteSwitch(id);
+	},
+	
+	setSwitchPort : function(id,port){
+		Model.setSwitchPort(id,port);
+	},
+	
+	getSwitchPorts : function (id){
+		return Model.getSwitchPorts(id);
+	},
+	
+	releaseSwitchPort : function(id, port){
+		Model.releaseSwitchPort(id, port);
 	}
 	
 	
@@ -289,11 +313,11 @@ var ViewHome = {
 							deleteSubRow("delete_row_connection"+row+rowSupport);
 							
 							Octopus.insertSwitch(row+rowSupport);
-							for (var i = 0; i<arraySwitch.length;i++){
-								
+							/*for (var i = 0; i<arraySwitch.length;i++){
 								var Switch = arraySwitch[i];
 								console.log("Switch " + Switch.idS);
 							}
+							*/
 							seeDevice("btnSD"+row+rowSupport);
 							assignConnnect("dropdownSD"+row+rowSupport);
 							
@@ -499,6 +523,10 @@ var ViewHome = {
 				var last1 = parseInt(id.slice(-1));
 				
 				releaseHost($(".btnSD"+last2_1+""+last1).text());
+				var PortToEliminate = $(".btnSP"+last2_1+""+last1).text();
+				if (!isNaN(PortToEliminate)){
+					Octopus.releaseSwitchPort(last2_1,PortToEliminate);
+				}
 				$("#srow"+last2_1+last1).remove();
 				last1--;
 				$("#add_row_connection"+last2_1+last1).show();
@@ -545,6 +573,7 @@ var ViewHome = {
 			});
 		};
 		
+		/*
 		var getPortsAvailable = function(id){
 			var arrayPorts=[1, 2, 3, 4, 5, 6, 7, 8];
 			
@@ -577,21 +606,24 @@ var ViewHome = {
 				}
 			}
 			
-			/*for (var i=0; i< arrayPorts.length;i++){
-				console.log("*** length "+" value "+arrayPorts.length);
-			}
-			*/
+			//for (var i=0; i< arrayPorts.length;i++){
+			//	console.log("*** length "+" value "+arrayPorts.length);
+			//}
+			
 		   return arrayPorts;
 			
 			
 		};
+		*/
 		
 		//function to manage ports' availability
 		var portsAvailable = function(id){
 			$("."+id).click(function(){
 				
+				var length = getPartLength(id);
+				var last2_1 = getSwitchPart(length,id);
 				
-				var arrayPorts = getPortsAvailable(id);
+				var arrayPorts = Octopus.getSwitchPorts(last2_1);
 				 
 				$("."+id).parent().find("ul").empty();
 				//console.log("Parent :",$("."+id).parent()[0]);
@@ -615,13 +647,20 @@ var ViewHome = {
 		
 		var assignPort = function(id){
 			$("#"+id).on("click","li a", function(){
+				var previousPort = $("#"+id).parent().find("button").text();	
 				var length = getPartLength(id);
 				var last2 = getSwitchPart(length,id);
 				var last1 = id.slice(-1);
 				var lastC = last2+""+last1;
-				
-				$("."+"btnSP"+lastC+":first-child").html($(this).text()+"<span class='caret'> </span>");
-				$("."+"btnSP"+lastC+":first-child").val($(this).text());
+				if (!isNaN(previousPort)){
+					//console.log("LAst2 "+last2 + " PreviousPort "+previousPort);
+					Octopus.releaseSwitchPort(last2,previousPort);
+				}
+				var newPort = $(this).text();
+				//console.log("LAst2 "+last2 + " newPort "+newPort);
+				Octopus.setSwitchPort(last2,newPort);
+				$("."+"btnSP"+lastC+":first-child").html(newPort+"<span class='caret'> </span>");
+				$("."+"btnSP"+lastC+":first-child").val(newPort);
 			});
 		};
 		
