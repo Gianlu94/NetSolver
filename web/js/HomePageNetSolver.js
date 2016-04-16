@@ -505,6 +505,16 @@ var ViewHome = {
 						//$("#dropdownSD").append(hostHtml);
 					}
 				}
+				
+				//Switch Part
+				var exist = true;
+				for (var i = 0; exist;i++){
+					if (i != last2_1){
+						if ($("#srow"+i).length){
+						
+						}
+					}
+				}
 			});
 		};
 		
@@ -519,7 +529,7 @@ var ViewHome = {
 			console.log("Last2_1 "+last2_1);
 			//the last part is the port
 			var last1 = parseInt(id.slice(-1));
-			var last0 = last1 - last1;
+			
 			
 			var exit = false;
 			
@@ -527,10 +537,10 @@ var ViewHome = {
 				var classP = ".btnSP"+last2_1+""+i;
 				if($(classP).length){
 					value = $(classP).text();
-					console.log("VALUE "+value);
+					//console.log("VALUE "+value);
 					if (!isNaN(parseInt(value))){
 						var index = arrayPorts.indexOf(parseInt(value));
-						console.log("INDEX "+index);
+						//console.log("INDEX "+index);
 						arrayPorts.splice(index,1);
 						//console.log("ok");
 					}
