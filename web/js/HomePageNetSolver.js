@@ -11,6 +11,7 @@ var Model = {
 	init : function(){
 		this.row=0;
 		this.rowS=0;
+		SwitchInterface.init();
 	},
 	
 	incrementAndGet : function(w){
@@ -63,7 +64,16 @@ var Model = {
 			default : break;
 				
 		}
+	},
+	
+	insertSwitch : function(id){
+		SwitchInterface.createSwitch(id);
+	},
+	
+	deleteSwitch : function(id){
+		SwitchInterface.deleteSwitch(id);
 	}
+	
 };
 
 var Octopus = {
@@ -83,7 +93,16 @@ var Octopus = {
 	
 	getRow : function(w){
 		return Model.rowIndex(w);
+	},
+
+	insertSwitch : function(id){
+		Model.insertSwitch(id);
+	},
+	
+	deleteSwitch : function(id){
+		Model.deleteSwitch(id);
 	}
+	
 	
 }
 
@@ -269,6 +288,12 @@ var ViewHome = {
 							addSubRow("add_row_connection"+row+rowSupport,"srow"+row+rowSupport);
 							deleteSubRow("delete_row_connection"+row+rowSupport);
 							
+							Octopus.insertSwitch(row+rowSupport);
+							for (var i = 0; i<arraySwitch.length;i++){
+								
+								var Switch = arraySwitch[i];
+								console.log("Switch " + Switch.idS);
+							}
 							seeDevice("btnSD"+row+rowSupport);
 							assignConnnect("dropdownSD"+row+rowSupport);
 							
@@ -454,6 +479,8 @@ var ViewHome = {
 						var rowSupport = row-row;
 						//var last1 = parseInt(id.slice(-1));
 						
+						Octopus.deleteSwitch();
+					
 						deleteFollowingChildren(id,row);
 						//console.log("Rows"+row+rowSupport);
 						//$("#srow"+row+rowSupport).remove();

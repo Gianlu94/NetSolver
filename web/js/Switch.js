@@ -4,24 +4,39 @@
  * and open the template in the editor.
  */
 
-$(document).ready(function(){
+
 	
 	var arraySwitch = [];
 	
 	var SwitchInterface = {
 	
+		init : function(id){
+			var Switch = {
+				idS:0,
+				p1:0,
+				p2:0,
+				p3:0,
+				p4:0,
+				p5:0,
+				p6:0,
+				p7:0,
+				p8:0
+			};
+			arraySwitch.push(Switch);
+		},
+		
 		createSwitch : function(id){
 			//Switch object
 			var Switch = {
 				idS:id,
-				p1:1,
-				p2:2,
-				p3:3,
-				p4:4,
-				p5:5,
-				p6:6,
-				p7:7,
-				p8:8
+				p1:0,
+				p2:0,
+				p3:0,
+				p4:0,
+				p5:0,
+				p6:0,
+				p7:0,
+				p8:0
 			};
 		
 			arraySwitch.push(Switch);
@@ -112,7 +127,7 @@ $(document).ready(function(){
 		}
 	
 	};
-});
+
 
 
 
