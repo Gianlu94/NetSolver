@@ -754,7 +754,7 @@ var ViewHome = {
 				last2S = getSwitchPart(length,arraySplit[0]);
 				port = arraySplit[1];
 				portN = port.charAt(port.indexOf('_')+1);
-				console.log("Switch busy "+last2S +" Port busy "+portN);
+				//console.log("Switch busy "+last2S +" Port busy "+portN);
 				Octopus.setSwitchPort(last2S,portN);
 			  
 			});
