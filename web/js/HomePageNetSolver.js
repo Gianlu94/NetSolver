@@ -163,17 +163,13 @@ var ViewHome = {
 			}
 			
 			$("#"+id+ " li a").click(function(){
-				//alert(this.text);
-				//$(".btnD:first-child").text($(this).text())
-				//ViewHome.param = this.text();
-				//alert(ViewHome.param);
+				
 				console.log("I'm here");
 				$("."+btnCl+":first-child").html($(this).text()+"<span class='caret'> </span>");
 				$("."+btnCl+":first-child").val($(this).text());
 				console.log("ID "+$(this).text());
 				
-				//alert(ViewHome.param);
-				//ViewHome.param = this.text();
+				
 			});
 			
 			/*$("#"+id).click(function(){
@@ -503,7 +499,7 @@ var ViewHome = {
 						var rowSupport = row-row;
 						//var last1 = parseInt(id.slice(-1));
 						
-						Octopus.deleteSwitch();
+						Octopus.deleteSwitch(row);
 					
 						deleteFollowingChildren(id,row);
 						//console.log("Rows"+row+rowSupport);
@@ -546,30 +542,25 @@ var ViewHome = {
 				$("."+id).parent().find("ul").empty();
 				//console.log("Parent :",$("."+id).parent()[0]);
 				//console.log("Ul :",$("."+id).parent().find("ul")[0]);
+				var hostHtml ="<li class='dropdown-submenu'><a tabindex='-1' href='#'>Hosts</a>"+
+						"<ul class='dropdown-menu'>";
 				for (var i=0;i < children; i++){
 					if($("#row"+i).hasClass("notSelectedH")){
 						//$("#row"+i).removeClass("notSelectedH"+i);
 						//$("#row"+i).hasClass("SelectedH"+i);
 						var nameH = $("#name"+i).val();
 						//alert(nameH);
-						var hostHtml = "<li>"+
-											"<a href='#' data-value='"+i+"' >"+nameH+
+						hostHtml = hostHtml+"<li>"+
+												"<a tabindex='-1'  href='#'  data-value='"+i+"' >"+nameH+
 											"</a>"+
-										"</li>";
-						$("."+id).parent().find("ul").append(hostHtml);		
+											"</li>";
+						
 						//$("#dropdownSD").append(hostHtml);
 					}
 				}
+				hostHtml = hostHtml +"</ul></li>"
+				$("."+id).parent().find("ul").append(hostHtml);		
 				
-				//Switch Part
-				var exist = true;
-				for (var i = 0; exist;i++){
-					if (i != last2_1){
-						if ($("#srow"+i).length){
-						
-						}
-					}
-				}
 			});
 		};
 		
@@ -771,6 +762,7 @@ var ViewHome = {
 		$("#extended").append("");
 	
 		$("#compact").append("");
+		
 	}
 };
 

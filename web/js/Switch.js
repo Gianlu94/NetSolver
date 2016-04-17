@@ -10,7 +10,7 @@
 	
 	var SwitchInterface = {
 	
-		init : function(id){
+		init : function(){
 			var Switch = {
 				idS:0,
 				p1:1,
