@@ -43,6 +43,12 @@
 		
 		},
 		
+		getSwitchId : function (index){
+			if (index < arraySwitch.length){
+				return arraySwitch[index].idS;
+			}
+		},
+		
 		getSwitch : function (id){
 			for (var i = 0; i<arraySwitch.length;i++){
 				var Switch = arraySwitch[i];
@@ -160,6 +166,10 @@
 					
 				}
 			}
+		},
+		
+		getArraySwitchLength : function(){
+			return arraySwitch.length;
 		}
 	
 	};

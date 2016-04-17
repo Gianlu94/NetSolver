@@ -40,8 +40,15 @@ and open the template in the editor.
 */
 
 
+
 .dropdown-submenu {
     position: relative;
+	
+}
+
+html, body
+{
+    height: 100%;
 }
 
 .dropdown-submenu>.dropdown-menu {
@@ -52,6 +59,9 @@ and open the template in the editor.
     -webkit-border-radius: 0 6px 6px 6px;
     -moz-border-radius: 0 6px 6px;
     border-radius: 0 6px 6px 6px;
+	
+    max-height: 90px;
+    overflow-y: scroll;
 }
 
 .dropdown-submenu:hover>.dropdown-menu {
@@ -62,7 +72,7 @@ and open the template in the editor.
     display: block;
     content: " ";
     float: right;
-    width: 0;
+    width: 0px;
     height: 0;
     border-color: transparent;
     border-style: solid;
@@ -70,4 +80,10 @@ and open the template in the editor.
     border-left-color: #ccc;
 }
 
-
+/*.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+	overflow-y: auto;
+}
+*/

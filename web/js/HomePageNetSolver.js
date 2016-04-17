@@ -70,6 +70,10 @@ var Model = {
 		SwitchInterface.createSwitch(id);
 	},
 	
+	getSwitchId : function (index){
+		return SwitchInterface.getSwitchId(index);
+	},
+	
 	deleteSwitch : function(id){
 		SwitchInterface.deleteSwitch(id);
 	},
@@ -84,6 +88,10 @@ var Model = {
 	
 	releaseSwitchPort : function(id, port){
 		SwitchInterface.releaseSwitchPort(id, port);
+	},
+	
+	getNumberOfSwitch : function(){
+			return SwitchInterface.getArraySwitchLength();
 	}
 	
 };
@@ -111,6 +119,10 @@ var Octopus = {
 		Model.insertSwitch(id);
 	},
 	
+	getSwitchId : function (index){
+		return Model.getSwitchId(index);
+	},
+	
 	deleteSwitch : function(id){
 		Model.deleteSwitch(id);
 	},
@@ -125,7 +137,11 @@ var Octopus = {
 	
 	releaseSwitchPort : function(id, port){
 		Model.releaseSwitchPort(id, port);
-	}
+	},
+	
+	getNumberOfSwitch : function(){
+			return Model.getNumberOfSwitch();
+	},
 	
 	
 }
@@ -542,15 +558,17 @@ var ViewHome = {
 				$("."+id).parent().find("ul").empty();
 				//console.log("Parent :",$("."+id).parent()[0]);
 				//console.log("Ul :",$("."+id).parent().find("ul")[0]);
-				var hostHtml ="<li class='dropdown-submenu'><a tabindex='-1' href='#'>Hosts</a>"+
-						"<ul class='dropdown-menu'>";
+				
+				//HostPart
+				var devicesHtml ="<li class='dropdown-submenu'><a tabindex='-1' href='#'>Hosts</a>"+
+						"<ul class='dropdown-menu scrollable-menu'>";
 				for (var i=0;i < children; i++){
 					if($("#row"+i).hasClass("notSelectedH")){
 						//$("#row"+i).removeClass("notSelectedH"+i);
 						//$("#row"+i).hasClass("SelectedH"+i);
 						var nameH = $("#name"+i).val();
 						//alert(nameH);
-						hostHtml = hostHtml+"<li>"+
+						devicesHtml = devicesHtml+"<li>"+
 												"<a tabindex='-1'  href='#'  data-value='"+i+"' >"+nameH+
 											"</a>"+
 											"</li>";
@@ -558,8 +576,34 @@ var ViewHome = {
 						//$("#dropdownSD").append(hostHtml);
 					}
 				}
-				hostHtml = hostHtml +"</ul></li>"
-				$("."+id).parent().find("ul").append(hostHtml);		
+				
+				//switch part
+				devicesHtml =devicesHtml+"</ul></li><li class='dropdown-submenu'\n\
+				><a tabindex='-1'\n\
+				href='#'>Switches</a><ul class='dropdown-menu scrollable-menu'>";
+				for (var i = 0; i < Octopus.getNumberOfSwitch(); i++ ){
+					var idSwitch = Octopus.getSwitchId(i);
+					console.log("Idswitch "+idSwitch+ " last2_1 "+last2_1);
+					if (idSwitch != last2_1){
+						/*devicesHtml = devicesHtml + "<li class='dropdown-submenu'"+
+								"<a href = '#' data-value = '"+idSwitch+"'>Switch_"+
+								idSwitch+"</a>"+
+								"<ul class='dropdown-menu'>";
+						*/
+						var ports = Octopus.getSwitchPorts(idSwitch);
+						for (var j = 0; j<ports.length; j++){
+							//console.log("Ports l "+ports.length);
+							//console.log("Ports"+ports[j]);
+							devicesHtml = devicesHtml + "<li><a tabindex='-1' href='#' data-value='"+
+									idSwitch+""+ports[j]+"'>Switch_"+idSwitch+" : Port_"+ports[j]+"</a></li>";
+						}
+						//devicesHtml=devicesHtml+"</ul></li>";
+					}
+				}
+				devicesHtml = devicesHtml +"</ul></li>";
+				//var numberOfSwitch = Octopus.getNumberOfSwitch();
+				//console.log("Number of Switch ",numberOfSwitch);
+				$("."+id).parent().find("ul").append(devicesHtml);		
 				
 			});
 		};
