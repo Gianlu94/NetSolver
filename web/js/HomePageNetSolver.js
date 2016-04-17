@@ -711,12 +711,29 @@ var ViewHome = {
 				//previous selected (value on the button)
 				var previouSelected = $(".btnSD"+lastC).text();
 				//alert("*PR "+previouSelected);
-				
+				var currentSelected = $(this).text();
 				//The element is now available
 				if (previouSelected!="Hosts/Devices"){
-					if($("[value="+previouSelected+"]").parent().parent().hasClass("SelectedH")){
-						$("[value="+previouSelected+"]").parent().parent().removeClass("SelectedH");
-						$("[value="+previouSelected+"]").parent().parent().addClass("notSelectedH");
+					if(previouSelected.indexOf("Port")>-1){
+						var arraySplit = previouSelected.split(":");
+						
+						//find switch and its port
+						var lengthS = getPartLength(arraySplit[0]);
+						var last2S = getSwitchPart(length,arraySplit[0]);
+						var port = arraySplit[1];
+						var portN = port.charAt(port.indexOf('_')+1);
+						
+						Octopus.releaseSwitchPort(last2S,portN);
+						console.log("Current selected "+currentSelected);
+						
+						//var lengthS = getPartLength(array);
+						//var last2 = getSwitchPart(length,id);
+					}
+					else{
+						if($("[value="+previouSelected+"]").parent().parent().hasClass("SelectedH")){
+							$("[value="+previouSelected+"]").parent().parent().removeClass("SelectedH");
+							$("[value="+previouSelected+"]").parent().parent().addClass("notSelectedH");
+						}
 					}
 				}
 			   
@@ -726,10 +743,19 @@ var ViewHome = {
 				$("."+"btnSD"+lastC+":first-child").val($(this).text());
 				
 				//The new selected element is not available
-				var hostPart=getHostPart($(this).text());
+				var hostPart=getHostPart(currentSelected);
 				$("#row"+hostPart).removeClass("notSelectedH");
 				$("#row"+hostPart).addClass("SelectedH");
+				//alert("*PR "+previouSelected);
 				
+				//set port of switch as busy
+				arraySplit = currentSelected.split(":");
+				lengthS = getPartLength(arraySplit[0]);
+				last2S = getSwitchPart(length,arraySplit[0]);
+				port = arraySplit[1];
+				portN = port.charAt(port.indexOf('_')+1);
+				console.log("Switch busy "+last2S +" Port busy "+portN);
+				Octopus.setSwitchPort(last2S,portN);
 			  
 			});
 		};
