@@ -92,6 +92,10 @@ var Model = {
 	
 	getNumberOfSwitch : function(){
 			return SwitchInterface.getArraySwitchLength();
+	},
+	
+	setConnectToSwitchPort : function(id,port,idpc){
+		SwitchInterface.setConnectToSwitchPort(id,port,idpc);
 	}
 	
 };
@@ -140,9 +144,12 @@ var Octopus = {
 	},
 	
 	getNumberOfSwitch : function(){
-			return Model.getNumberOfSwitch();
+		return Model.getNumberOfSwitch();
 	},
 	
+	setConnectToSwitchPort : function(id,port,idpc){
+		Model.setConnectToSwitchPort(id,port,idpc);
+	}
 	
 }
 
@@ -384,9 +391,22 @@ var ViewHome = {
 		
 		var releaseHost = function(host){
 			if (host!="Hosts/Devices"){
-				var hostPart=getHostPart(host);
-				$("#row"+hostPart).removeClass("SelectedH");
-				$("#row"+hostPart).addClass("notSelectedH");
+				if (host.indexOf("Port")){
+					var switchPort = host.split(":");
+						
+					//find switch and its port (to release)
+					var lengthS = getPartLength(switchPort[0]);
+					var last2S = getSwitchPart(lengthS,switchPort[0]);
+					var port = switchPort[1];
+					var portN = port.charAt(port.indexOf('_')+1);
+					
+					Octopus.releaseSwitchPort(last2S,portN);
+				}
+				else{
+					var hostPart=getHostPart(host);
+					$("#row"+hostPart).removeClass("SelectedH");
+					$("#row"+hostPart).addClass("notSelectedH");
+				}
 			}
 		};
 		
@@ -485,6 +505,7 @@ var ViewHome = {
 				
 				//alert(lastC);
 				//alert($("#btnSD"+lastC).);
+				//console.log("Text "+$(".btnSD"+lastC).text());
 				releaseHost($(".btnSD"+lastC).text());
 				//alert(text);
 				$("#srow"+lastC).remove();
@@ -516,7 +537,7 @@ var ViewHome = {
 						//var last1 = parseInt(id.slice(-1));
 						
 						Octopus.deleteSwitch(row);
-					
+
 						deleteFollowingChildren(id,row);
 						//console.log("Rows"+row+rowSupport);
 						//$("#srow"+row+rowSupport).remove();
@@ -724,7 +745,7 @@ var ViewHome = {
 						var portN = port.charAt(port.indexOf('_')+1);
 						
 						Octopus.releaseSwitchPort(last2S,portN);
-						console.log("Current selected "+currentSelected);
+						//console.log("Current selected "+currentSelected);
 						
 						//var lengthS = getPartLength(array);
 						//var last2 = getSwitchPart(length,id);
@@ -748,7 +769,7 @@ var ViewHome = {
 				$("#row"+hostPart).addClass("SelectedH");
 				//alert("*PR "+previouSelected);
 				
-				//set port of switch as busy
+				//set port of switch state busy
 				arraySplit = currentSelected.split(":");
 				lengthS = getPartLength(arraySplit[0]);
 				last2S = getSwitchPart(length,arraySplit[0]);
@@ -756,6 +777,7 @@ var ViewHome = {
 				portN = port.charAt(port.indexOf('_')+1);
 				//console.log("Switch busy "+last2S +" Port busy "+portN);
 				Octopus.setSwitchPort(last2S,portN);
+				//Octopus.setConnectToSwitchPort(last2,last1,last2S+":"+portN);
 			  
 			});
 		};

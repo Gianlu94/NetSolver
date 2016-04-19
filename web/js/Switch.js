@@ -73,12 +73,37 @@
 			}
 		},
 		
+		/*releasePortConnect: function(cport){
+			console.log("CPor "+cport);
+			if (cport!=0){
+				var arraySplit = currentSelected.split(":");
+				var lengthS = getPartLength(arraySplit[0]);
+				var last2S = getSwitchPart(length,arraySplit[0]);
+				var port = arraySplit[1];
+				var portN = port.charAt(port.indexOf('_')+1);
+				console.log("LIBERO Switch "+ last2S +" POrt"+portN);
+			}
+		},
+		
+		releaseSwitchPortConnect : function(sw){
+			SwitchInterface.releasePortConnect(sw.c1);
+			SwitchInterface.releasePortConnect(sw.c2);
+			SwitchInterface.releasePortConnect(sw.c3);
+			SwitchInterface.releasePortConnect(sw.c4);
+			SwitchInterface.releasePortConnect(sw.c5);
+			SwitchInterface.releasePortConnect(sw.c6);
+			SwitchInterface.releasePortConnect(sw.c7);
+			SwitchInterface.releasePortConnect(sw.c8);
+		},
+	*/
+		
 		deleteSwitch : function (id){
 			var removed = false;
 			for (var i = 0; i<arraySwitch.length && !removed;i++){
 				var Switch = arraySwitch[i];
 				if (Switch.idS == id){
-					console.log("Swtich "+Switch.id+" removed");
+					console.log("Swtich "+Switch.idS+" removed");
+					//SwitchInterface.releaseSwitchPortConnect(Switch);
 					arraySwitch.splice(i,1);
 					removed = true;
 				}
@@ -186,7 +211,42 @@
 		
 		getArraySwitchLength : function(){
 			return arraySwitch.length;
-		}
+		},
+		
+		/*setConnectToSwitchPort : function(id,port,idpc){
+			var found = false;
+			console.log("Switch "+id+" Port:")
+			for (var i = 0; arraySwitch.length && !found; i++){
+				if (arraySwitch[i].idS == id){
+					found = true;
+					if (port == 1){
+						arraySwitch[i].c1 = idpc;
+					}
+					else if(port == 2){
+						arraySwitch[i].c2 = idpc;
+					}
+					else if(port == 3){
+						arraySwitch[i].c3 = idpc;
+					}
+					else if(port == 4){
+						arraySwitch[i].c4 = idpc;
+					}
+					else if(port == 5){
+						arraySwitch[i].c5 = idpc;
+					}
+					else if(port == 6){
+						arraySwitch[i].c6 = idpc;
+					}
+					else if(port == 7){
+						arraySwitch[i].c7 = idpc;
+					}
+					else if(port == 8){
+						arraySwitch[i].c8 = idpc;
+					}
+					
+				}
+			}
+		}*/
 	
 	};
 
