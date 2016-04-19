@@ -533,7 +533,10 @@ var ViewHome = {
 						break;
 					case "delete_rowS" :
 						var row = Octopus.getRow('s');
+						var switchN = $("#sname"+row).val();
+						console.log("SNAME "+switchN);
 						var rowSupport = row-row;
+						
 						//var last1 = parseInt(id.slice(-1));
 						
 						Octopus.deleteSwitch(row);
@@ -541,6 +544,8 @@ var ViewHome = {
 						deleteFollowingChildren(id,row);
 						//console.log("Rows"+row+rowSupport);
 						//$("#srow"+row+rowSupport).remove();
+						$("button:contains("+switchN+")").html("Host/Devices"+
+						"<span class='caret'> </span>");
 						Octopus.decrement('s');
 						break;
 					default : break;
@@ -734,7 +739,7 @@ var ViewHome = {
 				//alert("*PR "+previouSelected);
 				var currentSelected = $(this).text();
 				//The element is now available
-				if (previouSelected!="Hosts/Devices"){
+				if (!isNaN(previouSelected)){
 					if(previouSelected.indexOf("Port")>-1){
 						var arraySplit = previouSelected.split(":");
 						
