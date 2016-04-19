@@ -175,19 +175,20 @@ var ViewHome = {
 		
 		
 		var assignValueByDropDown = function (id,btnCl){
-			switch (btnCl){
-				case "btnD" :
-					ViewHome.param=($(this).text());
-					break;
-				default : 
-					console.log("****ID : "+id+" btnCl: "+btnCl);
-					break;
-					
-			}
 			
 			$("#"+id+ " li a").click(function(){
 				
-				console.log("I'm here");
+				//console.log("I'm here");
+				switch (btnCl){
+					case "btnD" :
+						//console.log("I'm setting : "+$(this).text());
+						ViewHome.param=($(this).text());
+						break;
+					default : 
+						//console.log("****ID : "+id+" btnCl: "+btnCl);
+						break;
+					
+				}
 				$("."+btnCl+":first-child").html($(this).text()+"<span class='caret'> </span>");
 				$("."+btnCl+":first-child").val($(this).text());
 				console.log("ID "+$(this).text());
@@ -234,12 +235,14 @@ var ViewHome = {
 			$("#panelYourSolution").show();
 			var xhr  = new XMLHttpRequest();
 			//var param = "difficulty="+ViewHome.param;
+			console.log("DIfficulty parameter "+ ViewHome.param);
 			xhr.open('GET',"http://localhost:3000/Tracer/?data="+JSON.stringify({'difficulty':ViewHome.param}),true);
 			//xhr.open('POST',"http://localhost:3000/Tracer",true);
 			xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 			//xhr.setRequestHeader('Content-Type','application/json;charset=UTF-8');
 			xhr.addEventListener("readystatechange", processRequest, false);
 			function processRequest(e) {
+				console.log("CLIENT received respone");
 				if (xhr.readyState == 4 && xhr.status == 200) {
 					$("#extended").empty();
 					$("#extended").append(xhr.responseText);

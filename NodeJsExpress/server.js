@@ -43,7 +43,7 @@ app.use(express.static(__dirname+"/NetSolver/web/js" ));
 
 
 
-function createXmlProblem(arrayXml){
+function createXmlProblem(arrayXml,difficultyP){
 	/*var XmlProblem;
 	 XmlProblem="<NetworkProblem>\n"
 	 XMlProblem="
@@ -78,24 +78,35 @@ function createXmlProblem(arrayXml){
    				//xw.text(numberHosts);
    		    	xw.endElement();
    		    	break;
+			case "-switch" :
+				xw.startElement('Switch');
+				//var numberHosts = Math.floor((Math.random() * 3) + 1);
+				xw.text(arrayXml[i+1]);
+				//console.log("***NNNNNH ",numberHosts);
+				//xw.text(numberHosts);
+				xw.endElement();
+				break;
    		    default : break;
    		}    	
     }
 	xw.endElement();
 	xw.endDocument();
-	fs.writeFile(__dirname+'/Traces/Trace1/trac1.xml', xw.toString(), function (err) {
+	fs.writeFile(__dirname+difficultyP, xw.toString(), function (err) {
   	if (err) return console.log(err);
   		console.log("Creation oks");
 	});
 	console.log("Creation oks");
 	//console.log(xw.toString());
 }
+
 function DifficultyFile (difficulty,req,res) {
 	console.log("PARAM "+ difficulty);
 	switch (difficulty){
 		case '1' :
-			fs.readFile(path.join(__dirname+"/Traces/Trace1/trac1.txt"), function(err, file) { 
-			difficultyP="/Traces/Trace1/trac1.xml";
+			var randomFileToSend = parseInt(((Math.random() * 2) + 1));
+			console.log("RandomFileTo send" + randomFileToSend);
+			fs.readFile(path.join(__dirname+"/Traces/Trace1/trac"+randomFileToSend+".txt"), function(err, file) {
+			difficultyP="/Traces/Trace1/trac"+randomFileToSend+".xml";
             if(err) {  
                 // write an error response or nothing here  
                 return;  
@@ -110,17 +121,22 @@ function DifficultyFile (difficulty,req,res) {
    		    			arrayXml = arrayXml +"-network "+array[i];
    		    			break;
    		    		case "-hosts-" :
-   		    			var numberHosts = Math.floor((Math.random() * 3) + 1);
+   		    			var numberHosts = Math.floor((Math.random() * 1) + 2);
    		    			array[i]= numberHosts+" hosts";
    		    			arrayXml = arrayXml +" -hosts "+array[i];
    		    			break;
+					case "-switch-" :
+						var numberSwitch = Math.floor((Math.random() * 3) + 1);
+						array[i]= numberSwitch+" switches";
+						arrayXml = arrayXml +" -switch "+array[i];
+						break;
    		    		default : 
    		    			break;
    		    	}
    		    	arrayClient = arrayClient +" "+array[i];
     		}
     		//console.log(arrayXml);
-    		createXmlProblem(arrayXml.split(" "));
+    		createXmlProblem(arrayXml.split(" "),difficultyP);
             res.writeHead(200, { 'Content-Type': 'text/html' });  
             res.end(arrayClient.toString(), "utf-8");  
         });
@@ -133,7 +149,11 @@ function checkIfIsValidAddress (ipA, htmlResponse,network){
 	
 	console.log("Network : ", network);
 	var block = new Netmask(network);
-	if (!(ipM.isV4Format(ipA))){
+	
+	if(ipA == null) {
+		htmlResponse = htmlResponse + "<li> Error : null field</li>";	
+	}
+	else if (!(ipM.isV4Format(ipA))){
 		htmlResponse = htmlResponse + "<li> Error : "+ipA + " is not a valid IPV4 Address</li>";		
 	}
 	else if(ipA == block.base){
@@ -179,7 +199,7 @@ function checkIfIsValidNetmask (netmask, htmlResponse, network){
 function checkUserSolution (req,res){
 	var htmlResponse ="<h3>List of errors </h3>";
 	var parser = new DOMParser();
-	var userSFile = parser.parseFromString(req.body, "application/xml")
+	var userSFile = parser.parseFromString(req.body, "application/xml");
 	switch (difficultyP) {
 		case "/Traces/Trace1/trac1.xml":
 			var passed = false;
@@ -197,7 +217,7 @@ function checkUserSolution (req,res){
 					//console.log("***Problem hosts "+ hostP );
             		//console.log("***User hosts "+ hostU );
             		if (hostP != hostU){
-            			htmlResponse = htmlResponse + "<ul><li>Numbers of host is not equal</li>";
+            			htmlResponse = htmlResponse + "<ul><li>Number of host is not equal</li>";
             		}
             		else {
 		        			//var block = new Netmask(network);
@@ -213,6 +233,11 @@ function checkUserSolution (req,res){
 		        				var getW = (xpath.select("//"+listHosts[i].localName+"/Gateway",userSFile));
 		        				var netM =	(xpath.select("//"+listHosts[i].localName+"/Netmask",userSFile));
 		        				
+		        				/*if (ipA.firtChild == null){
+		        					console.log("***");
+		        					console.log("***" + ipA);
+		        				};
+		        				*/
 		        				htmlResponse = checkIfIsValidAddress(ipA[i].firstChild.data,htmlResponse,network);
 		        				htmlResponse = checkIfIsValidAddress(getW[i].firstChild.data,htmlResponse,network);
 		        				htmlResponse = checkIfIsValidNetmask(netM[i].firstChild.data,htmlResponse,network)
@@ -228,7 +253,7 @@ function checkUserSolution (req,res){
             						htmlResponse = htmlResponse + "<li> The following ip address " + hostArrayDuplicate[i] + " appears more than one time</li>";
             					}
             				}
-            				else{
+            				else if (htmlResponse.indexOf("Error")==-1){
             					htmlResponse = htmlResponse + "<h5>No errors occured</h5>";
             				}
             				htmlResponse = htmlResponse + "</ul>";
@@ -247,7 +272,7 @@ function checkUserSolution (req,res){
 		default : 
 			break;
 	}
-	console.log("*DDDD ",difficultyP);
+	//console.log("*DDDD ",difficultyP);
 }
 
 //manage  the request of a network problem
@@ -256,6 +281,7 @@ app.get("/Tracer", function(req,res){
 	var queryObj = querystring.parse(url2.query);
 	var obj = JSON.parse(queryObj.data);
 	var difficulty = obj.difficulty;
+	//console.log("REQUEST RECEIVED difficulty "+difficulty);
 	DifficultyFile(difficulty,req,res);
 });
 
