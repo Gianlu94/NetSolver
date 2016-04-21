@@ -840,9 +840,10 @@ var ViewHome = {
 			}
 			ConfigurationXml = ConfigurationXml+"</Hosts>\n";
 			//SWITCH PART
-			ConfigurationXml = ConfigurationXml + "<Switches>\n";
+			var numberOfSwitch = Octopus.getNumberOfSwitch();
+			ConfigurationXml = ConfigurationXml + "<Switches>\n\t"+XmlViewCreator.element("Number",numberOfSwitch);
 			for (var i = 0; i < Octopus.getNumberOfSwitch(); i++){
-				ConfigurationXml = ConfigurationXml + "\t<Switch>\n";
+				ConfigurationXml = ConfigurationXml + "\n\t<Switch>\n";
 				var switchIdP = Octopus.getSwitchId(i);
 
 				console.log("ID to Xml "+switchIdP);
@@ -851,7 +852,9 @@ var ViewHome = {
 
 				//get switch's info
 				//var row = Octopus.getRow('s');
-				var sname = $("#sname"+switchIdP+"0").val();
+
+				var sname = $("#sname"+switchIdP).val();
+				console.log("Name Switch :"+ switchIdP +"0 "+sname);
 				var Ports = Octopus.getSwitchBusyPorts(switchIdP);
 
 				ConfigurationXml = ConfigurationXml+"\t\t"+ XmlViewCreator.element("Name",sname)+"\n\t\t<Ports>\n";
@@ -867,10 +870,10 @@ var ViewHome = {
 					"\n\t\t\t\t" +XmlViewCreator.element("ConnectTo",connectTo)+
 					"\n\t\t\t</Port>\n";
 				}
-				ConfigurationXml = ConfigurationXml + "\t\t</Ports>\n\t</Switch>\n";
+				ConfigurationXml = ConfigurationXml + "\t\t</Ports>\n\t</Switch>";
 
 			}
-			ConfigurationXml = ConfigurationXml+"</Switches>\n</UserSolution>";
+			ConfigurationXml = ConfigurationXml+"\n</Switches>\n</UserSolution>";
 			//hostConfigurationXml = hostConfigurationXml+"</Hosts>";
 			console.log(ConfigurationXml);
 			return ConfigurationXml;
