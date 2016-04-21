@@ -223,7 +223,7 @@ var ViewHome = {
 		assignValueByDropDown("dropdownDI","btnD");
 		//assignValueByDropDown("dropdownSP00","btnSP00");
 		
-		assignValueByDropDown("dropdownST","btnST00");
+		assignValueByDropDown("dropdownST00","btnST00");
 		assignValueByDropDown("dropdownSD00","btnSD00");
 		/*$("#dropdownDI li a").click(function(){
 			//alert(this.text);
@@ -342,7 +342,7 @@ var ViewHome = {
 							addSubRow("add_row_connection"+row+rowSupport,"srow"+row+rowSupport);
 							deleteSubRow("delete_row_connection"+row+rowSupport);
 							
-							Octopus.insertSwitch(row+""+rowSupport);
+							Octopus.insertSwitch(row);
 							/*for (var i = 0; i<arraySwitch.length;i++){
 								var Switch = arraySwitch[i];
 								console.log("Switch " + Switch.idS);
@@ -696,6 +696,7 @@ var ViewHome = {
 				var length = getPartLength(id);
 				var last2_1 = getSwitchPart(length,id);
 
+				console.log("Ports available "+last2_1);
 				var arrayPorts = Octopus.getSwitchPorts(last2_1);
 				 
 				$("."+id).parent().find("ul").empty();
@@ -839,9 +840,9 @@ var ViewHome = {
 			}
 			ConfigurationXml = ConfigurationXml+"</Hosts>\n";
 			//SWITCH PART
-			ConfigurationXml = ConfigurationXml + "<Switches>";
+			ConfigurationXml = ConfigurationXml + "<Switches>\n";
 			for (var i = 0; i < Octopus.getNumberOfSwitch(); i++){
-				ConfigurationXml = ConfigurationXml + "<Switch>";
+				ConfigurationXml = ConfigurationXml + "\t<Switch>\n";
 				var switchIdP = Octopus.getSwitchId(i);
 
 				console.log("ID to Xml "+switchIdP);
@@ -850,16 +851,22 @@ var ViewHome = {
 
 				//get switch's info
 				//var row = Octopus.getRow('s');
-				var sname = $("#sname"+switchIdP).val();
-				var Ports = Octopus.getSwitchBusyPorts(switchIdP)
+				var sname = $("#sname"+switchIdP+"0").val();
+				var Ports = Octopus.getSwitchBusyPorts(switchIdP);
 
-				ConfigurationXml = ConfigurationXml+XmlViewCreator.element("Name",sname)+"<Ports>";
+				ConfigurationXml = ConfigurationXml+"\t\t"+ XmlViewCreator.element("Name",sname)+"\n\t\t<Ports>\n\t\t\t";
 				for (var j = 0; j < Ports.length; j++){
 					var sport = Ports[j];
-					ConfigurationXml = ConfigurationXml+"<Port>\n"+XmlViewCreator.element("PortNumber",sport)+
-					XmlViewCreator.element("TypeConnection",$("#dropdownST"+switchIdP+sport).text())+
-					XmlViewCreator.element("ConnectTo",$("#dropdownSD"+switchIdP+sport).text())+"</Port>";
+					//console.log("Switch "+switchIdP+j+" Port"+ sport);
+					var selectedConnection = $("#dropdownST"+switchIdP+j).parent().find("button").text();
+					console.log("********Port "+selectedConnection);
+					console.log($("#dropdownST"+switchIdP+j).text());
+					ConfigurationXml = ConfigurationXml+"<Port>\n\t\t\t\t"+XmlViewCreator.element("Number",sport)+
+					"\n\t\t\t\t"+XmlViewCreator.element("TypeConnection",selectedConnection)+
+					"\n\t\t\t\t" +XmlViewCreator.element("ConnectTo",$("#dropdownSD"+switchIdP+sport).text())+
+					"\n\t\t\t</Port>";
 				}
+				ConfigurationXml = ConfigurationXml + "\n\t\t</Ports>\n\t</Switch>\n";
 
 			}
 			ConfigurationXml = ConfigurationXml+"</Switches>\n</UserSolution>";

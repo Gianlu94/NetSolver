@@ -54,6 +54,7 @@
 		getSwitch : function (id){
 			for (var i = 0; i<arraySwitch.length;i++){
 				var Switch = arraySwitch[i];
+				//console.log("Searching for switch "+id);
 				if (Switch.idS == id)
 					return Switch;
 			}
@@ -88,7 +89,7 @@
 			for (var i = 0; i<arraySwitch.length && !removed;i++){
 				var Switch = arraySwitch[i];
 				if (Switch.idS == id){
-					console.log("Swtich "+Switch.idS+" removed");
+
 					//SwitchInterface.releaseSwitchPortConnect(Switch);
 					arraySwitch.splice(i,1);
 					removed = true;
