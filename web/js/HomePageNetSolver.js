@@ -85,6 +85,10 @@ var Model = {
 	getSwitchPorts : function(id){
 		return SwitchInterface.getSwitchPorts(id);
 	},
+
+	getSwitchBusyPorts : function (id){
+		return SwitchInterface.getSwitchBusyPorts(id);
+	},
 	
 	releaseSwitchPort : function(id, port){
 		SwitchInterface.releaseSwitchPort(id, port);
@@ -137,6 +141,10 @@ var Octopus = {
 	
 	getSwitchPorts : function (id){
 		return Model.getSwitchPorts(id);
+	},
+
+	getSwitchBusyPorts : function (id){
+		return Model.getSwitchBusyPorts(id);
 	},
 	
 	releaseSwitchPort : function(id, port){
@@ -334,7 +342,7 @@ var ViewHome = {
 							addSubRow("add_row_connection"+row+rowSupport,"srow"+row+rowSupport);
 							deleteSubRow("delete_row_connection"+row+rowSupport);
 							
-							Octopus.insertSwitch(row+rowSupport);
+							Octopus.insertSwitch(row+""+rowSupport);
 							/*for (var i = 0; i<arraySwitch.length;i++){
 								var Switch = arraySwitch[i];
 								console.log("Switch " + Switch.idS);
@@ -354,6 +362,7 @@ var ViewHome = {
 		};
 		
 		var getPartLength = function(code){
+			console.log("CODE "+ code);
 			if (isNaN(parseInt(code.slice(-3)))){
 				return 2;
 			}
@@ -683,10 +692,10 @@ var ViewHome = {
 		//function to manage ports' availability
 		var portsAvailable = function(id){
 			$("."+id).click(function(){
-				
+
 				var length = getPartLength(id);
 				var last2_1 = getSwitchPart(length,id);
-				
+
 				var arrayPorts = Octopus.getSwitchPorts(last2_1);
 				 
 				$("."+id).parent().find("ul").empty();
@@ -805,10 +814,11 @@ var ViewHome = {
 		assignPort("dropdownSP00")
 		
 		var createXml = function(){
+			//HOST PART
 			var children = document.getElementById("hostConfiguration").children.length;
 			//alert("Children number "+children);
-			var hostConfigurationXml;
-			hostConfigurationXml="<UserSolution>\n<Hosts>\n<Number>"+children+"</Number>\n";
+			var ConfigurationXml;
+			ConfigurationXml="<UserSolution>\n<Hosts>\n<Number>"+children+"</Number>\n";
 			//hostConfigurationXml="<Hosts>\n";
 			for (var i = 0;i<children;i++){
 				var hName = $("#name"+i).val();
@@ -819,7 +829,7 @@ var ViewHome = {
 				var hGat = $("#gat"+i).val();
 				var hSer = $("#ser"+i).val();
 				//ViewHome.assignErrorCheck(i);
-				hostConfigurationXml = hostConfigurationXml+"<Host>\n"+XmlViewCreator.element("Name",hName)+"\n"+
+				ConfigurationXml = ConfigurationXml+"<Host>\n"+XmlViewCreator.element("Name",hName)+"\n"+
 							XmlViewCreator.element("Ip",hIpAddr)+"\n"+
 							XmlViewCreator.element("Netmask",hNetM)+"\n"+
 							XmlViewCreator.element("Gateway",hGat)+"\n"+
@@ -827,9 +837,35 @@ var ViewHome = {
 							+"</Host>\n";
 				//XmlViewCreator.element()
 			}
-			hostConfigurationXml = hostConfigurationXml+"</Hosts>\n</UserSolution>";	
-			//hostConfigurationXml = hostConfigurationXml+"</Hosts>";	
-			return hostConfigurationXml;
+			ConfigurationXml = ConfigurationXml+"</Hosts>\n";
+			//SWITCH PART
+			ConfigurationXml = ConfigurationXml + "<Switches>";
+			for (var i = 0; i < Octopus.getNumberOfSwitch(); i++){
+				ConfigurationXml = ConfigurationXml + "<Switch>";
+				var switchIdP = Octopus.getSwitchId(i);
+
+				console.log("ID to Xml "+switchIdP);
+				//var lengthS = getPartLength(switchIdP);
+				//var last2S = getSwitchPart(length,switchIdP);
+
+				//get switch's info
+				//var row = Octopus.getRow('s');
+				var sname = $("#sname"+switchIdP).val();
+				var Ports = Octopus.getSwitchBusyPorts(switchIdP)
+
+				ConfigurationXml = ConfigurationXml+XmlViewCreator.element("Name",sname)+"<Ports>";
+				for (var j = 0; j < Ports.length; j++){
+					var sport = Ports[j];
+					ConfigurationXml = ConfigurationXml+"<Port>\n"+XmlViewCreator.element("PortNumber",sport)+
+					XmlViewCreator.element("TypeConnection",$("#dropdownST"+switchIdP+sport).text())+
+					XmlViewCreator.element("ConnectTo",$("#dropdownSD"+switchIdP+sport).text())+"</Port>";
+				}
+
+			}
+			ConfigurationXml = ConfigurationXml+"</Switches>\n</UserSolution>";
+			//hostConfigurationXml = hostConfigurationXml+"</Hosts>";
+			console.log(ConfigurationXml);
+			return ConfigurationXml;
 		};
 		
 		

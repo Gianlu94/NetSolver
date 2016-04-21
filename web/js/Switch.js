@@ -20,21 +20,14 @@
 				p5:5,
 				p6:6,
 				p7:7,
-				p8:8,
-				c1:0,
-				c2:0,
-				c3:0,
-				c4:0,
-				c5:0,
-				c6:0,
-				c7:0,
-				c8:0
+				p8:8
 			};
 			arraySwitch.push(Switch);
 		},
 		
 		createSwitch : function(id){
 			//Switch object
+			//console.log("I'm inserting switch "+ id);
 			var Switch = {
 				idS:id,
 				p1:1,
@@ -44,15 +37,7 @@
 				p5:5,
 				p6:6,
 				p7:7,
-				p8:8,
-				c1:0,
-				c2:0,
-				c3:0,
-				c4:0,
-				c5:0,
-				c6:0,
-				c7:0,
-				c8:0
+				p8:8
 			};
 		
 			arraySwitch.push(Switch);
@@ -61,6 +46,7 @@
 		
 		getSwitchId : function (index){
 			if (index < arraySwitch.length){
+				console.log("*****id "+arraySwitch[index].idS);
 				return arraySwitch[index].idS;
 			}
 		},
@@ -136,6 +122,36 @@
 			}
 			if (Switch.p8 != 0){
 				arrayPorts.push(Switch.p8);
+			}
+			return arrayPorts;
+		},
+
+		getSwitchBusyPorts : function (id){
+			var arrayPorts = [];
+			var Switch = SwitchInterface.getSwitch(id);
+			if (Switch.p1 == 0){
+				arrayPorts.push(1);
+			}
+			if (Switch.p2 == 0){
+				arrayPorts.push(2);
+			}
+			if (Switch.p3 == 0){
+				arrayPorts.push(3);
+			}
+			if (Switch.p4 == 0){
+				arrayPorts.push(4);
+			}
+			if (Switch.p5 == 0){
+				arrayPorts.push(5);
+			}
+			if (Switch.p6 == 0){
+				arrayPorts.push(6);
+			}
+			if (Switch.p7 == 0){
+				arrayPorts.push(7);
+			}
+			if (Switch.p8 == 0){
+				arrayPorts.push(8);
 			}
 			return arrayPorts;
 		},
