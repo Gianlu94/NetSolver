@@ -150,32 +150,35 @@ function checkIfIsValidAddress (ipA, htmlResponse,network){
 	console.log("Network : ", network);
 	var block = new Netmask(network);
 	
-	if(ipA == null) {
-		htmlResponse = htmlResponse + "<li> Error : null field</li>";	
+	if(ipA.firstChild == null) {
+		htmlResponse = htmlResponse + "<li> Error : null field found</li>";
 	}
-	else if (!(ipM.isV4Format(ipA))){
-		htmlResponse = htmlResponse + "<li> Error : "+ipA + " is not a valid IPV4 Address</li>";		
+	else {
+		ipV = ipA.firstChild.data;
+		if (!(ipM.isV4Format(ipV))){
+			htmlResponse = htmlResponse + "<li> Error : "+ipV + " is not a valid IPV4 Address</li>";
+		}
+		else if(ipV == block.base){
+			htmlResponse = htmlResponse + "<li> Error : "+ipV + " is the Network Address</li>";
+		}
+		else if(ipV == block.mask){
+			htmlResponse = htmlResponse + "<li> Error : "+ipV + " is the Netmask</li>";
+		}
+		else if(ipV == block.broadcast){
+			htmlResponse = htmlResponse + "<li> Error : "+ipV + " is the BroadCast Address</li>";
+		}
+		else if(!block.contains(ipV)){
+			htmlResponse = htmlResponse + "<li> Error : "+ipV + " doesn't belong to the network : " + network +"</li>";
+		}
 	}
-	else if(ipA == block.base){
-		htmlResponse = htmlResponse + "<li> Error : "+ipA + " is the Network Address</li>";		
-	}
-	else if(ipA == block.mask){
-		htmlResponse = htmlResponse + "<li> Error : "+ipA + " is the Netmask</li>";		
-	}
-	else if(ipA == block.broadcast){
-		htmlResponse = htmlResponse + "<li> Error : "+ipA + " is the BroadCast Address</li>";		
-	}
-	else if(!block.contains(ipA)){
-		htmlResponse = htmlResponse + "<li> Error : "+ipA + " doesn't belong to the network : " + network +"</li>";		
-	} 
-	console.log("Ipa : "+ ipA);  
+	//console.log("Ipa : "+ ipV);
 	console.log("Base : "+ block.base);
 	console.log("Last : "+ block.last);  
 	console.log("Netmask : "+ block.mask);
 	console.log("Broadcast : "+ block.broadcast);      
 	console.log("Gateway : "+ block.last);   
 	
-	return htmlResponse
+	return htmlResponse;
 	//console.log("Block Base : ", block.base);
 }
 
@@ -188,91 +191,115 @@ function checkDuplicateAddress (ipA, hostArray, hostArrayDuplicate){
 }
 
 function checkIfIsValidNetmask (netmask, htmlResponse, network){
-	var block = new Netmask(network);	
-	if(netmask != block.mask){
+	var block = new Netmask(network);
+	if (netmask.firstChild == null){
+		htmlResponse = htmlResponse + "<li> Error : null field</li>";
+	}
+	else if(netmask.firstChild.data != block.mask){
 		htmlResponse = htmlResponse + "<li> Error : "+netmask + " is not the Netmask</li>";		
 	}
 	return htmlResponse;
 }
 
+function checkHosts(parser,userSFile,difficultyProblemFile,htmlResponse,res,exitForced){
+	var passed = false;
+	console.log("Problem oks");
+	fs.readFile(path.join(__dirname+difficultyProblemFile), function(err, file) {
+		if (err) {
+			// write an error response or nothing here
+			return;
+		} else {
+			var fileString = file.toString();
+			var doc = parser.parseFromString(fileString, "application/xml");
+			var network = (xpath.select("//Network/text()", doc)).toString();
+			var hostP = (xpath.select("//Hosts/text()", doc)).toString();
+			var hostU = (xpath.select("//Hosts/Number/text()", userSFile)).toString();
+
+			if (hostP != hostU) {
+				console.log("HOSTP "+hostP+" hoSTU"+hostU);
+				htmlResponse = htmlResponse + "<ul><li>Number of host is not equal</li></ul>";
+				res.send(htmlResponse);
+			}
+			else {
+
+				var listHosts = (xpath.select("//Host", userSFile));
+				htmlResponse = htmlResponse+"<ul>";
+				var hostArray = [];
+				var hostArrayDuplicate = [];
+				//console.log("List hosts" + listHosts);
+				for (var i = 0; i < hostP; i++) {
+					//console.log(listHosts[i].localName);
+					var ipA = (xpath.select("//" + listHosts[i].localName + "/Ip", userSFile));
+					var getW = (xpath.select("//" + listHosts[i].localName + "/Gateway", userSFile));
+					var netM = (xpath.select("//" + listHosts[i].localName + "/Netmask", userSFile));
+
+					/*if (ipA.firtChild == null){
+					 console.log("***");
+					 console.log("***" + ipA);
+					 };
+					 */
+					//console.log("ip : "+ipA[i].firstChild.data);
+					//console.log("ip : "+ipA[i].firstChild.data);
+					//console.log("ip : "+ipA[i].firstChild.data);
+					/*if (ipA[i] == null) {
+						console.log("Find NULL VALUE");
+					}
+					if (ipA[i].firstChild == null) {
+						console.log("Find 2 NULL VALUE");
+					}
+					if (ipA[i].firstChild.sata == null) {
+						console.log("Find 3 NULL VALUE");
+					}*/
+					htmlResponse = checkIfIsValidAddress(ipA[i], htmlResponse, network);
+					htmlResponse = checkIfIsValidAddress(getW[i], htmlResponse, network);
+					htmlResponse = checkIfIsValidNetmask(netM[i], htmlResponse, network)
+					if (ipA[i].firstChild != null) {
+						checkDuplicateAddress(ipA[i].firstChild.data, hostArray, hostArrayDuplicate);
+						hostArray.push(ipA[i].firstChild.data);
+					}
+					//var ip = (xpath.select("/"+listHosts[i].localName+"/Ip/text()",userSFile)).toString();
+					//console.log("Host ip "+ i +"Ip address" + ipA[i].firstChild.data);
+					//hostArray
+				}
+				//htmlResponse = htmlResponse + "</ul>";
+				if (hostArrayDuplicate.length != 0) {
+					for (var i = 0; i < hostArrayDuplicate.length; i++) {
+						htmlResponse = htmlResponse + "<li> The following ip address " + hostArrayDuplicate[i] + " appears more than one time</li>";
+					}
+				}
+				else if (htmlResponse.indexOf("Error") != -1) {
+					htmlResponse = htmlResponse + "</ul>";
+					res.send(htmlResponse);
+					//htmlResponse = htmlResponse + "<h5>No errors occured</h5>";
+				}
+				else if (exitForced) {
+					htmlResponse = htmlResponse + "<h5>No errors occured</h5>";
+					res.send(htmlResponse);
+				}
+
+
+			}
+			//console.log("PRIMA "+htmlResponse);
+			//return htmlResponse;
+		}
+	});
+
+}
 
 function checkUserSolution (req,res){
 	var htmlResponse ="<h3>List of errors </h3>";
 	var parser = new DOMParser();
 	var userSFile = parser.parseFromString(req.body, "application/xml");
+	var exitForced = true;
 	switch (difficultyP) {
 		case "/Traces/Trace1/trac1.xml":
-			var passed = false;
-			console.log("Problem oks");
-			fs.readFile(path.join(__dirname+difficultyP), function(err, file) { 
-            	if(err) {  
-                	// write an error response or nothing here  
-                	return;  
-            	}else{
-            		var fileString = file.toString();
-            		var doc = parser.parseFromString(fileString, "application/xml");
-            		var network = (xpath.select("//Network/text()",doc)).toString();
-            		var hostP = (xpath.select("//Hosts/text()",doc)).toString();
-            		var hostU = (xpath.select("//Number/text()",userSFile)).toString();
-					//console.log("***Problem hosts "+ hostP );
-            		//console.log("***User hosts "+ hostU );
-            		if (hostP != hostU){
-            			htmlResponse = htmlResponse + "<ul><li>Number of host is not equal</li>";
-            		}
-            		else {
-		        			//var block = new Netmask(network);
-		        			//console.log("***Rete " + block.mask);
-			        		var listHosts = (xpath.select("//Host",userSFile));
-			        		htmlResponse = "<ul>";
-			        		var hostArray = [];
-			        		var hostArrayDuplicate = [];
-			        		//console.log("List hosts" + listHosts);
-		        			for (var i = 0; i < hostP; i++){
-		        				//console.log(listHosts[i].localName);
-		        				var ipA = (xpath.select("//"+listHosts[i].localName+"/Ip",userSFile));
-		        				var getW = (xpath.select("//"+listHosts[i].localName+"/Gateway",userSFile));
-		        				var netM =	(xpath.select("//"+listHosts[i].localName+"/Netmask",userSFile));
-		        				
-		        				/*if (ipA.firtChild == null){
-		        					console.log("***");
-		        					console.log("***" + ipA);
-		        				};
-		        				*/
-		        				htmlResponse = checkIfIsValidAddress(ipA[i].firstChild.data,htmlResponse,network);
-		        				htmlResponse = checkIfIsValidAddress(getW[i].firstChild.data,htmlResponse,network);
-		        				htmlResponse = checkIfIsValidNetmask(netM[i].firstChild.data,htmlResponse,network)
-		        				checkDuplicateAddress(ipA[i].firstChild.data,hostArray,hostArrayDuplicate);
-		        				hostArray.push(ipA[i].firstChild.data);
-		        				//var ip = (xpath.select("/"+listHosts[i].localName+"/Ip/text()",userSFile)).toString();
-		        				//console.log("Host ip "+ i +"Ip address" + ipA[i].firstChild.data);
-		        				//hostArray
-            				}
-            				//htmlResponse = htmlResponse + "</ul>";
-            				if (hostArrayDuplicate.length !=0){
-            					for (var i=0; i< hostArrayDuplicate.length ;i++){
-            						htmlResponse = htmlResponse + "<li> The following ip address " + hostArrayDuplicate[i] + " appears more than one time</li>";
-            					}
-            				}
-            				else if (htmlResponse.indexOf("Error")==-1){
-            					htmlResponse = htmlResponse + "<h5>No errors occured</h5>";
-            				}
-            				htmlResponse = htmlResponse + "</ul>";
-            	
-            		}
-            		
-            		
-            		//console.log("Document parsed ", doc);
-            		//console.log("***Network "+ (xpath.select("//Network/text()",doc)).toString());
-            		   //res.writeHead(200, { 'Content-Type': 'text/html' });  
-            			res.send(htmlResponse);  
-            		
-            	}
-            });
+			checkHosts(parser,userSFile,difficultyP,htmlResponse,res,exitForced);
+			//res.send(htmlResponse);
 			break;
 		default : 
 			break;
 	}
-	//console.log("*DDDD ",difficultyP);
+//console.log("*DDDD ",difficultyP);
 }
 
 //manage  the request of a network problem
