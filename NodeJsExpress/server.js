@@ -145,6 +145,7 @@ function DifficultyFile (difficulty,req,res) {
 	}
 }
 
+//check on a ip address
 function checkIfIsValidAddress (ipA, htmlResponse,network){
 	
 	console.log("Network : ", network);
@@ -201,7 +202,7 @@ function checkIfIsValidNetmask (netmask, htmlResponse, network){
 	return htmlResponse;
 }
 
-function checkHosts(parser,userSFile,difficultyProblemFile,htmlResponse,res,exitForced){
+function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,exitForced,executeSwitchCheck){
 	var passed = false;
 	console.log("Problem oks");
 	fs.readFile(path.join(__dirname+difficultyProblemFile), function(err, file) {
@@ -276,6 +277,9 @@ function checkHosts(parser,userSFile,difficultyProblemFile,htmlResponse,res,exit
 					htmlResponse = htmlResponse + "<h5>No errors occured</h5>";
 					res.send(htmlResponse);
 				}
+				else if (executeSwitchCheck) {
+					checkSwitches(parser,userSFile,difficultyP,htmlResponse,res,false);
+				}
 
 
 			}
@@ -286,14 +290,54 @@ function checkHosts(parser,userSFile,difficultyProblemFile,htmlResponse,res,exit
 
 }
 
+function checkSwitches(parser,userSFile,difficultyProblemFile,htmlResponse,res,exitForced){
+
+	fs.readFile(path.join(__dirname+difficultyProblemFile), function(err, file) {
+		if (err) {
+			// write an error response or nothing here
+			return;
+		} else {
+			console.log("ok");
+			var fileString = file.toString();
+			var doc = parser.parseFromString(fileString, "application/xml");
+			//var network = (xpath.select("//Network/text()", doc)).toString();
+			var switchP = (xpath.select("//Switch/text()", doc)).toString();
+			var switchU = (xpath.select("//Switches/Number/text()", userSFile)).toString();
+
+			if (switchP != switchU) {
+				//console.log("HOSTP "+hostP+" hoSTU"+hostU);
+				htmlResponse = htmlResponse + "<ul><li>Number of switches is not equal</li></ul>";
+				res.send(htmlResponse);
+			}
+			else {
+				htmlResponse = htmlResponse + "<h5>No errors occured</h5>";
+				res.send(htmlResponse);
+			}
+
+
+		}
+	});
+
+
+}
+
 function checkUserSolution (req,res){
 	var htmlResponse ="<h3>List of errors </h3>";
 	var parser = new DOMParser();
 	var userSFile = parser.parseFromString(req.body, "application/xml");
 	var exitForced = true;
+	console.log("DifficultyP " + difficultyP);
 	switch (difficultyP) {
 		case "/Traces/Trace1/trac1.xml":
-			checkHosts(parser,userSFile,difficultyP,htmlResponse,res,exitForced);
+			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,exitForced);
+			//res.send(htmlResponse);
+			break;
+		case "/Traces/Trace1/trac2.xml":
+			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true);
+			/*console.log("FINITO CONTROLLO");
+			checkSwitches(parser,userSFile,difficultyP,htmlResponse,res,false);
+			console.log("FINITO CONTROLLO2");
+			*/
 			//res.send(htmlResponse);
 			break;
 		default : 
