@@ -7,13 +7,16 @@ $(document).ready(function(){
 	Octopus.init();
 });
 
+//Model keeps data information and iteract witch switch.js
 var Model = {
+	//init number of rows of switch,host and create the first switch
 	init : function(){
-		this.row=0;
-		this.rowS=0;
+		this.row=-1;
+		this.rowS=-1;
 		SwitchInterface.init();
 	},
-	
+
+	//Increment row number of switch and host and get it
 	incrementAndGet : function(w){
 		switch (w){
 			case 'h' :
@@ -26,25 +29,26 @@ var Model = {
 				
 		}
 	},
-	
+
+	//decrement row's number of hosts and switches
 	decrement : function(w){
 		switch (w){
 			case 'h' :
 				if (this.row >= 1){
 					this.row--;
-					//alert("***Decrement"+this.row);
 				}
 			case 's' :
 				if (this.rowS >= 1){
 					this.rowS--;
-					//alert("***Decrement"+this.row);
 				}
 				
 			default : break;
 				
 		}
 	},
-	
+
+	/*get the current row of host and switches (-1 = means that you can't delete
+	the first host/switch*/
 	rowIndex : function(w){
 		switch (w){
 			case 'h' :
@@ -86,10 +90,6 @@ var Model = {
 		return SwitchInterface.getSwitchPorts(id);
 	},
 
-	getSwitchBusyPorts : function (id){
-		return SwitchInterface.getSwitchBusyPorts(id);
-	},
-	
 	releaseSwitchPort : function(id, port){
 		SwitchInterface.releaseSwitchPort(id, port);
 	},
@@ -104,6 +104,7 @@ var Model = {
 	
 };
 
+//Mediator between Model and View
 var Octopus = {
 	
 	init : function(){
@@ -143,10 +144,6 @@ var Octopus = {
 		return Model.getSwitchPorts(id);
 	},
 
-	getSwitchBusyPorts : function (id){
-		return Model.getSwitchBusyPorts(id);
-	},
-	
 	releaseSwitchPort : function(id, port){
 		Model.releaseSwitchPort(id, port);
 	},
@@ -161,7 +158,7 @@ var Octopus = {
 	
 }
 
-
+//A view used to create and xml element (tag name,<content>)
 var XmlViewCreator = {
 	element: function(name,content){
 		var xml;
@@ -175,99 +172,44 @@ var XmlViewCreator = {
 	}
 };
 
+//The ViewHome
 var ViewHome = {
+	// Param to keep the difficulty selected by user
 	param:"",
 	switchSelection:"",
 	
 	init : function(){
 		
-		
+		/*function used to assign to a button a specific value
+		  selected from its dropdown-menù
+		 */
 		var assignValueByDropDown = function (id,btnCl){
 			
 			$("#"+id+ " li a").click(function(){
-				
-				//console.log("I'm here");
+
 				switch (btnCl){
+					//if I press the difficulty button -> set the new current difficulty
 					case "btnD" :
-						//console.log("I'm setting : "+$(this).text());
 						ViewHome.param=($(this).text());
 						break;
-					default : 
-						//console.log("****ID : "+id+" btnCl: "+btnCl);
+					default :
 						break;
 					
 				}
+				//set the new value for the button
 				$("."+btnCl+":first-child").html($(this).text()+"<span class='caret'> </span>");
 				$("."+btnCl+":first-child").val($(this).text());
-				console.log("ID "+$(this).text());
 				
 				
 			});
-			
-			/*$("#"+id).click(function(){
-				//alert(this.text);
-				//$(".btnD:first-child").text($(this).text())
-				//ViewHome.param = this.text();
-				//alert(ViewHome.param);
-					
-				$("."+btnCl+":first-child").html($(this).text()+"<span class='caret'> </span>");
-				$("."+btnCl+":first-child").val($(this).text());
-				console.log("ID "+$(this).text());
-				
-				//alert(ViewHome.param);
-				//ViewHome.param = this.text();
-			});
-				*/
-		};
-		
-		assignValueByDropDown("dropdownDI","btnD");
-		//assignValueByDropDown("dropdownSP00","btnSP00");
-		
-		assignValueByDropDown("dropdownST00","btnST00");
-		assignValueByDropDown("dropdownSD00","btnSD00");
-		/*$("#dropdownDI li a").click(function(){
-			//alert(this.text);
-			//$(".btnD:first-child").text($(this).text())
-			//ViewHome.param = this.text();
-			//alert(ViewHome.param);
-			
-			$(".btnD:first-child").html($(this).text()+"<span class='caret'></span>");
-			$(".btnD:first-child").val($(this).text());
-			ViewHome.param=($(this).text());
-			//alert(ViewHome.param);
-			//ViewHome.param = this.text();
-		});
-		*/
-		
-		$("#getP").click(function(){
-			$("#panelYourSolution").show();
-			var xhr  = new XMLHttpRequest();
-			//var param = "difficulty="+ViewHome.param;
-			console.log("DIfficulty parameter "+ ViewHome.param);
-			xhr.open('GET',"http://localhost:3000/Tracer/?data="+JSON.stringify({'difficulty':ViewHome.param}),true);
-			//xhr.open('POST',"http://localhost:3000/Tracer",true);
-			xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-			//xhr.setRequestHeader('Content-Type','application/json;charset=UTF-8');
-			xhr.addEventListener("readystatechange", processRequest, false);
-			function processRequest(e) {
-				console.log("CLIENT received respone");
-				if (xhr.readyState == 4 && xhr.status == 200) {
-					$("#extended").empty();
-					$("#extended").append(xhr.responseText);
-				}	
-			}
 
-			//var data = {'difficulty':'zero'};
-			xhr.send();
-			//xhr.send("data="+JSON.stringify({difficulty:'zero'}));
-			//xhr.send("data="+JSON.stringify({'difficulty':'zero'}));//+JSON.stringify(data));
-		});
-		
+		};
+
+		//hide UserPanel Solution
 		$("#panelYourSolution").hide();
-		
-		/*$("#getP").click(function(){
-			$("#extended").load("./text.txt");
-		});*/
+
+		assignValueByDropDown("dropdownDI","btnD");
+
 		
 		//function to add new Host/Switch
 		var addRow = function(id,appendTo){
@@ -277,92 +219,93 @@ var ViewHome = {
 				switch (id){
 					case "add_rowH" :
 						var row = Octopus.incrementRow('h');
-						rowD = "<tr id='row"+row+"' class='notSelectedH' >"+
-							"<td><input type='text' id='name"+row+"' name = 'nam"+row+
-							"' placeholder='HostName' class='form-control' value='Host_"+row+"' /></td>"+
-							"<td><input type='text' id='ip"+row+"' name = 'i"+row+
-							"' placeholder='Ip address' class='form-control'/></td>"+
-							"<td><input type='text' id='net"+row+"' name = 'ne"+row+
-							"' placeholder='Netmask' class='form-control'/></td>"+
-							"<td><input type='text' id='gat"+row+"' name = 'ga"+row+
-							"' placeholder='Gateway' class='form-control'/></td>"+
-							"<td><input type='text' id='ser"+row+"' name = 'se"+row+
-							"' placeholder='Service' class='form-control'/></td>";
-						$("#"+appendTo).append(rowD);
+
+						// Grab the template script
+						var theTemplateScript = $("#host-template").html();
+						
+						// Compile the template
+						var theTemplate = Handlebars.compile(theTemplateScript);
+
+						
+						// Define our data object
+						var context={
+							"rowId": "row"+row,
+							"idH": "name"+row,
+							"nameH": "nam"+row,
+							"valueH": "Host_"+row,
+							"ipH": "ip"+row,
+							"ipHname": "i"+row,
+							"netH": "net"+row,
+							"netHname": "ne"+row,
+							"gatH": "gat"+row,
+							"gatHname": "ga"+row,
+							"serH": "ser"+row,
+							"serHname": "se"+row
+						};
+
+						// Pass our data to the template
+						var theCompiledHtml = theTemplate(context);
+
+						// Add the compiled html to the page
+						$('#'+appendTo).append(theCompiledHtml);
+						
 						break;
 					case "add_rowS" :
 						var row = Octopus.incrementRow('s');
 						var rowSupport = row-row;
-						rowD = "<tr id='srow"+row+rowSupport+"'>"+
-							"<td><input type='text' id='sname"+row+"' name = 'snam"+row+
-							"' placeholder='Switch Name' class='form-control' value='Switch_"+row+"'/></td>"+
-							"<td><div class='dropdown'>"+
-								"<button class='btn btnSP"+row+rowSupport+" btn-default dropdown-toggle'"+
-								"type='button' data-toggle='dropdown'>Port number"+
-								 "<span class='caret'></span></button>"+
-								 "<ul class='dropdown-menu' id='dropdownSP"+row+rowSupport+"' >"+
-									"<li><a href='#' data-value='1'>1</a></li>"+
-									"<li><a href='#' data-value='2'>2</a></li>"+
-									"<li><a href='#' data-value='3'>3</a></li>"+
-									"<li><a href='#' data-value='4'>4</a></li>"+
-									"<li><a href='#' data-value='5'>5</a></li>"+
-									"<li><a href='#' data-value='6'>6</a></li>"+
-									"<li><a href='#' data-value='7'>7</a></li>"+
-									"<li><a href='#' data-value='8'>8</a></li>"+
-								"</ul>"+
-								"</div>"+
-							"</td>"+
-							"<td>"+
-							"<div class='dropdown'>"+
-								"<button  class='btn btnST"+row+rowSupport+" btn-default "+
-									"dropdown-toggle' type='button'"+
-										"data-toggle='dropdown'>Type"+
-											"<span class='caret'></span>"+
-												"</button>"+
-												"<ul class='dropdown-menu' id='dropdownST"+row+rowSupport+"' >"+
-													"<li><a href='#' "+ 
-														"data-value='straight'>straight</a></li>"+
-													"<li><a href='#' data-value='cross'>cross</a></li>"+
-												"</ul>"+
-							"</div><td>"+
-							"<div class='dropdown'>"+
-								"<button  class='btn btnSD"+row+rowSupport+" btn-default "+
-									"dropdown-toggle' type='button'"+
-										"data-toggle='dropdown'>Hosts/Devices<span class='caret'></span></button>"+
-												"<ul class='dropdown-menu' id='dropdownSD"+row+rowSupport+"' >"+
-												"</ul>"+
-							"</div></td>"+
-							"<td>"+
-								"<button id='add_row_connection"+row+rowSupport+"' class='btn btn-success pull-left'>+</button>"+
-							"</td>"
-							;
-							$("#"+appendTo).append(rowD);
-							//assignValueByDropDown("dropdownSP"+row+rowSupport,"btnSP"+row+rowSupport);
-							assignValueByDropDown("dropdownST"+row+rowSupport,"btnST"+row+rowSupport);
-							addSubRow("add_row_connection"+row+rowSupport,"srow"+row+rowSupport);
-							deleteSubRow("delete_row_connection"+row+rowSupport);
+
+						// Grab the template script
+						var theTemplateScript = $("#switch-template").html();
+
+						// Compile the template
+						var theTemplate = Handlebars.compile(theTemplateScript);
+
+
+						// Define our data object
+						var context={
+							"srowId": "srow"+row+rowSupport,
+							"sname": "sname"+row,
+							"snam": "snam"+row,
+							"valueS": "Switch_"+row,
+							"btnSP": "btnSP"+row+rowSupport,
+							"dropdownSP": "dropdownSP"+row+rowSupport,
+							"btnST": "btnST"+row+rowSupport,
+							"dropdownST": "dropdownST"+row+rowSupport,
+							"btnSD": "btnSD"+row+rowSupport,
+							"dropdownSD": "dropdownSD"+row+rowSupport,
+							"add_row_connection": "add_row_connection"+row+rowSupport
+						};
+
+						// Pass our data to the template
+						var theCompiledHtml = theTemplate(context);
+
+
+						$("#"+appendTo).append(theCompiledHtml);
+
+						//settings for the new row
+						assignValueByDropDown("dropdownST"+row+rowSupport,"btnST"+row+rowSupport);
+						addSubRow("add_row_connection"+row+rowSupport,"srow"+row+rowSupport);
+						//deleteSubRow("delete_row_connection"+row+rowSupport);
+
+						seeDevice("btnSD"+row+rowSupport);
+						assignConnnect("dropdownSD"+row+rowSupport);
+
+						portsAvailable("btnSP"+row+rowSupport);
+						assignPort("dropdownSP"+row+rowSupport);
+
+						Octopus.insertSwitch(row);
+
+
 							
-							Octopus.insertSwitch(row);
-							/*for (var i = 0; i<arraySwitch.length;i++){
-								var Switch = arraySwitch[i];
-								console.log("Switch " + Switch.idS);
-							}
-							*/
-							seeDevice("btnSD"+row+rowSupport);
-							assignConnnect("dropdownSD"+row+rowSupport);
-							
-							portsAvailable("btnSP"+row+rowSupport);
-							assignPort("dropdownSP"+row+rowSupport);
-							
-							break;
+						break;
 							
 					default : break;
 				}
 			});
 		};
-		
+
+		//function to get the last "character number" of switch or host
 		var getPartLength = function(code){
-			console.log("CODE "+ code);
 			if (isNaN(parseInt(code.slice(-3)))){
 				return 2;
 			}
@@ -370,7 +313,8 @@ var ViewHome = {
 				return 3;
 			}
 		};
-		
+
+		//function to get switch number (without port)
 		var getSwitchPart = function(length,id){
 			if (length == 2){
 				var last2 = id.slice(-2);
@@ -382,10 +326,10 @@ var ViewHome = {
 				var last3 = id.slice(-3);
 				var pair = last3[0]+""+last3[1];
 				return pair;
-				//return pair;
 			}
 		};
-		
+
+		//function to get host number
 		var getHostPart = function(host){
 			if (isNaN(parseInt(host.slice(-3)))){
 				if(isNaN(parseInt(host.slice(-2)))){
@@ -400,29 +344,9 @@ var ViewHome = {
 			}
 			
 		};
+
 		
-		var releaseHost = function(host){
-			if (host!="Hosts/Devices"){
-				if (host.indexOf("Port")){
-					var switchPort = host.split(":");
-						
-					//find switch and its port (to release)
-					var lengthS = getPartLength(switchPort[0]);
-					var last2S = getSwitchPart(lengthS,switchPort[0]);
-					var port = switchPort[1];
-					var portN = port.charAt(port.indexOf('_')+1);
-					
-					Octopus.releaseSwitchPort(last2S,portN);
-				}
-				else{
-					var hostPart=getHostPart(host);
-					$("#row"+hostPart).removeClass("SelectedH");
-					$("#row"+hostPart).addClass("notSelectedH");
-				}
-			}
-		};
-		
-		//function to add subrows Switches
+		//function to add Switch's subrows
 		var addSubRow = function (id,srow){
 			$("#"+id).click(function(e){
 				e.preventDefault();
@@ -430,65 +354,49 @@ var ViewHome = {
 				var length = getPartLength(id);
 				var last2_1 = getSwitchPart(length,id);
 				var last1 = parseInt(id.slice(-1));
+
 				if (last1==-1){
 					last1++;
 				}
-				console.log("Last 1 "+last1);
-				/*console.log("Penultuim "+last2_1);
-				console.log("Ultimo "+last1);
-				*/
+
 				if (last1 < 7){
 					$("#add_row_connection"+last2_1+last1).hide();
-					last1++;	
-					rowD = "<tr id='srow"+last2_1+last1+"' ><td></td><td><div class='dropdown'>"+
-						"<button class='btn btnSP"+last2_1+last1+" btn-default dropdown-toggle'"+
-						"type='button' data-toggle='dropdown'>Port number"+
-						"<span class='caret'></span></button>"+
-							"<ul class='dropdown-menu' id='dropdownSP"+last2_1+last1+"' >"+
-								"<li><a href='#' data-value='1'>1</a></li>"+
-								"<li><a href='#' data-value='2'>2</a></li>"+
-								"<li><a href='#' data-value='3'>3</a></li>"+
-								"<li><a href='#' data-value='4'>4</a></li>"+
-								"<li><a href='#' data-value='5'>5</a></li>"+
-								"<li><a href='#' data-value='6'>6</a></li>"+
-								"<li><a href='#' data-value='7'>7</a></li>"+
-								"<li><a href='#' data-value='8'>8</a></li>"+
-							"</ul>"+
-							"</div>"+
-						"</td>"+
-						"<td>"+
-							"<div class='dropdown'>"+
-								"<button  class='btn btnST"+last2_1+last1+" btn-default "+
-									"dropdown-toggle' type='button'"+
-										"data-toggle='dropdown'>Type"+
-											"<span class='caret'></span>"+
-												"</button>"+
-												"<ul class='dropdown-menu' id='dropdownST"+last2_1+last1+"' >"+
-													"<li><a href='#' "+ 
-														"data-value='straight'>straight</a></li>"+
-													"<li><a href='#' data-value='cross'>cross</a></li>"+
-												"</ul>"+
-							"</div>\n\
-						<td>"+
-							"<div class='dropdown'>"+
-								"<button  class='btn btnSD"+last2_1+last1+" btn-default "+
-									"dropdown-toggle' type='button'"+
-										"data-toggle='dropdown'>Hosts/Devices<span class='caret'></span></button>"+
-												"<ul class='dropdown-menu' id='dropdownSD"+last2_1+last1+"' >"+
-												"</ul>"+
-							"</div></td>"+
-						"<td>"+
-							"<button id='add_row_connection"+last2_1+last1+"' class='btn btn-success pull-left'>+</button>"+
-							"<button id='delete_row_connection"+last2_1+last1+"' class='btn btn-danger pull-left delete_row_connection'>-</button>"+
-						"</td></tr>";
-					console.log("**SROW",srow);
+					last1++;
+
+					// Grab the template script
+					var theTemplateScript = $("#switch2-template").html();
+
+					// Compile the template
+					var theTemplate = Handlebars.compile(theTemplateScript);
+
+
+					// Define our data object
+					var context={
+						"srowId": "srow"+last2_1+last1,
+						"btnSP": "btnSP"+last2_1+last1,
+						"dropdownSP": "dropdownSP"+last2_1+last1,
+						"btnST": "btnST"+last2_1+last1,
+						"dropdownST": "dropdownST"+last2_1+last1,
+						"btnSD": "btnSD"+last2_1+last1,
+						"dropdownSD": "dropdownSD"+last2_1+last1,
+						"add_row_connection": "add_row_connection"+last2_1+last1,
+						"delete_row_connection": "delete_row_connection"+last2_1+last1
+					};
+
+					// Pass our data to the template
+					var theCompiledHtml = theTemplate(context);
+
+					//hide delete of the previous element
 					last1--;
 					$("#delete_row_connection"+last2_1+last1).hide();
-					$(rowD).insertAfter("#srow"+last2_1+last1);
+
+					$(theCompiledHtml).insertAfter("#srow"+last2_1+last1);
 					last1++;
+
+					//settings for subrow
 					addSubRow("add_row_connection"+last2_1+last1,"srow"+last2_1+last1);
 					deleteSubRow("delete_row_connection"+last2_1+last1);
-					//assignValueByDropDown("dropdownSP"+last2_1+last1,"btnSP"+last2_1+last1);
+
 					
 					assignValueByDropDown("dropdownST"+last2_1+last1,"btnST"+last2_1+last1);
 					
@@ -497,29 +405,47 @@ var ViewHome = {
 					
 					portsAvailable("btnSP"+last2_1+last1);
 					assignPort("dropdownSP"+last2_1+last1);
-					//$("#switchConfiguration").append(rowD);
 				}
-				//console.log("***Position " + position );
-				//console.log("***CHildren " + $("#dropdownSP"+position).find('a').size());
+
 				
 			});
 		};
-		
-		//function to delete the children of a switch (from its id)
+
+		//function to release hosts/switches  in the "connect to" button
+		var releaseHS = function(device){
+			if (device!="Hosts/Devices"){
+				if (device.indexOf("Port")>-1){
+					var switchPort = device.split(":");
+
+					//find switch and its port (to release)
+					var lengthS = getPartLength(switchPort[0]);
+					var last2S = getSwitchPart(lengthS,switchPort[0]);
+					var port = switchPort[1];
+
+					var portN = port.charAt(port.indexOf('_')+1);
+
+					Octopus.releaseSwitchPort(last2S,portN);
+				}
+				else{
+					var hostPart=getHostPart(device);
+					//host is available again
+					$("#row"+hostPart).removeClass("SelectedH");
+					$("#row"+hostPart).addClass("notSelectedH");
+				}
+			}
+		};
+
+		//function to delete the subrows of a switch (from its id)
 		var deleteFollowingChildren = function(id,row){
-			//console.log("***id :"+id+" *****row :"+row);
-			//
+
 			last1=0;
 			lastC = row +""+ last1;
-			//console.log("Children to eliminate :"+parseInt(last1));
+
+			//until exists a subrow
 			while ($("#srow"+lastC).length){
-				//console.log("Children exists :"+last1);
-				
-				//alert(lastC);
-				//alert($("#btnSD"+lastC).);
-				//console.log("Text "+$(".btnSD"+lastC).text());
-				releaseHost($(".btnSD"+lastC).text());
-				//alert(text);
+
+				releaseHS($(".btnSD"+lastC).text());
+
 				$("#srow"+lastC).remove();
 				last1++;
 				lastC = row + "" +last1;
@@ -528,63 +454,70 @@ var ViewHome = {
 		};
 		
 		
-		//function to delete row Host/Switch
+		//function to delete Host/Switch 's rows
 		var deleteRow = (function (id){
 			$("#"+id).click(function(e){
 				e.preventDefault();
 				switch (id){
 					case "delete_rowH" :
+
 						var row = Octopus.getRow('h');
 						var hostN = $("#name"+row).val();
 						$("#row"+row).remove();
-						//alert("'button:contains("+hostN+")'")
+
+						//where it was setted up restore the defaul value
 						$("button:contains("+hostN+")").html("Hosts/Devices"+
 						"<span class='caret'> </span>");
 						
 						Octopus.decrement('h');
 						break;
+
 					case "delete_rowS" :
+
 						var row = Octopus.getRow('s');
 						var switchN = $("#sname"+row).val();
-						console.log("SNAME "+switchN);
 						var rowSupport = row-row;
-						
-						//var last1 = parseInt(id.slice(-1));
-						
-						Octopus.deleteSwitch(row);
 
+						//delete all subrows connect to a switch
 						deleteFollowingChildren(id,row);
-						//console.log("Rows"+row+rowSupport);
-						//$("#srow"+row+rowSupport).remove();
+
 						$("button:contains("+switchN+")").html("Host/Devices"+
 						"<span class='caret'> </span>");
+
+						Octopus.deleteSwitch(row);
 						Octopus.decrement('s');
+
 						break;
 					default : break;
 				}
 			});
 		});
-		
+
+		//function to delete a single subrow of a Switch
 		var deleteSubRow = function(id){
 			$("#"+id).click(function(e){
 				e.preventDefault();
+
 				var length = getPartLength(id);
 				var last2_1 = getSwitchPart(length,id);
 				var last1 = parseInt(id.slice(-1));
 				
-				releaseHost($(".btnSD"+last2_1+""+last1).text());
+				releaseHS($(".btnSD"+last2_1+""+last1).text());
+
 				var PortToEliminate = $(".btnSP"+last2_1+""+last1).text();
 				if (!isNaN(PortToEliminate)){
 					Octopus.releaseSwitchPort(last2_1,PortToEliminate);
 				}
 				$("#srow"+last2_1+last1).remove();
+
+				//show the add and delete button of the previous row
 				last1--;
 				$("#add_row_connection"+last2_1+last1).show();
 				$("#delete_row_connection"+last2_1+last1).show();	
 			});
 		}
 		
-		
+		//fuction to see the list of the available devices (in the connect to section)
 		var seeDevice = function(id){
 			$("."+id).click(function(){
 				//number hosts
@@ -592,102 +525,122 @@ var ViewHome = {
 				var length = getPartLength(id);
 				var last2_1 = getSwitchPart(length,id);
 				var last1 = parseInt(id.slice(-1));
-				
+
+
+
 				$("."+id).parent().find("ul").empty();
-				//console.log("Parent :",$("."+id).parent()[0]);
-				//console.log("Ul :",$("."+id).parent().find("ul")[0]);
+
 				
-				//HostPart
+				//HostPart : create menù with available hosts
 				var devicesHtml ="<li class='dropdown-submenu'><a tabindex='-1' href='#'>Hosts</a>"+
 						"<ul class='dropdown-menu scrollable-menu'>";
 				for (var i=0;i < children; i++){
 					if($("#row"+i).hasClass("notSelectedH")){
-						//$("#row"+i).removeClass("notSelectedH"+i);
-						//$("#row"+i).hasClass("SelectedH"+i);
+
 						var nameH = $("#name"+i).val();
-						//alert(nameH);
 						devicesHtml = devicesHtml+"<li>"+
 												"<a tabindex='-1'  href='#'  data-value='"+i+"' >"+nameH+
 											"</a>"+
 											"</li>";
-						
-						//$("#dropdownSD").append(hostHtml);
 					}
 				}
 				
-				//switch part
+				//Switch part : create menu with available switches
 				devicesHtml =devicesHtml+"</ul></li><li class='dropdown-submenu'\n\
 				><a tabindex='-1'\n\
 				href='#'>Switches</a><ul class='dropdown-menu scrollable-menu'>";
 				for (var i = 0; i < Octopus.getNumberOfSwitch(); i++ ){
 					var idSwitch = Octopus.getSwitchId(i);
-					console.log("Idswitch "+idSwitch+ " last2_1 "+last2_1);
+
+					//getting the available ports of a different switch
 					if (idSwitch != last2_1){
-						/*devicesHtml = devicesHtml + "<li class='dropdown-submenu'"+
-								"<a href = '#' data-value = '"+idSwitch+"'>Switch_"+
-								idSwitch+"</a>"+
-								"<ul class='dropdown-menu'>";
-						*/
+
 						var ports = Octopus.getSwitchPorts(idSwitch);
 						for (var j = 0; j<ports.length; j++){
-							//console.log("Ports l "+ports.length);
-							//console.log("Ports"+ports[j]);
+
 							devicesHtml = devicesHtml + "<li><a tabindex='-1' href='#' data-value='"+
 									idSwitch+""+ports[j]+"'>Switch_"+idSwitch+" : Port_"+ports[j]+"</a></li>";
 						}
-						//devicesHtml=devicesHtml+"</ul></li>";
+
 					}
 				}
 				devicesHtml = devicesHtml +"</ul></li>";
-				//var numberOfSwitch = Octopus.getNumberOfSwitch();
-				//console.log("Number of Switch ",numberOfSwitch);
-				$("."+id).parent().find("ul").append(devicesHtml);		
+
+				//insert the menù
+				$("."+id).parent().find("ul").append(devicesHtml);
 				
 			});
 		};
-		
-		/*
-		var getPortsAvailable = function(id){
-			var arrayPorts=[1, 2, 3, 4, 5, 6, 7, 8];
-			
-			
-			
-			var length = getPartLength(id);
-			
-			var last2_1 = getSwitchPart(length,id);
-			console.log("Last2_1 "+last2_1);
-			//the last part is the port
-			var last1 = parseInt(id.slice(-1));
-			
-			
-			var exit = false;
-			
-			for (var i = 0; i<8 && !exit; i++){
-				var classP = ".btnSP"+last2_1+""+i;
-				if($(classP).length){
-					value = $(classP).text();
-					//console.log("VALUE "+value);
-					if (!isNaN(parseInt(value))){
-						var index = arrayPorts.indexOf(parseInt(value));
-						//console.log("INDEX "+index);
-						arrayPorts.splice(index,1);
-						//console.log("ok");
+
+		//function to assign available devices (for a switch)
+		var assignConnnect = function(id){
+			$("#"+id).on("click","li a", function(){
+
+				//extract last characters of the id
+				var length = getPartLength(id);
+				var last2 = getSwitchPart(length,id);
+				var last1 = id.slice(-1);
+				var lastC = last2+""+last1;
+
+				//previous selected (value on the button)
+				var previouSelected = $(".btnSD"+lastC).text();
+
+				//new selected value
+				var currentSelected = $(this).text();
+
+				//The element is now available (to find what tyoe of element is)
+				if (isNaN(previouSelected)){
+					if(previouSelected.indexOf("Port")>-1){
+						var arraySplit = previouSelected.split(":");
+
+						//find switch and its port
+						var lengthS = getPartLength(arraySplit[0]);
+						var last2S = getSwitchPart(length,arraySplit[0]);
+						var port = arraySplit[1];
+						var portN = port.charAt(port.indexOf('_')+1);
+
+						Octopus.releaseSwitchPort(last2S,portN);
+
+					}
+					else if (previouSelected.indexOf("Devices")==-1){
+						if($("[value="+previouSelected+"]").parent().parent().hasClass("SelectedH")){
+							$("[value="+previouSelected+"]").parent().parent().removeClass("SelectedH");
+							$("[value="+previouSelected+"]").parent().parent().addClass("notSelectedH");
+						}
 					}
 				}
-				else{
-					exit = true;
+
+				//if it's a switch
+				if (currentSelected.indexOf("Port")>-1){
+
+					//set port of switch state busy
+					arraySplit = currentSelected.split(":");
+					lengthS = getPartLength(arraySplit[0]);
+					last2S = getSwitchPart(length,arraySplit[0]);
+					port = arraySplit[1];
+					portN = port.charAt(port.indexOf('_')+1);
+
+					Octopus.setSwitchPort(last2S,portN);
+
+
 				}
-			}
-			
-			//for (var i=0; i< arrayPorts.length;i++){
-			//	console.log("*** length "+" value "+arrayPorts.length);
-			//}
-			
-		   return arrayPorts;
-			
-			
+				else{
+
+					var hostPart=getHostPart(currentSelected);
+					$("#row"+hostPart).removeClass("notSelectedH");
+					$("#row"+hostPart).addClass("SelectedH");
+
+				}
+
+				//setting the new value of the button
+				$("."+"btnSD"+lastC+":first-child").html($(this).text()+"<span class='caret'> </span>");
+				$("."+"btnSD"+lastC+":first-child").val($(this).text());
+
+
+
+			});
 		};
-		*/
+
 		
 		//function to manage ports' availability
 		var portsAvailable = function(id){
@@ -696,153 +649,96 @@ var ViewHome = {
 				var length = getPartLength(id);
 				var last2_1 = getSwitchPart(length,id);
 
-				console.log("Ports available "+last2_1);
+				//get the available ports given the id of the switch
 				var arrayPorts = Octopus.getSwitchPorts(last2_1);
-				 
+
+				//clean previous port (View)
 				$("."+id).parent().find("ul").empty();
-				//console.log("Parent :",$("."+id).parent()[0]);
-				//console.log("Ul :",$("."+id).parent().find("ul")[0]);
+
+				//append the available port
 				for (var i=0;i < arrayPorts.length; i++){
-					
-						
-						//alert(nameH);
-						//alert(arrayPorts[i]);
 						var hostHtml = "<li>"+
 											"<a href='#' data-value='"+arrayPorts[i]+"' >"+arrayPorts[i]+
 											"</a>"+
 										"</li>";
 						$("."+id).parent().find("ul").append(hostHtml);	
-						
-						//$("#dropdownSD").append(hostHtml);
+
 				}
 				
 			});
 		};
-		
+
+		//function to set port from ports' list
 		var assignPort = function(id){
 			$("#"+id).on("click","li a", function(){
-				var previousPort = $("#"+id).parent().find("button").text();	
+
+				var previousPort = $("#"+id).parent().find("button").text();
+
 				var length = getPartLength(id);
 				var last2 = getSwitchPart(length,id);
 				var last1 = id.slice(-1);
 				var lastC = last2+""+last1;
+
+				//if it's a port (not default option)
 				if (!isNaN(previousPort)){
-					//console.log("LAst2 "+last2 + " PreviousPort "+previousPort);
 					Octopus.releaseSwitchPort(last2,previousPort);
 				}
+
 				var newPort = $(this).text();
-				//console.log("LAst2 "+last2 + " newPort "+newPort);
 				Octopus.setSwitchPort(last2,newPort);
+
 				$("."+"btnSP"+lastC+":first-child").html(newPort+"<span class='caret'> </span>");
 				$("."+"btnSP"+lastC+":first-child").val(newPort);
 			});
 		};
-		
-		//function to assign available devices (for a switch)
-		var assignConnnect = function(id){
-			$("#"+id).on("click","li a", function(){
-				//extract last characters of the id
-				var length = getPartLength(id);
-				var last2 = getSwitchPart(length,id);
-				var last1 = id.slice(-1);
-				var lastC = last2+""+last1;
-				
-				//previous selected (value on the button)
-				var previouSelected = $(".btnSD"+lastC).text();
-				//alert("*PR "+previouSelected);
-				var currentSelected = $(this).text();
-				//The element is now available
-				if (!isNaN(previouSelected)){
-					if(previouSelected.indexOf("Port")>-1){
-						var arraySplit = previouSelected.split(":");
-						
-						//find switch and its port
-						var lengthS = getPartLength(arraySplit[0]);
-						var last2S = getSwitchPart(length,arraySplit[0]);
-						var port = arraySplit[1];
-						var portN = port.charAt(port.indexOf('_')+1);
-						
-						Octopus.releaseSwitchPort(last2S,portN);
-						//console.log("Current selected "+currentSelected);
-						
-						//var lengthS = getPartLength(array);
-						//var last2 = getSwitchPart(length,id);
-					}
-					else{
-						if($("[value="+previouSelected+"]").parent().parent().hasClass("SelectedH")){
-							$("[value="+previouSelected+"]").parent().parent().removeClass("SelectedH");
-							$("[value="+previouSelected+"]").parent().parent().addClass("notSelectedH");
-						}
-					}
-				}
-			   
 
-				//setting the value of the button
-				$("."+"btnSD"+lastC+":first-child").html($(this).text()+"<span class='caret'> </span>");
-				$("."+"btnSD"+lastC+":first-child").val($(this).text());
-				
-				//The new selected element is not available
-				var hostPart=getHostPart(currentSelected);
-				$("#row"+hostPart).removeClass("notSelectedH");
-				$("#row"+hostPart).addClass("SelectedH");
-				//alert("*PR "+previouSelected);
-				
-				//set port of switch state busy
-				arraySplit = currentSelected.split(":");
-				lengthS = getPartLength(arraySplit[0]);
-				last2S = getSwitchPart(length,arraySplit[0]);
-				port = arraySplit[1];
-				portN = port.charAt(port.indexOf('_')+1);
-				//console.log("Switch busy "+last2S +" Port busy "+portN);
-				Octopus.setSwitchPort(last2S,portN);
-				//Octopus.setConnectToSwitchPort(last2,last1,last2S+":"+portN);
-			  
-			});
-		};
-		
-		addRow("add_rowH","tableH");
-		addRow("add_rowS","tableS");
+		//clean problem's section
+		$("#extended").append("");
 
+		$("#compact").append("");
+
+		//enable add and delete rows
+		addRow("add_rowH","hostConfiguration");
+		addRow("add_rowS","switchConfiguration");
 		deleteRow("delete_rowH");
 		deleteRow("delete_rowS");
-		//First row
-		addSubRow("add_row_connection00","srow00");
-		
-		seeDevice("btnSD00");
-		assignConnnect("dropdownSD00");
-		
-		portsAvailable("btnSP00");
-		assignPort("dropdownSP00")
-		
+
+		//insert a minimum of 1 host/device
+		$("#add_rowH").trigger("click");
+		$("#add_rowS").trigger("click");
+
+		//create the xml to send to server
 		var createXml = function(){
 			//HOST PART
 			var children = document.getElementById("hostConfiguration").children.length;
-			//alert("Children number "+children);
+			console.log("NUMber HOst "+children);
+
 			var ConfigurationXml;
 			ConfigurationXml="<UserSolution>\n<Hosts>\n<Number>"+children+"</Number>\n";
-			//hostConfigurationXml="<Hosts>\n";
+
 			for (var i = 0;i<children;i++){
+
+				//get host's info
 				var hName = $("#name"+i).val();
-				//alert("#name"+i+"Hname ",hName);
-				//alert("#ip"+i+"Hname ",hName);
 				var hIpAddr = $("#ip"+i).val();
 				var hNetM = $("#net"+i).val();
 				var hGat = $("#gat"+i).val();
 				var hSer = $("#ser"+i).val();
-				//ViewHome.assignErrorCheck(i);
+
 				ConfigurationXml = ConfigurationXml+"<Host>\n"+XmlViewCreator.element("Name",hName)+"\n"+
 							XmlViewCreator.element("Ip",hIpAddr)+"\n"+
 							XmlViewCreator.element("Netmask",hNetM)+"\n"+
 							XmlViewCreator.element("Gateway",hGat)+"\n"+
 							XmlViewCreator.element("Service",hSer)+"\n"
 							+"</Host>\n";
-				//XmlViewCreator.element()
 			}
 			ConfigurationXml = ConfigurationXml+"</Hosts>\n";
+
 			//SWITCH PART
 			var numberOfSwitch = Octopus.getNumberOfSwitch();
 			ConfigurationXml = ConfigurationXml + "<Switches>\n\t"+XmlViewCreator.element("Number",numberOfSwitch);
 			for (var i = 0; i < Octopus.getNumberOfSwitch(); i++){
+
 				ConfigurationXml = ConfigurationXml + "\n\t<Switch>\n";
 				var switchIdP = Octopus.getSwitchId(i);
 
@@ -855,20 +751,24 @@ var ViewHome = {
 
 				var sname = $("#sname"+switchIdP).val();
 				console.log("Name Switch :"+ switchIdP +"0 "+sname);
-				var Ports = Octopus.getSwitchBusyPorts(switchIdP);
+				//var Ports = Octopus.getSwitchBusyPorts(switchIdP);
 
 				ConfigurationXml = ConfigurationXml+"\t\t"+ XmlViewCreator.element("Name",sname)+"\n\t\t<Ports>\n";
-				for (var j = 0; j < Ports.length; j++){
-					var sport = Ports[j];
-					//console.log("Switch "+switchIdP+j+" Port"+ sport);
-					var selectedConnection = $("#dropdownST"+switchIdP+j).parent().find("button").text();
-					var connectTo = $("#dropdownSD"+switchIdP+j).parent().find("button").text();
-					console.log("********Port "+selectedConnection);
-					console.log("********Port2 "+connectTo);
-					ConfigurationXml = ConfigurationXml+"\t\t\t<Port>\n\t\t\t\t"+XmlViewCreator.element("Number",sport)+
-					 "\t\t\t"+XmlViewCreator.element("TypeConnection",selectedConnection)+
-					"\n\t\t\t\t" +XmlViewCreator.element("ConnectTo",connectTo)+
-					"\n\t\t\t</Port>\n";
+				for (var j = 0; j < 8; j++){
+					var switchPort = switchIdP+""+j;
+					console.log("SWITCHPORT "+switchPort);
+					if ($("#srow"+switchPort).length) {
+						var sport = $(".btnSP"+switchPort).text();
+						//console.log("Switch "+switchIdP+j+" Port"+ sport);
+						var selectedConnection = $("#dropdownST" + switchIdP + j).parent().find("button").text();
+						var connectTo = $("#dropdownSD" + switchIdP + j).parent().find("button").text();
+						console.log("********Port " + selectedConnection);
+						console.log("********Port2 " + connectTo);
+						ConfigurationXml = ConfigurationXml + "\t\t\t<Port>\n\t\t\t\t" + XmlViewCreator.element("Number", sport) +
+							"\t\t\t" + XmlViewCreator.element("TypeConnection", selectedConnection) +
+							"\n\t\t\t\t" + XmlViewCreator.element("ConnectTo", connectTo) +
+							"\n\t\t\t</Port>\n";
+					}
 				}
 				ConfigurationXml = ConfigurationXml + "\t\t</Ports>\n\t</Switch>";
 
@@ -878,37 +778,59 @@ var ViewHome = {
 			console.log(ConfigurationXml);
 			return ConfigurationXml;
 		};
-		
-		
+
+		//request problem to server
+		$("#getP").click(function(){
+			$("#panelYourSolution").show();
+			var xhr  = new XMLHttpRequest();
+			xhr.open('GET',"http://localhost:3000/Tracer/?data="+JSON.stringify({'difficulty':ViewHome.param}),true);
+			xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+
+			//display the problem after received it
+			xhr.addEventListener("readystatechange", processRequest, false);
+			function processRequest(e) {
+				console.log("CLIENT received respone");
+				if (xhr.readyState == 4 && xhr.status == 200) {
+					$("#extended").empty();
+					$("#extended").append(xhr.responseText);
+				}
+			}
+			xhr.send();
+
+		});
+
+		//submit solution and manage report section
 		$("#NetworkConfList").on('submit', function(e){ 
 			e.preventDefault();
 			var hostConfigurationXml = createXml();
 			var xhr  = new XMLHttpRequest();
 			xhr.open('POST',"http://localhost:3000/Solution",true);
-			//xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			//xhr.setRequestHeader("Content-length", xmldata.length);
+
 			xhr.addEventListener("readystatechange", processRequest, false);
 			function processRequest(e) {
 				if (xhr.readyState == 4 && xhr.status == 200) {
-					console.log("OKKOKOKOK");
+
+					//no focus
 					$("#hostH").removeClass("active");
 					$("#hostsDe").removeClass("active");
+					$("#switchH").removeClass("active");
+					$("#switchDe").removeClass("active");
+
+					//give focus to report section
 					$("#reportH").addClass("active");
 					$("#reportDe").addClass("active");
+
+					//show server's response
 					console.log("Server Response ",xhr.responseText);
 					$("#reportDe").empty();
 					$("#reportDe").html(xhr.responseText);
 				}	
 			}
 
-			//var data = {'difficulty':'zero'};
+
 			xhr.send(hostConfigurationXml);
 			console.log(hostConfigurationXml);
 		});
-		
-		$("#extended").append("");
-	
-		$("#compact").append("");
 		
 	}
 };
