@@ -11,6 +11,7 @@ and open the template in the editor.
 		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>	
 		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
 		<link href="/general.css" rel="stylesheet">
 		<script src="/Switch.js"></script>
 		<script src="/HomePageNetSolver.js"></script>
@@ -74,7 +75,7 @@ and open the template in the editor.
 					<h4>Your solution</h4>
 					<ul class="nav nav nav-tabs nav-tabs-horizontal">
 						<li class="active" id="hostH"><a href="#hostsDe" data-toggle="tab">Host</a></li>
-						<li><a href="#switchDe" data-toggle="tab">Switch</a></li>
+						<li id="switchH"><a href="#switchDe" data-toggle="tab">Switch</a></li>
 						<li><a href="#routersDe" data-toggle="tab">Routers</a></li>
 						<li><a href="#modemsDe" data-toggle="tab">Modems</a></li>
 						<li><a href="#hubsDe" data-toggle="tab">Hubs</a></li>
@@ -96,23 +97,25 @@ and open the template in the editor.
 								  </tr>
 								</thead>
 								<tbody id="hostConfiguration">
-								  <tr id="row0" class="notSelectedH">
-									<td><input type="text" id="name0" name='nam0
-										'  placeholder='Host Name' value="Host_0" 
+								  <script id="host-template" type="text/x-handlebars-template">
+								  	<tr id={{rowId}} class="notSelectedH">
+								  		<td><input type="text" id={{idH}} name={{nameH}}
+												placeholder='Host Name' value={{valueH}}
+											class="form-control"/></td>
+										<td><input type="text" id={{ipH}} name={{ipHname}}  
+											placeholder='Ip address' 
+											class="form-control"/></td>
+										<td><input type="text" id={{netH}} name={{netHname}}
+											placeholder='NetMask' 
+											class="form-control"/></td>
+										<td><input type="text" id={{gatH}} name={{gatHname}}
+												   placeholder='Gateway' 
+											class="form-control"/></td>
+										<td><input type="text" id={{servH}} name={{servHname}}
+											placeholder='Service' 
 										class="form-control"/></td>
-									<td><input type="text" id="ip0" name='i0'  
-										placeholder='Ip address' 
-										class="form-control"/></td>
-									<td><input type="text" id="net0" name='ne0'
-										placeholder='NetMask' 
-										class="form-control"/></td>
-									<td><input type="text" id="gat0" name='ga0'
-											   placeholder='Gateway' 
-										class="form-control"/></td>
-									<td><input type="text" id="ser0" name='se0'
-										placeholder='Service' 
-									class="form-control"/></td>
-								  </tr>
+									  </tr>
+								  </script>
 								</tbody>
 							</table>
 							<button id="add_rowH" class="btn btn-success pull-left">Add Row</button>
@@ -130,16 +133,17 @@ and open the template in the editor.
 								  </tr>
 								</thead>
 								<tbody id="switchConfiguration">
-								  <tr id="srow00">
-									<td><input type="text" id="sname00" 
-											   name='snam0'  placeholder='Switch
+								<script id="switch-template" type="text/x-handlebars-template">
+								  <tr id="{{srowId}}">
+									<td><input type="text" id="{{sname}}" 
+											   name='{{snam}}'  placeholder='Switch
 											   Name' class="form-control"
-											   value="Switch_0" /></td>
+											   value="{{valueS}}" /></td>
 									<td>
 										<div class="dropdown">
-											<button class="btn btnSP00 btn-default dropdown-toggle" type="button" data-toggle="dropdown">Port number
+											<button class="btn {{btnSP}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Port number
 											<span class="caret"></span></button>
-												<ul class="dropdown-menu" id="dropdownSP00">
+												<ul class="dropdown-menu" id="{{dropdownSP}}">
 													<li><a href="#" data-value="1">1</a></li>
 													<li><a href="#" data-value="2">2</a></li>
 													<li><a href="#" data-value="3">3</a></li>
@@ -153,9 +157,9 @@ and open the template in the editor.
 									</td>
 									<td>
 										<div class="dropdown">
-											<button class="btn btnST00 btn-default dropdown-toggle" type="button" data-toggle="dropdown">Type
+											<button class="btn {{btnST}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Type
 											<span class="caret"></span></button>
-												<ul class="dropdown-menu" id="dropdownST00">
+												<ul class="dropdown-menu" id="{{dropdownST}}">
 													<li><a href="#" data-value="straight">straight</a></li>
 													<li><a href="#" data-value="cross">cross</a></li>
 												</ul>
@@ -163,15 +167,58 @@ and open the template in the editor.
 									</td>
 									<td>
 										<div class="dropdown open">
-											<button class="btn btnSD00 btn-default dropdown-toggle" type="button" data-toggle="dropdown">Hosts/Devices<span class="caret"></span></button>
-												<ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu" id="dropdownSD00">
+											<button class="btn {{btnSD}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Hosts/Devices<span class="caret"></span></button>
+												<ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu" id="{{dropdownSD}}">								
 												</ul>
 										</div>
 									</td>
 									<td>
-										<button id="add_row_connection00" class="btn btn-success pull-left">+</button>
+										<button id="{{add_row_connection}}" class="btn btn-success pull-left">+</button>
 									</td>
 								  </tr>
+								  </script>
+								  <script id="switch2-template" type="text/x-handlebars-template">
+								  <tr id="{{srowId}}">
+									<td></td>
+									<td>
+										<div class="dropdown">
+											<button class="btn {{btnSP}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Port number
+											<span class="caret"></span></button>
+												<ul class="dropdown-menu" id="{{dropdownSP}}">
+													<li><a href="#" data-value="1">1</a></li>
+													<li><a href="#" data-value="2">2</a></li>
+													<li><a href="#" data-value="3">3</a></li>
+													<li><a href="#" data-value="4">4</a></li>
+													<li><a href="#" data-value="5">5</a></li>
+													<li><a href="#" data-value="6">6</a></li>
+													<li><a href="#" data-value="7">7</a></li>
+													<li><a href="#" data-value="8">8</a></li>
+												</ul>
+										</div>
+									</td>
+									<td>
+										<div class="dropdown">
+											<button class="btn {{btnST}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Type
+											<span class="caret"></span></button>
+												<ul class="dropdown-menu" id="{{dropdownST}}">
+													<li><a href="#" data-value="straight">straight</a></li>
+													<li><a href="#" data-value="cross">cross</a></li>
+												</ul>
+										</div>
+									</td>
+									<td>
+										<div class="dropdown open">
+											<button class="btn {{btnSD}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Hosts/Devices<span class="caret"></span></button>
+												<ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu" id="{{dropdownSD}}">								
+												</ul>
+										</div>
+									</td>
+									<td>
+										<button id="{{add_row_connection}}" class="btn btn-success pull-left">+</button>
+										<button id="{{delete_row_connection}}"class="btn btn-danger pull-left delete_row_connection">-</button>
+									</td>
+								  </tr>
+								  </script>
 								</tbody>
 							  </table>
 							<button id="add_rowS" class="btn btn-success pull-left">Add Row</button>
