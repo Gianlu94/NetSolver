@@ -13,7 +13,6 @@ var Model = {
 	init : function(){
 		this.row=-1;
 		this.rowS=-1;
-		SwitchInterface.init();
 	},
 
 	//Increment row number of switch and host and get it
@@ -292,7 +291,7 @@ var ViewHome = {
 
 						portsAvailable("btnSP"+row+rowSupport);
 						assignPort("dropdownSP"+row+rowSupport);
-
+						console.log("INsert switch "+row);
 						Octopus.insertSwitch(row);
 
 
@@ -754,7 +753,9 @@ var ViewHome = {
 				//var Ports = Octopus.getSwitchBusyPorts(switchIdP);
 
 				ConfigurationXml = ConfigurationXml+"\t\t"+ XmlViewCreator.element("Name",sname)+"\n\t\t<Ports>\n";
-				for (var j = 0; j < 8; j++){
+				var portNumber = 0;
+				var exit = false;
+				for (var j = 0; j < 8 && !exit; j++){
 					var switchPort = switchIdP+""+j;
 					console.log("SWITCHPORT "+switchPort);
 					if ($("#srow"+switchPort).length) {
@@ -764,13 +765,17 @@ var ViewHome = {
 						var connectTo = $("#dropdownSD" + switchIdP + j).parent().find("button").text();
 						console.log("********Port " + selectedConnection);
 						console.log("********Port2 " + connectTo);
-						ConfigurationXml = ConfigurationXml + "\t\t\t<Port>\n\t\t\t\t" + XmlViewCreator.element("Number", sport) +
-							"\t\t\t" + XmlViewCreator.element("TypeConnection", selectedConnection) +
+						ConfigurationXml = ConfigurationXml + "\t\t\t<Port>\n\t\t\t\t" + XmlViewCreator.element("Number", sport.trim()) +
+							"\n\t\t\t\t" + XmlViewCreator.element("TypeConnection", selectedConnection.trim()) +
 							"\n\t\t\t\t" + XmlViewCreator.element("ConnectTo", connectTo) +
 							"\n\t\t\t</Port>\n";
+						portNumber++;
+					}
+					else{
+						exit=true;
 					}
 				}
-				ConfigurationXml = ConfigurationXml + "\t\t</Ports>\n\t</Switch>";
+				ConfigurationXml = ConfigurationXml + "\t\t\t<PortsLength>"+portNumber+"</PortsLength>"+"\n\t\t</Ports>\n\t</Switch>";
 
 			}
 			ConfigurationXml = ConfigurationXml+"\n</Switches>\n</UserSolution>";
