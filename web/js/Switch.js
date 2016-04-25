@@ -7,22 +7,6 @@
 	//interface to deal with switches
 	var SwitchInterface = {
 
-		//create the first switch
-		init : function(){
-			var Switch = {
-				idS:0,
-				p1:1,
-				p2:2,
-				p3:3,
-				p4:4,
-				p5:5,
-				p6:6,
-				p7:7,
-				p8:8
-			};
-			arraySwitch.push(Switch);
-		},
-
 		//create and add one switch
 		createSwitch : function(id){
 			//Switch object {id:number,list of ports}
@@ -42,7 +26,7 @@
 		
 		},
 
-		//get switch's id from an index
+		//get switch's id from index
 		getSwitchId : function (index){
 			if (index < arraySwitch.length){
 				return arraySwitch[index].idS;
