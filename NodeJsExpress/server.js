@@ -329,13 +329,17 @@ function typeLink(userSFile){
 }
 
 function CheckIfSwitchIsSetted (port,typeConnection,connectTo,htmlResponse){
+	connectTo = connectTo.trim();
+	typeConnection = typeConnection.trim();
+	port = port.trim();
+	console.log("CONNECT TO "+connectTo)
 	if (isNaN(port)){
 		htmlResponse = htmlResponse + "<li>- ERROR : A not defined Port was found</li>";
 	}
-	if ((typeConnection != "straight")||(typeConnection == "cross")){
+	if ((typeConnection != "straight")&&(typeConnection != "cross")){
 		htmlResponse = htmlResponse + "<li>- ERROR : Type Connnection not defined</li>";
 	}
-	if (connectTo=="Hosts/Devices"){
+	if ((connectTo=="Hosts/Devices")||(connectTo=="Hosts")||(connectTo=="Switches")){
 		htmlResponse = htmlResponse + "<li>- ERROR : Not connect to defined</li>";
 	}
 
@@ -352,6 +356,7 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 			var portsL = 0;
 			var portC = 0;
 
+			var htmlResponseSupport="";
 			//console.log("HOSTP "+switchP+" hoSTU"+switchU);
 			if (switchP != switchU) {
 
@@ -359,7 +364,7 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 				res.send(htmlResponse);
 			}
 			else{
-				htmlResponse = htmlResponse + "<ul>";
+				htmlResponseSupport = htmlResponseSupport + "<ul>";
 				var errorFound = false;
 				//extract switch data from xml
 				var listSwitch = (xpath.select("/UserSolution/Switches/Switch", userSFile));
@@ -372,12 +377,12 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 					var name = (xpath.select("/UserSolution/Switches/Switch/Name", userSFile));
 
 					if (name[i].firstChild==null){
-						htmlResponse = htmlResponse+"<li>Error Switch name line "+i+": Null field found </li>";
+						htmlResponseSupport = htmlResponseSupport+"<li>Error Switch name line "+i+": Null field found </li>";
 						//console.log("Switch i" + i +", name "+name[i].firstChild.data);
 					}
 					else{
 						var nameS= name[i].firstChild;
-						htmlResponse = htmlResponse+"<h4>    "+nameS+"</h4><ul>";
+						htmlResponseSupport = htmlResponseSupport+"<h4>    "+nameS+"</h4><ul>";
 						//getting the ports of switch i
 						var tempL = (xpath.select("/UserSolution/Switches/Switch/Ports/PortsLength", userSFile));
 						portsL = portsL +parseInt(tempL[i].firstChild.data);
@@ -391,15 +396,17 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 							console.log("PORT TYPE CONNECTION "+portType[j].firstChild.data);
 							console.log("PORT CONNECT TO "+portConnectTo[j].firstChild.data);
 							*/
-							htmlResponse=CheckIfSwitchIsSetted(portsN[j].firstChild.data,portType[j].firstChild.data,portConnectTo[j].firstChild.data,htmlResponse);
+							htmlResponseSupport=CheckIfSwitchIsSetted(portsN[j].firstChild.data,portType[j].firstChild.data,portConnectTo[j].firstChild.data,htmlResponseSupport);
 						}
-						if (htmlResponse.indexOf("- ERROR :")){
+						if (htmlResponseSupport.indexOf("ERROR")>-1){
 							errorFound = true;
-							console.log("Find an ");
-							htmlResponse = htmlResponse+"</ul>";
+							console.log("Find an " +htmlResponseSupport.indexOf("- ERROR :"));
+							//htmlResponse = htmlResponse+"</ul>";
+							console.log("HTML RESP "+htmlResponseSupport);
 						}
 						//console.log("WWWWW");
 						portC = portC + portsL;
+						htmlResponseSupport = htmlResponseSupport+"</ul>";
 						//console.log("PORT C AFTER "+portC);
 						//for (portsC; portsC < PortL; po)
 						//var ports2 = parser.parseFromString(ports, "application/xml");
@@ -410,7 +417,7 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 
 
 				}
-				htmlResponse = htmlResponse+"</ul>";
+				htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
 				res.send(htmlResponse);
 
 			}
