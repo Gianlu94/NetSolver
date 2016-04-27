@@ -305,10 +305,13 @@ function checkExist(htmlRespone){
 		return false;
 	}
 }
-function typeLink(userSFile){
-	var nHost = (xpath.select("//Hosts/Number/text()", userSFile)).toString();
+function typeLink(doc){
+	/*var nHost = (xpath.select("//Hosts/Number/text()", userSFile)).toString();
 	var nSwitch = (xpath.select("//Switches/Number/text()", userSFile)).toString();
-	var Hlink = nHost;
+	*/
+	var nSwitch = (xpath.select("//Switch/text()", doc)).toString();
+	var nHosts = (xpath.select("//Hosts/text()", doc)).toString();
+	var Hlink = nHosts;
 	var Slink;
 	var Nlink = 0;
 
@@ -333,7 +336,6 @@ function CheckIfSwitchIsSetted (port,typeConnection,connectTo,htmlResponse){
 	connectTo = connectTo.trim();
 	typeConnection = typeConnection.trim();
 	port = port.trim();
-	console.log("CONNECT TO "+connectTo)
 	if (isNaN(port)){
 		htmlResponse = htmlResponse + "<li>- ERROR : A not defined Port was found</li>";
 	}
@@ -360,13 +362,39 @@ function CheckIfSwitchIsSetted (port,typeConnection,connectTo,htmlResponse){
 	return htmlResponse;
 }
 
+function checkLogicConnection (htmlResposeSupport,devicesConnected,TypeLink){
+	for (var i = 0; i < devicesConnected.length;i++){
+		console.log("DevicesConnetecd "+i+ " : " +devicesConnected[i] );
+		if(devicesConnected[i].indexOf("Port")>-1){
+			if (TypeLink.Sl == 0){
+				htmlResposeSupport = htmlResposeSupport + "<li>WARNING : Redudant or uneccesary connection found</li>"
+			}
+			else {
+				TypeLink.Sl--;
+			}
+		}
+		else{
+			TypeLink.Hl--;
+			console.log("Typelink "+TypeLink.Hl);
+		}
+	}
+	if(TypeLink.Hl > 0){
+		htmlResposeSupport = htmlResposeSupport + "<li>ERROR : Host/s not connected yet</li>";
+	}
+	if(TypeLink.Sl > 0){
+		htmlResposeSupport = htmlResposeSupport + "<li>ERROR : Switch/es not connected yet</li>";
+	}
+	console.log("-----2   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
+
+	return htmlResposeSupport;
+}
 
 function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 
 
 			var switchP = (xpath.select("//Switch/text()", doc)).toString();
 			var switchU = (xpath.select("//Switches/Number/text()", userSFile)).toString();
-
+			var devicesConnected=[];
 
 			var portsL = 0;
 			var portC = 0;
@@ -393,7 +421,9 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 
 					}
 					else{
+
 						var nameS= name[i].firstChild;
+						console.log("NAME "+nameS);
 						htmlResponseSupport = htmlResponseSupport+"<h4>    "+nameS+"</h4><ul>";
 						//getting the ports of switch i
 						var tempL = (xpath.select("/UserSolution/Switches/Switch/Ports/PortsLength", userSFile));
@@ -404,7 +434,7 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 							var portsN =(xpath.select("/UserSolution/Switches/Switch/Ports/Port/Number", userSFile));
 							var portType = (xpath.select("/UserSolution/Switches/Switch/Ports/Port/TypeConnection", userSFile));
 							var portConnectTo = (xpath.select("/UserSolution/Switches/Switch/Ports/Port/ConnectTo", userSFile));
-
+							devicesConnected.push(portConnectTo[j].firstChild.data);
 							htmlResponseSupport=CheckIfSwitchIsSetted(portsN[j].firstChild.data,portType[j].firstChild.data,portConnectTo[j].firstChild.data,htmlResponseSupport);
 						}
 						if (htmlResponseSupport.indexOf("ERROR")>-1){
@@ -421,11 +451,15 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 				}
 				if (!errorFound){
 					console.log("NO errors");
+					/*htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
+					res.send(htmlResponse);*/
+					//check logic
+					var TypeLink = typeLink(doc);
+					console.log("-----1   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
+					htmlResponseSupport = checkLogicConnection(htmlResponseSupport,devicesConnected,TypeLink);
 					htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
 					res.send(htmlResponse);
-					//check logic
-					var TypeLink = typeLink(userSFile);
-					//console.log("HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
+					console.log(htmlResponse);
 				}
 				else{
 					htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
