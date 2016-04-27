@@ -310,13 +310,14 @@ function typeLink(userSFile){
 	var nSwitch = (xpath.select("//Switches/Number/text()", userSFile)).toString();
 	var Hlink = nHost;
 	var Slink;
-	var Nlink;
+	var Nlink = 0;
 
 	if (nSwitch ==1){
 		Slink = 0;
 	}
 	else if (nSwitch == 2){
 		Slink = 1;
+		Nlink = 1;
 	}
 	else if (nSwitch == 3){
 		Slink = 2;
@@ -342,9 +343,23 @@ function CheckIfSwitchIsSetted (port,typeConnection,connectTo,htmlResponse){
 	if ((connectTo=="Hosts/Devices")||(connectTo=="Hosts")||(connectTo=="Switches")){
 		htmlResponse = htmlResponse + "<li>- ERROR : Not connect to defined</li>";
 	}
+	else if(connectTo.indexOf("Port")>-1){
+		if (typeConnection != "cross"){
+			htmlResponse = htmlResponse + "<li>- ERROR : Type connection defined not correct</li>";
+		}
+	}
+	else {
+		if (typeConnection != "straight"){
+			htmlResponse = htmlResponse + "<li>- ERROR : Type connection defined not correct</li>";
+		}
+	}
+
+
+
 
 	return htmlResponse;
 }
+
 
 function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 
@@ -368,17 +383,14 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 				var errorFound = false;
 				//extract switch data from xml
 				var listSwitch = (xpath.select("/UserSolution/Switches/Switch", userSFile));
-				var TypeLink = typeLink(userSFile);
-				console.log("HOST L " + TypeLink.Hl +"Switch L " +TypeLink.Sl + "NNL"+TypeLink.Nl);
+				//console.log("HOST L " + TypeLink.Hl +"Switch L " +TypeLink.Sl + "NNL"+TypeLink.Nl);
 				for (var i=0; i<switchP && !errorFound; i++){
-					//checkNoSetFields
-					//console.log("Switch i "+i+", localname "+listSwitch[i].localName);
-					//console.log("Switch i "+i+", localname 2 "+listSwitch[i+1].localName);
+
 					var name = (xpath.select("/UserSolution/Switches/Switch/Name", userSFile));
 
 					if (name[i].firstChild==null){
 						htmlResponseSupport = htmlResponseSupport+"<li>Error Switch name line "+i+": Null field found </li>";
-						//console.log("Switch i" + i +", name "+name[i].firstChild.data);
+
 					}
 					else{
 						var nameS= name[i].firstChild;
@@ -392,33 +404,39 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 							var portsN =(xpath.select("/UserSolution/Switches/Switch/Ports/Port/Number", userSFile));
 							var portType = (xpath.select("/UserSolution/Switches/Switch/Ports/Port/TypeConnection", userSFile));
 							var portConnectTo = (xpath.select("/UserSolution/Switches/Switch/Ports/Port/ConnectTo", userSFile));
-							/*console.log("PORT NUMBER "+portsN[j].firstChild.data);
-							console.log("PORT TYPE CONNECTION "+portType[j].firstChild.data);
-							console.log("PORT CONNECT TO "+portConnectTo[j].firstChild.data);
-							*/
+
 							htmlResponseSupport=CheckIfSwitchIsSetted(portsN[j].firstChild.data,portType[j].firstChild.data,portConnectTo[j].firstChild.data,htmlResponseSupport);
 						}
 						if (htmlResponseSupport.indexOf("ERROR")>-1){
 							errorFound = true;
-							console.log("Find an " +htmlResponseSupport.indexOf("- ERROR :"));
-							//htmlResponse = htmlResponse+"</ul>";
-							console.log("HTML RESP "+htmlResponseSupport);
 						}
-						//console.log("WWWWW");
+
 						portC = portC + portsL;
 						htmlResponseSupport = htmlResponseSupport+"</ul>";
-						//console.log("PORT C AFTER "+portC);
-						//for (portsC; portsC < PortL; po)
-						//var ports2 = parser.parseFromString(ports, "application/xml");
-						//var ports =(xpath.select("/UserSolution/Switches/"+listSwitch[i].localName, userSFile));
-						//console.log("PORTS "+" i "+i+ " ---" + tempL[i].firstChild.data);
-						//console.log("PORTS i"+portsL);
+
 					}
 
 
+
 				}
+				if (!errorFound){
+					console.log("NO errors");
+					htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
+					res.send(htmlResponse);
+					//check logic
+					var TypeLink = typeLink(userSFile);
+					//console.log("HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
+				}
+				else{
+					htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
+					res.send(htmlResponse);
+				}
+				//check logic
+				/*var TypeLink = typeLink(userSFile);
+				console.log("HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
 				htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
 				res.send(htmlResponse);
+				*/
 
 			}
 			/*else if{
