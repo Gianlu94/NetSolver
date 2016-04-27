@@ -345,14 +345,17 @@ function CheckIfSwitchIsSetted (port,typeConnection,connectTo,htmlResponse){
 	if ((connectTo=="Hosts/Devices")||(connectTo=="Hosts")||(connectTo=="Switches")){
 		htmlResponse = htmlResponse + "<li>- ERROR : Not connect to defined</li>";
 	}
-	else if(connectTo.indexOf("Port")>-1){
-		if (typeConnection != "cross"){
-			htmlResponse = htmlResponse + "<li>- ERROR : Type connection defined not correct</li>";
-		}
-	}
 	else {
-		if (typeConnection != "straight"){
-			htmlResponse = htmlResponse + "<li>- ERROR : Type connection defined not correct</li>";
+		if(connectTo.indexOf("Port")>-1){
+			if ((typeConnection != "Type")&&(typeConnection != "cross")){
+				htmlResponse = htmlResponse + "<li>- ERROR : defined connect to (type) not correct</li>";
+			}
+		}
+		else{
+			if  ((typeConnection != "Type")&&(typeConnection != "straight")){
+					//console.log("TTTTTTTTTTTTTTT "+connectTo+""+typeConnection);
+					htmlResponse = htmlResponse + "<li>- ERROR : defined connect to (type) not correct</li>";
+			}
 		}
 	}
 
@@ -371,6 +374,7 @@ function checkLogicConnection (htmlResposeSupport,devicesConnected,TypeLink){
 			}
 			else {
 				TypeLink.Sl--;
+				console.log("Typelink "+TypeLink.Sl);
 			}
 		}
 		else{
@@ -421,16 +425,16 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 
 					}
 					else{
-
-						var nameS= name[i].firstChild;
+						console.log("*****NAME SWITCH "+name[i].firstChild.data);
+						var nameS= name[i].firstChild.data;
 						console.log("NAME "+nameS);
 						htmlResponseSupport = htmlResponseSupport+"<h4>    "+nameS+"</h4><ul>";
 						//getting the ports of switch i
 						var tempL = (xpath.select("/UserSolution/Switches/Switch/Ports/PortsLength", userSFile));
 						portsL = portsL +parseInt(tempL[i].firstChild.data);
-						//console.log("PORT C BEFORE "+portC);
+						console.log("PORT L BEFORE "+portsL);
 						for (var j = portC; j < portsL; j++){
-							console.log("STEP "+i);
+							console.log("STEP "+j);
 							var portsN =(xpath.select("/UserSolution/Switches/Switch/Ports/Port/Number", userSFile));
 							var portType = (xpath.select("/UserSolution/Switches/Switch/Ports/Port/TypeConnection", userSFile));
 							var portConnectTo = (xpath.select("/UserSolution/Switches/Switch/Ports/Port/ConnectTo", userSFile));
@@ -441,7 +445,8 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 							errorFound = true;
 						}
 
-						portC = portC + portsL;
+						portC = portsL;
+						console.log("PORT L AFTER "+portsL);
 						htmlResponseSupport = htmlResponseSupport+"</ul>";
 
 					}
