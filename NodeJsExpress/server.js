@@ -173,11 +173,12 @@ function checkIfIsValidAddress (ipA, htmlResponse,network){
 		}
 	}
 	//console.log("Ipa : "+ ipV);
-	console.log("Base : "+ block.base);
+	/*console.log("Base : "+ block.base);
 	console.log("Last : "+ block.last);  
 	console.log("Netmask : "+ block.mask);
 	console.log("Broadcast : "+ block.broadcast);      
-	console.log("Gateway : "+ block.last);   
+	console.log("Gateway : "+ block.last);
+	*/
 	
 	return htmlResponse;
 	//console.log("Block Base : ", block.base);
@@ -202,7 +203,7 @@ function checkIfIsValidNetmask (netmask, htmlResponse, network){
 	return htmlResponse;
 }
 
-/*function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,exitForced,executeSwitchCheck){
+function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,exitForced,executeSwitchCheck){
 	var passed = false;
 	console.log("Problem oks");
 	fs.readFile(path.join(__dirname+difficultyProblemFile), function(err, file) {
@@ -215,9 +216,9 @@ function checkIfIsValidNetmask (netmask, htmlResponse, network){
 			var network = (xpath.select("//Network/text()", doc)).toString();
 			var hostP = (xpath.select("//Hosts/text()", doc)).toString();
 			var hostU = (xpath.select("//Hosts/Number/text()", userSFile)).toString();
-
+			console.log("HOSTP "+hostP+" hoSTU"+hostU);
 			if (hostP != hostU) {
-				console.log("HOSTP "+hostP+" hoSTU"+hostU);
+				console.log("HOSTP "+hostP+" hoSTU "+hostU);
 				htmlResponse = htmlResponse + "<ul><li>Number of host is not equal</li></ul>";
 				res.send(htmlResponse);
 			}
@@ -255,6 +256,7 @@ function checkIfIsValidNetmask (netmask, htmlResponse, network){
 				if (hostArrayDuplicate.length != 0) {
 					for (var i = 0; i < hostArrayDuplicate.length; i++) {
 						htmlResponse = htmlResponse + "<li> The following ip address " + hostArrayDuplicate[i] + " appears more than one time</li>";
+						res.send(htmlResponse);
 					}
 				}
 				else if (htmlResponse.indexOf("Error") != -1) {
@@ -278,9 +280,9 @@ function checkIfIsValidNetmask (netmask, htmlResponse, network){
 	});
 
 }
-*/
 
-function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,exitForced,executeSwitchCheck){
+
+/*function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,exitForced,executeSwitchCheck){
 
 	fs.readFile(path.join(__dirname+difficultyProblemFile), function(err, file) {
 		if (err) {
@@ -295,6 +297,7 @@ function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,
 	});
 
 }
+*/
 
 function checkExist(htmlRespone){
 	if (htmlResponse.indexOf("Error") == -1) {
@@ -388,7 +391,7 @@ function checkLogicConnection (htmlResposeSupport,devicesConnected,TypeLink){
 	if(TypeLink.Sl > 0){
 		htmlResposeSupport = htmlResposeSupport + "<li>ERROR : Switch/es not connected yet</li>";
 	}
-	console.log("-----2   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
+	//console.log("-----2   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
 
 	return htmlResposeSupport;
 }
@@ -460,11 +463,11 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 					res.send(htmlResponse);*/
 					//check logic
 					var TypeLink = typeLink(doc);
-					console.log("-----1   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
+					//console.log("-----1   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
 					htmlResponseSupport = checkLogicConnection(htmlResponseSupport,devicesConnected,TypeLink);
 					htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
 					res.send(htmlResponse);
-					console.log(htmlResponse);
+					//console.log(htmlResponse);
 				}
 				else{
 					htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";

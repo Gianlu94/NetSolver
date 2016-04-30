@@ -709,7 +709,7 @@ var ViewHome = {
 		//create the xml to send to server
 		var createXml = function(){
 			//HOST PART
-			var children = document.getElementById("hostConfiguration").children.length;
+			var children = document.getElementById("hostConfiguration").children.length-1;
 			console.log("NUMber HOst "+children);
 
 			var ConfigurationXml;
