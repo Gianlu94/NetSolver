@@ -185,11 +185,32 @@ function checkIfIsValidAddress (ipA, htmlResponse,network){
 }
 
 function checkDuplicateAddress (ipA, hostArray, hostArrayDuplicate){
+
+	var ipA2 = ipA.split(".");
+	ipA="";
+	for (var i = 0; i< ipA2.length; i++){
+		//console.log("IPA "+ i +" = "+parseInt(ipA2[i]));
+		if (i == ipA2.length-1){
+			ipA = ipA + parseInt(ipA2[i]);
+		}
+		else{
+			ipA = ipA + parseInt(ipA2[i])+".";
+		}
+	}
+
+	/*console.log("IPA "+ipA);
+	console.log("III1"+hostArray.indexOf(ipA));
+	console.log("DDDDD1"+)
+	*/
 	if (hostArray.indexOf(ipA) != -1){
 		if (hostArrayDuplicate.indexOf(ipA) == -1){
 			hostArrayDuplicate.push(ipA);
 		}
 	}
+	else{
+		hostArray.push(ipA);
+	}
+
 }
 
 function checkIfIsValidNetmask (netmask, htmlResponse, network){
@@ -246,7 +267,7 @@ function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,
 					htmlResponse = checkIfIsValidNetmask(netM[i], htmlResponse, network)
 					if (ipA[i].firstChild != null) {
 						checkDuplicateAddress(ipA[i].firstChild.data, hostArray, hostArrayDuplicate);
-						hostArray.push(ipA[i].firstChild.data);
+						//hostArray.push(ipA[i].firstChild.data);
 					}
 					//var ip = (xpath.select("/"+listHosts[i].localName+"/Ip/text()",userSFile)).toString();
 					//console.log("Host ip "+ i +"Ip address" + ipA[i].firstChild.data);
