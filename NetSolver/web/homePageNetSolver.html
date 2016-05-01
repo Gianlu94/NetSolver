@@ -14,6 +14,7 @@ and open the template in the editor.
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
 		<link href="/general.css" rel="stylesheet">
 		<script src="/Switch.js"></script>
+		<script src="/Vlan.js"></script>
 		<script src="/HomePageNetSolver.js"></script>
 	</head>
 	<body>
@@ -175,7 +176,11 @@ and open the template in the editor.
 										</div>
 									</td>
 									<td>
-										<button class="btn btnSV btn-default dropdown-toggle" type="button">Vlan <span class="caret"></span></button>						
+										<div class="dropdown open">
+											<button class="btn {{btnSV}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Vlan<span class="caret"></span></button>
+												<ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu" id="{{dropdownSV}}">								
+												</ul>
+										</div>					
 									</td>
 									<td>
 										<button id="{{add_row_connection}}" class="btn btn-success pull-left">+</button>
@@ -219,6 +224,14 @@ and open the template in the editor.
 										</div>
 									</td>
 									<td>
+										<div class="dropdown open">
+											<button class="btn {{btnSV}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Vlan<span class="caret"></span></button>
+												<ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu"
+														id="{{dropdownSV}}">								
+												</ul>
+										</div>	
+									</td>
+									<td>
 										<button id="{{add_row_connection}}" class="btn btn-success pull-left">+</button>
 										<button id="{{delete_row_connection}}"class="btn btn-danger pull-left delete_row_connection">-</button>
 									</td>
@@ -256,8 +269,7 @@ and open the template in the editor.
 											</td>
 											<td>
 												<div class="dropdown">
-													<button class="btn {{btnVl}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Type
-													<span class="caret"></span></button>
+													<button class="btn {{btnVl}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Type<span class="caret"></span></button>
 														<ul class="dropdown-menu" id="{{dropdownVl}}">
 															<li><a href="#" data-value="mode trunk">mode trunk</a></li>
 															<li><a href="#" data-value="access">access</a></li>

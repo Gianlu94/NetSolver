@@ -114,7 +114,33 @@ var Model = {
 	
 	setConnectToSwitchPort : function(id,port,idpc){
 		SwitchInterface.setConnectToSwitchPort(id,port,idpc);
+	},
+
+	//Vlan
+	createVlan : function (id){
+		VlanInterface.createVlan(id);
+	},
+
+	deleteVlan : function (pos){
+		VlanInterface.deleteVlan(pos);
+	},
+
+	getNameVlan : function (pos){
+		return VlanInterface.getVlanName(pos);
+	},
+
+	getVlanIdentifier : function(pos){
+		return VlanInterface.getVlanNumber(pos);
+	},
+
+	getNumberVlan : function(){
+		return VlanInterface.getVlanLength();
+	},
+
+	getVlanSwitchPort : function(pos){
+		return VlanInterface.getVlanSwitchPort(pos);
 	}
+
 	
 };
 
@@ -168,9 +194,34 @@ var Octopus = {
 	
 	setConnectToSwitchPort : function(id,port,idpc){
 		Model.setConnectToSwitchPort(id,port,idpc);
+	},
+
+	//Vlan
+	createVlan : function (id){
+		Model.createVlan(id);
+	},
+
+	deleteVlan : function (pos){
+		Model.deleteVlan(pos);
+	},
+
+	getVlanIdentifier : function(pos){
+		return Model.getVlanIdentifier(pos);
+	},
+
+	getNameVlan : function (pos){
+		return Model.getNameVlan(pos);
+	},
+
+	getNumberVlan : function(){
+		return Model.getNumberVlan();
+	},
+
+	getVlanSwitchPort : function(pos){
+		return Model.getVlanSwitchPort(pos);
 	}
 	
-}
+};
 
 //A view used to create and xml element (tag name,<content>)
 var XmlViewCreator = {
@@ -225,7 +276,7 @@ var ViewHome = {
 		assignValueByDropDown("dropdownDI","btnD");
 
 		
-		//function to add new Host/Switch
+		//function to add new Host/Switch/Vlan
 		var addRow = function(id,appendTo){
 			$("#"+id).click(function(e){
 				e.preventDefault();
@@ -287,6 +338,8 @@ var ViewHome = {
 							"dropdownST": "dropdownST"+row+rowSupport,
 							"btnSD": "btnSD"+row+rowSupport,
 							"dropdownSD": "dropdownSD"+row+rowSupport,
+							"btnSV": "btnSV"+row+rowSupport,
+							"dropdownSV": "dropdownSV"+row+rowSupport,
 							"add_row_connection": "add_row_connection"+row+rowSupport
 						};
 
@@ -306,6 +359,9 @@ var ViewHome = {
 
 						portsAvailable("btnSP"+row+rowSupport);
 						assignPort("dropdownSP"+row+rowSupport);
+
+						vlanAvailable("btnSV"+row+rowSupport);
+						assignVlan("dropdownSV"+row+rowSupport);
 						console.log("INsert switch "+row);
 						Octopus.insertSwitch(row);
 
@@ -335,8 +391,12 @@ var ViewHome = {
 						// Pass our data to the template
 						var theCompiledHtml = theTemplate(context);
 
-
+						//create and display the new vlan
+						Octopus.createVlan(row);
 						$("#"+appendTo).append(theCompiledHtml);
+
+						//set dropdown switchPort
+						assignValueByDropDown("dropdownVl"+row,"btnVl"+row);
 
 
 						break;
@@ -421,6 +481,8 @@ var ViewHome = {
 						"dropdownST": "dropdownST"+last2_1+last1,
 						"btnSD": "btnSD"+last2_1+last1,
 						"dropdownSD": "dropdownSD"+last2_1+last1,
+						"btnSV": "btnSV"+last2_1+last1,
+						"dropdownSV": "dropdownSV"+last2_1+last1,
 						"add_row_connection": "add_row_connection"+last2_1+last1,
 						"delete_row_connection": "delete_row_connection"+last2_1+last1
 					};
@@ -447,6 +509,9 @@ var ViewHome = {
 					
 					portsAvailable("btnSP"+last2_1+last1);
 					assignPort("dropdownSP"+last2_1+last1);
+
+					vlanAvailable("btnSV"+last2_1+last1);
+					assignVlan("dropdownSV"+last2_1+last1);
 				}
 
 				
@@ -533,6 +598,7 @@ var ViewHome = {
 					case "delete_rowV" :
 						var row = Octopus.getRow('v');
 						$("#vlrow"+row).remove();
+						Octopus.deleteVlan(row);
 						Octopus.decrement('v')
 
 
@@ -738,6 +804,56 @@ var ViewHome = {
 
 				$("."+"btnSP"+lastC+":first-child").html(newPort+"<span class='caret'> </span>");
 				$("."+"btnSP"+lastC+":first-child").val(newPort);
+			});
+		};
+
+		//function to display available vlans
+		var vlanAvailable = function(id){
+			$("."+id).click(function(){
+
+				var length = getPartLength(id);
+				var last2_1 = getSwitchPart(length,id);
+
+				//clean previous vlans (View)
+				$("."+id).parent().find("ul").empty();
+
+				//append the available port
+				for (var i=0;i < Octopus.getNumberVlan(); i++){
+					var vlanName = Octopus.getNameVlan(i);
+					var vlanSwitchPort = Octopus.getVlanSwitchPort(i);
+					var vlanIdentifier = Octopus.getVlanIdentifier(i);
+					if ((vlanName!="")&&(vlanIdentifier!="")&&(vlanSwitchPort!="")&&
+						(vlanSwitchPort.indexOf("Type")==-1)) {
+							var vlanHtml = "<li>" +
+								"<a href='#' data-value='" + vlanName + " : "+vlanSwitchPort+"' >" + vlanName + " : " +
+									vlanSwitchPort+
+								"</a>" +
+								"</li>";
+							$("." + id).parent().find("ul").append(vlanHtml);
+					}
+
+				}
+
+			});
+		};
+
+		//function to set vlan from list
+		var assignVlan = function(id){
+			$("#"+id).on("click","li a", function(){
+
+				//var newVlan = $("#"+id).parent().find("button").text();
+
+				var length = getPartLength(id);
+				var last2 = getSwitchPart(length,id);
+				var last1 = id.slice(-1);
+				var lastC = last2+""+last1;
+
+
+				var newVlan = $(this).text();
+				//Octopus.setSwitchPort(last2,newPort);
+
+				$("."+"btnSV"+lastC+":first-child").html(newVlan+"<span class='caret'> </span>");
+				$("."+"btnSV"+lastC+":first-child").val(newVlan);
 			});
 		};
 
