@@ -13,6 +13,7 @@ var Model = {
 	init : function(){
 		this.row=-1;
 		this.rowS=-1;
+		this.rowVl=-1;
 	},
 
 	//Increment row number of switch and host and get it
@@ -24,6 +25,9 @@ var Model = {
 			case 's' :
 				this.rowS++;
 				return this.rowS;
+			case 'v' :
+				this.rowVl++;
+				return this.rowVl;
 			default : break;
 				
 		}
@@ -39,6 +43,10 @@ var Model = {
 			case 's' :
 				if (this.rowS >= 1){
 					this.rowS--;
+				}
+			case 'v' :
+				if (this.rowVl >= 1){
+					this.rowVl--;
 				}
 				
 			default : break;
@@ -60,6 +68,13 @@ var Model = {
 			case 's' :
 				if (this.rowS > 0){
 					return this.rowS;
+				}
+				else{
+					return -1;
+				}
+			case 'v' :
+				if (this.rowVl > 0){
+					return this.rowVl;
 				}
 				else{
 					return -1;
@@ -294,8 +309,36 @@ var ViewHome = {
 						console.log("INsert switch "+row);
 						Octopus.insertSwitch(row);
 
+						break;
+					case "add_rowV":
+						e.preventDefault();
+						var row = Octopus.incrementRow('v');
 
-							
+
+						// Grab the template script
+						var theTemplateScript = $("#vlan-template").html();
+
+						// Compile the template
+						var theTemplate = Handlebars.compile(theTemplateScript);
+
+
+						// Define our data object
+						var context={
+							"vlanId": "vlrow"+row,
+							"vNumber": "vNumber"+row,
+							"vName": "vName"+row,
+							"btnVl": "btnVl"+row,
+							"dropdownVl": "dropdownVl"+row
+
+						};
+
+						// Pass our data to the template
+						var theCompiledHtml = theTemplate(context);
+
+
+						$("#"+appendTo).append(theCompiledHtml);
+
+
 						break;
 							
 					default : break;
@@ -485,6 +528,13 @@ var ViewHome = {
 
 						Octopus.deleteSwitch(row);
 						Octopus.decrement('s');
+
+						break;
+					case "delete_rowV" :
+						var row = Octopus.getRow('v');
+						$("#vlrow"+row).remove();
+						Octopus.decrement('v')
+
 
 						break;
 					default : break;
@@ -699,12 +749,15 @@ var ViewHome = {
 		//enable add and delete rows
 		addRow("add_rowH","hostConfiguration");
 		addRow("add_rowS","switchConfiguration");
+		addRow("add_rowV","vlanConfiguration");
 		deleteRow("delete_rowH");
 		deleteRow("delete_rowS");
+		deleteRow("delete_rowV");
 
-		//insert a minimum of 1 host/device
+		//insert a minimum of 1 host/device/vlan
 		$("#add_rowH").trigger("click");
 		$("#add_rowS").trigger("click");
+		$("#add_rowV").trigger("click");
 
 		//create the xml to send to server
 		var createXml = function(){

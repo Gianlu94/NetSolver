@@ -76,6 +76,7 @@ and open the template in the editor.
 					<ul class="nav nav nav-tabs nav-tabs-horizontal">
 						<li class="active" id="hostH"><a href="#hostsDe" data-toggle="tab">Host</a></li>
 						<li id="switchH"><a href="#switchDe" data-toggle="tab">Switch</a></li>
+						<li id="vlanH"><a href="#vlanDe" data-toggle="tab">Vlan</a></li>
 						<li><a href="#routersDe" data-toggle="tab">Routers</a></li>
 						<li><a href="#modemsDe" data-toggle="tab">Modems</a></li>
 						<li><a href="#hubsDe" data-toggle="tab">Hubs</a></li>
@@ -129,6 +130,7 @@ and open the template in the editor.
 									<th>Switch port</th>
 									<th>Type of connection</th>
 									<th>Connect to</th>
+									<th>Vlan</th>
 									<th><button id="checkSolution" type="submit" class="btn btn-info pull-right">Check</button></th>
 								  </tr>
 								</thead>
@@ -171,6 +173,9 @@ and open the template in the editor.
 												<ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu" id="{{dropdownSD}}">								
 												</ul>
 										</div>
+									</td>
+									<td>
+										<button class="btn btnSV btn-default dropdown-toggle" type="button">Vlan <span class="caret"></span></button>						
 									</td>
 									<td>
 										<button id="{{add_row_connection}}" class="btn btn-success pull-left">+</button>
@@ -223,6 +228,49 @@ and open the template in the editor.
 							  </table>
 							<button id="add_rowS" class="btn btn-success pull-left">Add Row</button>
 							<button id="delete_rowS" class="btn btn-danger pull-right">Delete Row</button>
+						</div>
+						<div class="tab-pane" id="vlanDe">
+							<table class="table table-hover" id="tableS">
+								<thead>
+								  <tr>
+									<th>Number</th>
+									<th>Name</th>
+									<th>SwitchPort</th>
+									<th><button id="checkSolution" type="submit" class="btn btn-info pull-right">Check</button></th>
+								  </tr>
+								</thead>
+								<tbody id="vlanConfiguration">
+									<script id="vlan-template" type="text/x-handlebars-template">
+								  	<tr id="{{vlanId}}">
+											<td>
+												<input type="text" id="{{vNumber}}" 
+											   placeholder="Vlan number"
+											   class="form-control"
+											    />
+											</td>
+											<td>
+												<input type="text" id="{{vName}}" 
+											   placeholder="Vlan name"
+											   class="form-control"
+											   />
+											</td>
+											<td>
+												<div class="dropdown">
+													<button class="btn {{btnVl}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Type
+													<span class="caret"></span></button>
+														<ul class="dropdown-menu" id="{{dropdownVl}}">
+															<li><a href="#" data-value="mode trunk">mode trunk</a></li>
+															<li><a href="#" data-value="access">access</a></li>
+														</ul>
+												</div>
+											</td>
+										</tr>
+									
+									</script>
+								</tbody>
+							</table>
+							<button id="add_rowV" class="btn btn-success pull-left">Add Vlan</button>
+							<button id="delete_rowV" class="btn btn-danger pull-right">Delete Vlan</button>
 						</div>
 						<div class="tab-pane" id="routersDe">
 							To develop
