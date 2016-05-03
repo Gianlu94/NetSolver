@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<NetworkProblem>
-    <Network>192.168.100.000/28</Network>
-    <Hosts>2</Hosts>
-</NetworkProblem>
+<Problem>
+    <NetworkProblem>
+        <Network>192.168.100.000/28</Network>
+        <Hosts>2</Hosts>
+    </NetworkProblem>
+</Problem>

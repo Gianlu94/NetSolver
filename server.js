@@ -61,10 +61,18 @@ function createXmlProblem(arrayXml,difficultyP){
     }*/
     var xw = new XmlWriter(true);
 	xw.startDocument();
-	xw.startElement('NetworkProblem');
+	xw.startElement('Problem');
 	for(var i = 0; i < arrayXml.length;i++) {
 		//console.log(arrayXml[i]+"\n");
    		switch (arrayXml[i]){
+			case "-networkProblems" :
+				xw.startElement('NetworkProblem');
+				arrayXml[i]=" ";
+				break;
+			case "-number" :
+				xw.startElement('Number');
+				xw.text(arrayXml[i+1]);
+				xw.endElement();
    			case "-network" :
    				xw.startElement('Network');
    				xw.text(arrayXml[i+1]);
@@ -78,6 +86,10 @@ function createXmlProblem(arrayXml,difficultyP){
    				//xw.text(numberHosts);
    		    	xw.endElement();
    		    	break;
+			case "-networkProbleme" :
+				xw.endElement();
+				arrayXml[i]=" ";
+				break;
 			case "-switch" :
 				xw.startElement('Switch');
 				//var numberHosts = Math.floor((Math.random() * 3) + 1);
@@ -115,6 +127,7 @@ function DifficultyFile (difficulty,req,res) {
             var arrayClient ="";
             var arrayXml = "";
    		    for(var i = 0; i < array.length;i++) {
+				array[i]=array[i].trim();
    		    	switch (array[i]){
    		    		case "-network-" :
    		    			array[i]="192.168.100.000/28";
@@ -130,12 +143,21 @@ function DifficultyFile (difficulty,req,res) {
 						array[i]= numberSwitch+" switches";
 						arrayXml = arrayXml +" -switch "+array[i];
 						break;
+					case "-networkProblems-" :
+						array[i] = "";
+						arrayXml = arrayXml +" -networkProblems ";
+						break;
+					case "-networkProbleme-" :
+						array[i] = "";
+						arrayXml = arrayXml +" -networkProbleme ";
+						break;
    		    		default : 
    		    			break;
    		    	}
    		    	arrayClient = arrayClient +" "+array[i];
     		}
-    		//console.log(arrayXml);
+				console.log("*** 2 "+arrayClient);
+    		console.log("*** 1 " +arrayXml);
     		createXmlProblem(arrayXml.split(" "),difficultyP);
             res.writeHead(200, { 'Content-Type': 'text/html' });  
             res.end(arrayClient.toString(), "utf-8");  
