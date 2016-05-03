@@ -73,6 +73,7 @@ function createXmlProblem(arrayXml,difficultyP){
 				xw.startElement('Number');
 				xw.text(arrayXml[i+1]);
 				xw.endElement();
+				break;
    			case "-network" :
    				xw.startElement('Network');
    				xw.text(arrayXml[i+1]);
@@ -133,6 +134,11 @@ function DifficultyFile (difficulty,req,res) {
    		    			array[i]="192.168.100.000/28";
    		    			arrayXml = arrayXml +"-network "+array[i];
    		    			break;
+					case "-number-" :
+						array[i] = "";
+						arrayXml = arrayXml +" -number "+array[i+1];
+						array[i+1] = "";
+						break;
    		    		case "-hosts-" :
    		    			var numberHosts = Math.floor((Math.random() * 1) + 2);
    		    			array[i]= numberHosts+" hosts";

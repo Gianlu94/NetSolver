@@ -1,1 +1,1 @@
-Data la -networkProblems- rete -network- ed avendo a disposizione -hosts- -networkProbleme- e -switch- fornire una possibile "struttura" di rete, configurando correttamente host e switch.
+Data la -number- 1 -networkProblems- rete -network- ed avendo a disposizione -hosts- -networkProbleme- e -switch- fornire una possibile "struttura" di rete, configurando correttamente host e switch.
