@@ -15,8 +15,13 @@ var DOMParser = require('xmldom').DOMParser
 var Netmask = require('netmask').Netmask
 var ipM = require("ip");
 
+//My modules
+var networkProblem = require("./problem.js");
+
 var parser = new xml2js.Parser();
 var difficultyP="";
+
+//var arrayObjectProblem = [];
 
 //app.use(xmlparser());
 /*app.use(bodyParser.urlencoded({
@@ -174,31 +179,42 @@ function DifficultyFile (difficulty,req,res) {
 }
 
 //check on a ip address
-function checkIfIsValidAddress (ipA, htmlResponse,network){
+function checkIfIsValidAddress (ipA, htmlResponse){
 	
-	console.log("Network : ", network);
-	var block = new Netmask(network);
+	//console.log("Network : ", network);
+	//var block = new Netmask(network);
 	
 	if(ipA.firstChild == null) {
 		htmlResponse = htmlResponse + "<li> Error : null field found</li>";
 	}
 	else {
 		ipV = ipA.firstChild.data;
+		console.log("IPV "+ipV);
 		if (!(ipM.isV4Format(ipV))){
 			htmlResponse = htmlResponse + "<li> Error : "+ipV + " is not a valid IPV4 Address</li>";
 		}
-		else if(ipV == block.base){
-			htmlResponse = htmlResponse + "<li> Error : "+ipV + " is the Network Address</li>";
+		else if(!(networkProblem.belongNetwork(ipV))){
+			htmlResponse = htmlResponse + "<li> Error : "+ipV + " host doesn't belog to any network</li>";
 		}
-		else if(ipV == block.mask){
-			htmlResponse = htmlResponse + "<li> Error : "+ipV + " is the Netmask</li>";
+		else if(networkProblem.LimitExceed(ipV)){
+			htmlResponse = htmlResponse + "<li> Error : "+ipV + " exceeds limit of host defined for its network</li>";
 		}
-		else if(ipV == block.broadcast){
-			htmlResponse = htmlResponse + "<li> Error : "+ipV + " is the BroadCast Address</li>";
+		else {
+			var block = new Netmask(networkProblem.getNetworkAddress(ipV));
+			console.log("BLOCK BASE "+block.base);
+			if(ipV == block.base){
+				htmlResponse = htmlResponse + "<li> Error : "+ipV + " is the Network Address</li>";
+			}
+			else if(ipV == block.mask){
+				htmlResponse = htmlResponse + "<li> Error : "+ipV + " is the Netmask</li>";
+			}
+			else if(ipV == block.broadcast){
+				htmlResponse = htmlResponse + "<li> Error : "+ipV + " is the BroadCast Address</li>";
+			}
 		}
-		else if(!block.contains(ipV)){
-			htmlResponse = htmlResponse + "<li> Error : "+ipV + " doesn't belong to the network : " + network +"</li>";
-		}
+		//else if(!block.contains(ipV)){
+		//	htmlResponse = htmlResponse + "<li> Error : "+ipV + " doesn't belong to the network : " + network +"</li>";
+		//}
 	}
 	//console.log("Ipa : "+ ipV);
 	/*console.log("Base : "+ block.base);
@@ -241,7 +257,8 @@ function checkDuplicateAddress (ipA, hostArray, hostArrayDuplicate){
 
 }
 
-function checkIfIsValidNetmask (netmask, htmlResponse, network){
+function checkIfIsValidNetmask (netmask, htmlResponse,ip){
+	var network = networkProblem.getNetworkAddress(ip);
 	var block = new Netmask(network);
 	if (netmask.firstChild == null){
 		htmlResponse = htmlResponse + "<li> Error : null field</li>";
@@ -252,6 +269,26 @@ function checkIfIsValidNetmask (netmask, htmlResponse, network){
 	return htmlResponse;
 }
 
+/*
+//This function extarc data from problem's xml and create an object Problem
+function createObjectProblem (doc){
+
+
+	var numberNetworkProblem = (xpath.select("/Problem/Number/text()", doc)).toString();
+	//console.log("Network problem number "+numberNetworkProblem);
+	for (var i = 0; i < numberNetworkProblem; i++){
+		var networkProblems = (xpath.select("//NetworkProblem", doc));
+		var networkV = (xpath.select("//" + networkProblems[i].localName + "/Network/text()", doc)).toString();
+		var hostV = (xpath.select("//" + networkProblems[i].localName + "/Hosts/text()", doc)).toString();
+		//var objectProblem = {network : networkV, host : hostV }
+		//arrayObjectProblem.push(objectProblem)
+		//console.log("**NETOWRK    "+network);
+		//console.log("**HOST    "+host);
+		console.log("Number network problem "+networkProblem.createAndInsertObjectProblem(networkV, hostV,doc));
+	}
+}
+*/
+
 function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,exitForced,executeSwitchCheck){
 	var passed = false;
 	console.log("Problem oks");
@@ -260,14 +297,21 @@ function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,
 			// write an error response or nothing here
 			return;
 		} else {
+
 			var fileString = file.toString();
 			var doc = parser.parseFromString(fileString, "application/xml");
-			var network = (xpath.select("//Network/text()", doc)).toString();
-			var hostP = (xpath.select("//Hosts/text()", doc)).toString();
+			//var network = (xpath.select("//Network/text()", doc)).toString();
+			//var hostP = (xpath.select("//Hosts/text()", doc)).toString();
+			var objectProblem = networkProblem.createObjectProblem(doc);
+
+			var numberHost = networkProblem. getTotalNumberHost();
+			console.log("Total number hosts "+ numberHost);
+
 			var hostU = (xpath.select("//Hosts/Number/text()", userSFile)).toString();
-			console.log("HOSTP "+hostP+" hoSTU"+hostU);
-			if (hostP != hostU) {
-				console.log("HOSTP "+hostP+" hoSTU "+hostU);
+			console.log("HOSTP "+numberHost+" hoSTU"+hostU);
+
+			if (numberHost != hostU) {
+				//console.log("HOSTP "+hostP+" hoSTU "+hostU);
 				htmlResponse = htmlResponse + "<ul><li>Number of host is not equal</li></ul>";
 				res.send(htmlResponse);
 			}
@@ -278,7 +322,7 @@ function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,
 				var hostArray = [];
 				var hostArrayDuplicate = [];
 				//console.log("List hosts" + listHosts);
-				for (var i = 0; i < hostP; i++) {
+				for (var i = 0; i < numberHost; i++) {
 					//console.log(listHosts[i].localName);
 					var ipA = (xpath.select("//" + listHosts[i].localName + "/Ip", userSFile));
 					var getW = (xpath.select("//" + listHosts[i].localName + "/Gateway", userSFile));
@@ -290,9 +334,9 @@ function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,
 					//console.log("ip : "+ipA[i].firstChild.data);
 					//console.log("ip : "+ipA[i].firstChild.data);
 
-					htmlResponse = checkIfIsValidAddress(ipA[i], htmlResponse, network);
-					htmlResponse = checkIfIsValidAddress(getW[i], htmlResponse, network);
-					htmlResponse = checkIfIsValidNetmask(netM[i], htmlResponse, network)
+					htmlResponse = checkIfIsValidAddress(ipA[i], htmlResponse);
+					htmlResponse = checkIfIsValidAddress(getW[i], htmlResponse);
+					//htmlResponse = checkIfIsValidNetmask(netM[i], htmlResponse);
 					if (ipA[i].firstChild != null) {
 						checkDuplicateAddress(ipA[i].firstChild.data, hostArray, hostArrayDuplicate);
 						//hostArray.push(ipA[i].firstChild.data);
