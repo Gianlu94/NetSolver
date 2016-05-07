@@ -179,7 +179,7 @@ function DifficultyFile (difficulty,req,res) {
 }
 
 //check on a ip address
-function checkIfIsValidAddress (ipA, htmlResponse){
+function checkIfIsValidAddress (ipA, htmlResponse, checkLimitExceed){
 	
 	//console.log("Network : ", network);
 	//var block = new Netmask(network);
@@ -193,29 +193,32 @@ function checkIfIsValidAddress (ipA, htmlResponse){
 		if (!(ipM.isV4Format(ipV))){
 			htmlResponse = htmlResponse + "<li> Error : "+ipV + " is not a valid IPV4 Address</li>";
 		}
-		else if(!(networkProblem.belongNetwork(ipV))){
-			htmlResponse = htmlResponse + "<li> Error : "+ipV + " host doesn't belog to any network</li>";
-		}
-		else if(networkProblem.LimitExceed(ipV)){
-			htmlResponse = htmlResponse + "<li> Error : "+ipV + " exceeds limit of host defined for its network</li>";
-		}
 		else {
-			var block = new Netmask(networkProblem.getNetworkAddress(ipV));
-			console.log("BLOCK BASE "+block.base);
-			if(ipV == block.base){
-				htmlResponse = htmlResponse + "<li> Error : "+ipV + " is the Network Address</li>";
+			var ipV2 = networkProblem.normalizeIpAddress(ipV);
+			if (networkProblem.isNetworkAddress(ipV2)) {
+				htmlResponse = htmlResponse + "<li> Error : " + ipV + " is the Network Address</li>";
 			}
-			else if(ipV == block.mask){
-				htmlResponse = htmlResponse + "<li> Error : "+ipV + " is the Netmask</li>";
+			else if (networkProblem.isNetmaskAddress(ipV2)) {
+				htmlResponse = htmlResponse + "<li> Error : " + ipV + " is the Netmask</li>";
 			}
-			else if(ipV == block.broadcast){
-				htmlResponse = htmlResponse + "<li> Error : "+ipV + " is the BroadCast Address</li>";
+			
+			else if (networkProblem.isBroadcastAddress(ipV2)) {
+					htmlResponse = htmlResponse + "<li> Error : " + ipV + " is the BroadCast Address</li>";
+			}
+			else if(!(networkProblem.belongNetwork(ipV))){
+				htmlResponse = htmlResponse + "<li> Error : "+ipV + " ip doesn't belong to any network</li>";
+			}
+			else if (checkLimitExceed) {
+				if (networkProblem.LimitExceed(ipV)) {
+					htmlResponse = htmlResponse + "<li> Error : " + ipV + " exceeds limit of host defined for its network</li>";
+				}
 			}
 		}
+	}
+
 		//else if(!block.contains(ipV)){
 		//	htmlResponse = htmlResponse + "<li> Error : "+ipV + " doesn't belong to the network : " + network +"</li>";
 		//}
-	}
 	//console.log("Ipa : "+ ipV);
 	/*console.log("Base : "+ block.base);
 	console.log("Last : "+ block.last);  
@@ -228,20 +231,11 @@ function checkIfIsValidAddress (ipA, htmlResponse){
 	//console.log("Block Base : ", block.base);
 }
 
+
 function checkDuplicateAddress (ipA, hostArray, hostArrayDuplicate){
 
-	var ipA2 = ipA.split(".");
-	ipA="";
-	for (var i = 0; i< ipA2.length; i++){
-		//console.log("IPA "+ i +" = "+parseInt(ipA2[i]));
-		if (i == ipA2.length-1){
-			ipA = ipA + parseInt(ipA2[i]);
-		}
-		else{
-			ipA = ipA + parseInt(ipA2[i])+".";
-		}
-	}
 
+	ipA = networkProblem.normalizeIpAddress(ipA);
 	/*console.log("IPA "+ipA);
 	console.log("III1"+hostArray.indexOf(ipA));
 	console.log("DDDDD1"+)
@@ -334,8 +328,8 @@ function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,
 					//console.log("ip : "+ipA[i].firstChild.data);
 					//console.log("ip : "+ipA[i].firstChild.data);
 
-					htmlResponse = checkIfIsValidAddress(ipA[i], htmlResponse);
-					htmlResponse = checkIfIsValidAddress(getW[i], htmlResponse);
+					htmlResponse = checkIfIsValidAddress(ipA[i], htmlResponse, true);
+					htmlResponse = checkIfIsValidAddress(getW[i], htmlResponse, false);
 					//htmlResponse = checkIfIsValidNetmask(netM[i], htmlResponse);
 					if (ipA[i].firstChild != null) {
 						checkDuplicateAddress(ipA[i].firstChild.data, hostArray, hostArrayDuplicate);

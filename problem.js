@@ -18,12 +18,32 @@ module.exports = {
             var networkProblems = (xpath.select("//NetworkProblem", doc));
             var networkV = (xpath.select("//" + networkProblems[i].localName + "/Network/text()", doc)).toString();
             var hostV = (xpath.select("//" + networkProblems[i].localName + "/Hosts/text()", doc)).toString();
-            var objectProblem = {network : networkV, host : hostV }
+
+            var block = new Netmask(networkV);
+			console.log("----block.base "+block.base+" ----val "+networkV);
+            var objectProblem = {network : networkV, host : hostV, netmask : block.mask, broadcast : block.broadcast}
             arrayObjectProblem.push(objectProblem)
             //console.log("**NETOWRK    "+network);
             //console.log("**HOST    "+host);
             //console.log("Number network problem "+networkProblem.createAndInsertObjectProblem(networkV, hostV,doc));
         }
+    },
+
+
+    //normalize ip address
+    normalizeIpAddress : function(ipA){
+        var ipA2 = ipA.split(".");
+        ipA="";
+        for (var i = 0; i< ipA2.length; i++){
+            //console.log("IPA "+ i +" = "+parseInt(ipA2[i]));
+            if (i == ipA2.length-1){
+                ipA = ipA + parseInt(ipA2[i]);
+            }
+            else{
+                ipA = ipA + parseInt(ipA2[i])+".";
+            }
+        }
+        return ipA
     },
 
     //This function get the total number of hosts from the problem
@@ -42,6 +62,7 @@ module.exports = {
            // console.log("EXTRAC NETWROK  "+ objectProblem.network);
             var block = new Netmask(objectProblem.network);
            // console.log("EXTRAC NETWROK2  "+ block.base);
+			console.log("**IP "+ip +" block.contains : " +block.contains("192.168.100.001")+" block.base "+block.base);
             if (block.contains(ip)){
                // console.log("HOST BEFORE" + arrayObjectProblem[i].host);
                 //arrayObjectProblem[i].host--;
@@ -70,6 +91,45 @@ module.exports = {
         return true;
     },
 
+    //check if the following ip is equal to the network address
+    isNetworkAddress : function(ip){
+        //console.log("**IP "+ip);
+        for (var i = 0; i < arrayObjectProblem.length; i++){
+			var objectProblem = arrayObjectProblem[i];
+			var block = new Netmask(objectProblem.network);
+            if (ip == block.base){
+                return true;
+            }
+        }
+        return false;
+    },
+
+	//check if the following ip is equal to the netmask address
+	isNetmaskAddress : function(ip){
+		//console.log("**IP "+ip);
+		for (var i = 0; i < arrayObjectProblem.length; i++){
+			var objectProblem = arrayObjectProblem[i];
+			var block = new Netmask(objectProblem.network);
+			if (ip == block.mask){
+				return true;
+			}
+		}
+		return false;
+	},
+
+	//check if the following ip is equal to the broadcast address
+	isBroadcastAddress : function(ip){
+		//console.log("**IP "+ip);
+		for (var i = 0; i < arrayObjectProblem.length; i++){
+			var objectProblem = arrayObjectProblem[i];
+			var block = new Netmask(objectProblem.network);
+			if (ip == block.broadcast){
+				return true;
+			}
+		}
+		return false;
+	},
+
     //get newtrok address of a specific host
     getNetworkAddress : function (ip){
         for (var i = 0; i < arrayObjectProblem.length; i++) {
@@ -81,4 +141,5 @@ module.exports = {
         }
         return null;
     }
+
 }
