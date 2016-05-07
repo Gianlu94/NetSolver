@@ -497,7 +497,7 @@ function checkLogicConnection (htmlResposeSupport,devicesConnected,TypeLink){
 function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 
 
-			var switchP = (xpath.select("//Switch/text()", doc)).toString();
+			var switchP = networkProblem.getNumberCommonSwitches(doc);
 			var switchU = (xpath.select("//Switches/Number/text()", userSFile)).toString();
 			var devicesConnected=[];
 

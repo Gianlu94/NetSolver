@@ -20,7 +20,7 @@ module.exports = {
             var hostV = (xpath.select("//" + networkProblems[i].localName + "/Hosts/text()", doc)).toString();
 
             var block = new Netmask(networkV);
-			console.log("----block.base "+block.base+" ----val "+networkV);
+			//console.log("----block.base "+block.base+" ----val "+networkV);
             var objectProblem = {network : networkV, host : hostV, netmask : block.mask, broadcast : block.broadcast}
             arrayObjectProblem.push(objectProblem)
             //console.log("**NETOWRK    "+network);
@@ -156,6 +156,13 @@ module.exports = {
                 }
         }
         return null;
-    }
+    },
+
+	//SWITCH PART :
+
+	getNumberCommonSwitches : function (doc){
+		var numberCommonSwitch = (xpath.select("/Problem/Switch/text()", doc)).toString();
+		return numberCommonSwitch;
+	}
 
 }
