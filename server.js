@@ -251,14 +251,25 @@ function checkDuplicateAddress (ipA, hostArray, hostArrayDuplicate){
 
 }
 
-function checkIfIsValidNetmask (netmask, htmlResponse,ip){
-	var network = networkProblem.getNetworkAddress(ip);
-	var block = new Netmask(network);
+function checkIfIsValidNetmask (netmask, ipA, htmlResponse){
 	if (netmask.firstChild == null){
 		htmlResponse = htmlResponse + "<li> Error : null field</li>";
 	}
-	else if(netmask.firstChild.data != block.mask){
-		htmlResponse = htmlResponse + "<li> Error : "+netmask + " is not the Netmask</li>";		
+	//else if(!networkProblem.isNetmaskAddressIndex(netmask.firstChild.data, index)){
+	else {
+		if (ipA.firstChild != null){
+			var ipV = ipA.firstChild.data;
+			if (ipM.isV4Format(ipV)){
+				var ipV2 = networkProblem.normalizeIpAddress(ipV);
+				if ((!networkProblem.isNetworkAddress(ipV2)) && (!networkProblem.isBroadcastAddress(ipV2)) &&
+					networkProblem.belongNetwork(ipV)) {
+					if(!networkProblem.isNetmaskAddressIp(netmask.firstChild.data, ipV2)){
+						htmlResponse = htmlResponse + "<li> Error : " + netmask + " is not the Netmask</li>";
+					}
+
+				}
+			}
+		}
 	}
 	return htmlResponse;
 }
@@ -299,10 +310,10 @@ function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,
 			var objectProblem = networkProblem.createObjectProblem(doc);
 
 			var numberHost = networkProblem. getTotalNumberHost();
-			console.log("Total number hosts "+ numberHost);
+
 
 			var hostU = (xpath.select("//Hosts/Number/text()", userSFile)).toString();
-			console.log("HOSTP "+numberHost+" hoSTU"+hostU);
+			
 
 			if (numberHost != hostU) {
 				//console.log("HOSTP "+hostP+" hoSTU "+hostU);
@@ -330,7 +341,7 @@ function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,
 
 					htmlResponse = checkIfIsValidAddress(ipA[i], htmlResponse, true);
 					htmlResponse = checkIfIsValidAddress(getW[i], htmlResponse, false);
-					//htmlResponse = checkIfIsValidNetmask(netM[i], htmlResponse);
+					htmlResponse = checkIfIsValidNetmask(netM[i], ipA[i], htmlResponse);
 					if (ipA[i].firstChild != null) {
 						checkDuplicateAddress(ipA[i].firstChild.data, hostArray, hostArrayDuplicate);
 						//hostArray.push(ipA[i].firstChild.data);

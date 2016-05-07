@@ -117,6 +117,22 @@ module.exports = {
 		return false;
 	},
 
+	//check if the following ip is equal to the netmask address using index
+	isNetmaskAddressIp : function (netmask, ip){
+		for (var i = 0; i < arrayObjectProblem.length; i++){
+			var objectProblem = arrayObjectProblem[i];
+			var block = new Netmask(objectProblem.network);
+			if (block.contains(ip)){
+				console.log("Netmask "+ netmask +" block.mask "+block.mask);
+				if (netmask == block.mask){
+					return true;
+				}
+			}
+		}
+		return false
+
+	},
+
 	//check if the following ip is equal to the broadcast address
 	isBroadcastAddress : function(ip){
 		//console.log("**IP "+ip);
