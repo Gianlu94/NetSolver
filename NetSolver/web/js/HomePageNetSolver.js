@@ -833,6 +833,11 @@ var ViewHome = {
 					}
 
 				}
+				var vlanHtml = "<li>" +
+					"<a href='#' data-value='trunk'>mode : trunk</a>"+
+					"</a>" +
+					"</li>";
+				$("." + id).parent().find("ul").append(vlanHtml);
 
 			});
 		};
