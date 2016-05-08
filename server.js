@@ -119,63 +119,71 @@ function createXmlProblem(arrayXml,difficultyP){
 
 function DifficultyFile (difficulty,req,res) {
 	console.log("PARAM "+ difficulty);
+	var randomFileToSend;
 	switch (difficulty){
 		case '1' :
-			var randomFileToSend = parseInt(((Math.random() * 2) + 1));
+			randomFileToSend = parseInt(((Math.random() * 2) + 1));
 			console.log("RandomFileTo send" + randomFileToSend);
-			fs.readFile(path.join(__dirname+"/Traces/Trace1/trac"+randomFileToSend+".txt"), function(err, file) {
-			difficultyP="/Traces/Trace1/trac"+randomFileToSend+".xml";
-            if(err) {  
-                // write an error response or nothing here  
-                return;  
-            }
-            var array = file.toString().split(" ");
-            var arrayClient ="";
-            var arrayXml = "";
-   		    for(var i = 0; i < array.length;i++) {
-				array[i]=array[i].trim();
-   		    	switch (array[i]){
-   		    		case "-network-" :
-   		    			array[i]="192.168.100.000/28";
-   		    			arrayXml = arrayXml +"-network "+array[i];
-   		    			break;
-					case "-number-" :
-						array[i] = "";
-						arrayXml = arrayXml +" -number "+array[i+1];
-						array[i+1] = "";
-						break;
-   		    		case "-hosts-" :
-   		    			var numberHosts = Math.floor((Math.random() * 1) + 2);
-   		    			array[i]= numberHosts+" hosts";
-   		    			arrayXml = arrayXml +" -hosts "+array[i];
-   		    			break;
-					case "-switch-" :
-						var numberSwitch = Math.floor((Math.random() * 3) + 1);
-						array[i]= numberSwitch+" switches";
-						arrayXml = arrayXml +" -switch "+array[i];
-						break;
-					case "-networkProblems-" :
-						array[i] = "";
-						arrayXml = arrayXml +" -networkProblems ";
-						break;
-					case "-networkProbleme-" :
-						array[i] = "";
-						arrayXml = arrayXml +" -networkProbleme ";
-						break;
-   		    		default : 
-   		    			break;
-   		    	}
-   		    	arrayClient = arrayClient +" "+array[i];
-    		}
-				console.log("*** 2 "+arrayClient);
-    		console.log("*** 1 " +arrayXml);
-    		createXmlProblem(arrayXml.split(" "),difficultyP);
-            res.writeHead(200, { 'Content-Type': 'text/html' });  
-            res.end(arrayClient.toString(), "utf-8");  
-        });
-		break;
+			break;
+		case '2' :
+			randomFileToSend = parseInt(((Math.random() * 1) + 1));
+			console.log("RandomFileTo send" + randomFileToSend);
+			break;
 		default : break;
 	}
+	fs.readFile(path.join(__dirname+"/Traces/Trace"+difficulty+"/trac"+randomFileToSend+".txt"), function(err, file) {
+		difficultyP="/Traces/Trace"+difficulty+"/trac"+randomFileToSend+".xml";
+		if(err) {
+			// write an error response or nothing here
+			return;
+		}
+		var array = file.toString().split(" ");
+		var arrayClient ="";
+		var arrayXml = "";
+		for(var i = 0; i < array.length;i++) {
+			array[i]=array[i].trim();
+			switch (array[i]){
+				case "-network-" :
+					array[i]="192.168.100.000/28";
+					arrayXml = arrayXml +"-network "+array[i];
+					break;
+				case "-number-" :
+					array[i] = "";
+					arrayXml = arrayXml +" -number "+array[i+1];
+					array[i+1] = "";
+					break;
+				case "-hosts-" :
+					var numberHosts = Math.floor((Math.random() * 1) + 2);
+					array[i]= numberHosts+" hosts";
+					arrayXml = arrayXml +" -hosts "+array[i];
+					break;
+				case "-switch-" :
+					var numberSwitch = Math.floor((Math.random() * 3) + 1);
+					array[i]= numberSwitch+" switches";
+					arrayXml = arrayXml +" -switch "+array[i];
+					break;
+				case "-networkProblems-" :
+					array[i] = "";
+					arrayXml = arrayXml +" -networkProblems ";
+					break;
+				case "-networkProbleme-" :
+					array[i] = "";
+					arrayXml = arrayXml +" -networkProbleme ";
+					break;
+				case "-wrap-" :
+					array[i] ="\n";
+					break;
+				default :
+					break;
+			}
+			arrayClient = arrayClient +" "+array[i];
+		}
+		console.log("*** 2 "+arrayClient);
+		console.log("*** 1 " +arrayXml);
+		createXmlProblem(arrayXml.split(" "),difficultyP);
+		res.writeHead(200, { 'Content-Type': 'text/html' });
+		res.end(arrayClient.toString(), "utf-8");
+	});
 }
 
 //check on a ip address
