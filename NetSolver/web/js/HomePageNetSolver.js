@@ -937,11 +937,13 @@ var ViewHome = {
 						//console.log("Switch "+switchIdP+j+" Port"+ sport);
 						var selectedConnection = $("#dropdownST" + switchIdP + j).parent().find("button").text();
 						var connectTo = $("#dropdownSD" + switchIdP + j).parent().find("button").text();
+						var vlan = $("#dropdownSV" + switchIdP + j).parent().find("button").text();
 						console.log("********Port " + selectedConnection);
 						console.log("********Port2 " + connectTo);
 						ConfigurationXml = ConfigurationXml + "\t\t\t<Port>\n\t\t\t\t" + XmlViewCreator.element("Number", sport.trim()) +
 							"\n\t\t\t\t" + XmlViewCreator.element("TypeConnection", selectedConnection.trim()) +
 							"\n\t\t\t\t" + XmlViewCreator.element("ConnectTo", connectTo) +
+							"\n\t\t\t\t" + XmlViewCreator.element("Vlan", vlan) +
 							"\n\t\t\t</Port>\n";
 						portNumber++;
 					}
