@@ -104,6 +104,14 @@ function createXmlProblem(arrayXml,difficultyP){
 				//xw.text(numberHosts);
 				xw.endElement();
 				break;
+			case "-vlans" :
+				xw.startElement('Vlan');
+				//var numberHosts = Math.floor((Math.random() * 3) + 1);
+				xw.text(arrayXml[i+1]);
+				//console.log("***NNNNNH ",numberHosts);
+				//xw.text(numberHosts);
+				xw.endElement();
+				break;
    		    default : break;
    		}    	
     }
@@ -115,6 +123,13 @@ function createXmlProblem(arrayXml,difficultyP){
 	});
 	console.log("Creation oks");
 	//console.log(xw.toString());
+}
+
+//get network address from NetworkAddress.txt
+function setNetworkAddress (arrayN){
+		 var randomNetworkToSend = parseInt(Math.random()*3);
+		console.log("*RANDOMNETWORKTOSEND "+randomNetworkToSend);
+		 return arrayN[randomNetworkToSend];
 }
 
 function DifficultyFile (difficulty,req,res) {
@@ -131,58 +146,88 @@ function DifficultyFile (difficulty,req,res) {
 			break;
 		default : break;
 	}
-	fs.readFile(path.join(__dirname+"/Traces/Trace"+difficulty+"/trac"+randomFileToSend+".txt"), function(err, file) {
+	fs.readFile(path.join(__dirname+"/Traces/Trace"+difficulty+"/trac"+randomFileToSend+".txt"), function(err1, file1) {
 		difficultyP="/Traces/Trace"+difficulty+"/trac"+randomFileToSend+".xml";
-		if(err) {
+		if(err1) {
 			// write an error response or nothing here
 			return;
 		}
-		var array = file.toString().split(" ");
-		var arrayClient ="";
-		var arrayXml = "";
-		for(var i = 0; i < array.length;i++) {
-			array[i]=array[i].trim();
-			switch (array[i]){
-				case "-network-" :
-					array[i]="192.168.100.000/28";
-					arrayXml = arrayXml +"-network "+array[i];
-					break;
-				case "-number-" :
-					array[i] = "";
-					arrayXml = arrayXml +" -number "+array[i+1];
-					array[i+1] = "";
-					break;
-				case "-hosts-" :
-					var numberHosts = Math.floor((Math.random() * 1) + 2);
-					array[i]= numberHosts+" hosts";
-					arrayXml = arrayXml +" -hosts "+array[i];
-					break;
-				case "-switch-" :
-					var numberSwitch = Math.floor((Math.random() * 3) + 1);
-					array[i]= numberSwitch+" switches";
-					arrayXml = arrayXml +" -switch "+array[i];
-					break;
-				case "-networkProblems-" :
-					array[i] = "";
-					arrayXml = arrayXml +" -networkProblems ";
-					break;
-				case "-networkProbleme-" :
-					array[i] = "";
-					arrayXml = arrayXml +" -networkProbleme ";
-					break;
-				case "-wrap-" :
-					array[i] ="\n";
-					break;
-				default :
-					break;
-			}
-			arrayClient = arrayClient +" "+array[i];
+		else {
+			fs.readFile(path.join(__dirname+"/ServerRes/NetworkAddress.txt"), function(err2, file2) {
+				if (err2){
+					// write an error response or nothing here
+					return;
+				}
+				else {
+					var array = file1.toString().split(" ");
+					var arrayClient = "";
+					var arrayXml = "";
+					var array2 = file2.toString().split('\n');
+					for (var i = 0; i < array.length; i++) {
+						array[i] = array[i].trim();
+						switch (array[i]) {
+							case "-network-" :
+								//setNetworkAddress(array, i);
+								array[i] = setNetworkAddress(array2);
+								console.log("Netwrok het "+array[i]);
+								/*fs.readFile(path.join(__dirname+"/ServerRes/NetworkAddress.txt"), function(err, file) {
+								 if(err) {
+								 // write an error response or nothing here
+								 console.log("ERROR");
+								 return;
+								 }
+								 var array = file.toString().split('\n');
+								 for (var i = 0; i < array.length-1; i++){
+								 console.log("NETWROK FOUND "+array[i]);
+								 }
+								 });
+								 */
+								arrayXml = arrayXml + "-network " + array[i];
+								break;
+							case "-number-" :
+								array[i] = "";
+								arrayXml = arrayXml + " -number " + array[i + 1];
+								array[i + 1] = "";
+								break;
+							case "-hosts-" :
+								var numberHosts = Math.floor((Math.random() * 1) + 2);
+								array[i] = numberHosts + " hosts";
+								arrayXml = arrayXml + " -hosts " + array[i];
+								break;
+							case "-switch-" :
+								var numberSwitch = Math.floor((Math.random() * 3) + 1);
+								array[i] = numberSwitch + " switches";
+								arrayXml = arrayXml + " -switch " + array[i];
+								break;
+							case "-vlans-" :
+								var numberVlan = Math.floor((Math.random() * 3) + 1);
+								array[i] = numberVlan + " vlan";
+								arrayXml = arrayXml + " -vlans " + array[i + 1];
+								break;
+							case "-networkProblems-" :
+								array[i] = "";
+								arrayXml = arrayXml + " -networkProblems ";
+								break;
+							case "-networkProbleme-" :
+								array[i] = "";
+								arrayXml = arrayXml + " -networkProbleme ";
+								break;
+							case "-wrap-" :
+								array[i] = "\n";
+								break;
+							default :
+								break;
+						}
+						arrayClient = arrayClient + " " + array[i];
+					}
+					console.log("*** 2 " + arrayClient);
+					console.log("*** 1 " + arrayXml);
+					createXmlProblem(arrayXml.split(" "), difficultyP);
+					res.writeHead(200, {'Content-Type': 'text/html'});
+					res.end(arrayClient.toString(), "utf-8");
+				}
+			});
 		}
-		console.log("*** 2 "+arrayClient);
-		console.log("*** 1 " +arrayXml);
-		createXmlProblem(arrayXml.split(" "),difficultyP);
-		res.writeHead(200, { 'Content-Type': 'text/html' });
-		res.end(arrayClient.toString(), "utf-8");
 	});
 }
 

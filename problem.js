@@ -4,6 +4,8 @@
  */
 var xpath = require("xpath");
 var Netmask = require('netmask').Netmask
+var path = require("path");
+var fs = require("fs");
 
 var arrayObjectProblem = [];
 module.exports = {
@@ -28,8 +30,7 @@ module.exports = {
             //console.log("Number network problem "+networkProblem.createAndInsertObjectProblem(networkV, hostV,doc));
         }
     },
-
-
+	
     //normalize ip address
     normalizeIpAddress : function(ipA){
         var ipA2 = ipA.split(".");
@@ -46,6 +47,21 @@ module.exports = {
         return ipA
     },
 
+	//get network address from NetworkAddress.txt
+	getNetworkAddress : function(ipA){
+		var ipA2 = ipA.split(".");
+		ipA="";
+		for (var i = 0; i< ipA2.length; i++){
+			//console.log("IPA "+ i +" = "+parseInt(ipA2[i]));
+			if (i == ipA2.length-1){
+				ipA = ipA + parseInt(ipA2[i]);
+			}
+			else{
+				ipA = ipA + parseInt(ipA2[i])+".";
+			}
+		}
+		return ipA
+	},
     //This function get the total number of hosts from the problem
     getTotalNumberHost : function(){
         var total = 0;
