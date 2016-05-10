@@ -49,21 +49,6 @@ app.use(express.static(__dirname+"/NetSolver/web/js" ));
 
 
 function createXmlProblem(arrayXml,difficultyP){
-	/*var XmlProblem;
-	 XmlProblem="<NetworkProblem>\n"
-	 XMlProblem="
-	 var eleMain = xml.ele('Networks');
-	 for(var i = 0; i < arrayXml.length;i++) {
-   		switch (array[i]){
-   			case "-network" :
-   		    	eleMain.ele('Network',{'address':array[i+1]});
-   		    	break;
-   		    case "-hosts-" :
-   		    	eleMain.ele('Hosts',array[i+1]);
-   		    	break;
-   		    default : break;
-   		}    	
-    }*/
     var xw = new XmlWriter(true);
 	xw.startDocument();
 	xw.startElement('Problem');
@@ -167,21 +152,7 @@ function DifficultyFile (difficulty,req,res) {
 						array[i] = array[i].trim();
 						switch (array[i]) {
 							case "-network-" :
-								//setNetworkAddress(array, i);
 								array[i] = setNetworkAddress(array2);
-								console.log("Netwrok het "+array[i]);
-								/*fs.readFile(path.join(__dirname+"/ServerRes/NetworkAddress.txt"), function(err, file) {
-								 if(err) {
-								 // write an error response or nothing here
-								 console.log("ERROR");
-								 return;
-								 }
-								 var array = file.toString().split('\n');
-								 for (var i = 0; i < array.length-1; i++){
-								 console.log("NETWROK FOUND "+array[i]);
-								 }
-								 });
-								 */
 								arrayXml = arrayXml + "-network " + array[i];
 								break;
 							case "-number-" :
@@ -420,7 +391,7 @@ function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,
 					res.send(htmlResponse);
 				}
 				else if (executeSwitchCheck) {
-					checkSwitches(parser,doc,userSFile,htmlResponse,res,false);
+					checkSwitches(parser,doc,userSFile,htmlResponse,res,true);
 				}
 
 
@@ -558,7 +529,7 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 			var portC = 0;
 
 			var htmlResponseSupport="";
-			//console.log("HOSTP "+switchP+" hoSTU"+switchU);
+			console.log("SWICHP "+switchP+" SWITCHU "+switchU);
 			if (switchP != switchU) {
 
 				htmlResponse = htmlResponse + "<ul><li>Number of switches is not equal</li></ul>";
@@ -608,10 +579,14 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 
 
 				}
-				if (!errorFound){
+				if (errorFound){
+					htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
+					res.send(htmlResponse);
+				}
+				else if (exitForced){
 					console.log("NO errors");
 					/*htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
-					res.send(htmlResponse);*/
+					 res.send(htmlResponse);*/
 					//check logic
 					var TypeLink = typeLink(doc);
 					//console.log("-----1   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
@@ -621,8 +596,7 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 					//console.log(htmlResponse);
 				}
 				else{
-					htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
-					res.send(htmlResponse);
+					console.log("I mustn't go out");
 				}
 				//check logic
 				/*var TypeLink = typeLink(userSFile);
@@ -644,11 +618,10 @@ function checkUserSolution (req,res){
 	var htmlResponse ="<h3>List of errors </h3>";
 	var parser = new DOMParser();
 	var userSFile = parser.parseFromString(req.body, "application/xml");
-	var exitForced = true;
 	console.log("DifficultyP " + difficultyP);
 	switch (difficultyP) {
 		case "/Traces/Trace1/trac1.xml":
-			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,exitForced);
+			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,true);
 			//res.send(htmlResponse);
 			break;
 		case "/Traces/Trace1/trac2.xml":
