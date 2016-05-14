@@ -173,7 +173,7 @@ function DifficultyFile (difficulty,req,res) {
 							case "-vlans-" :
 								var numberVlan = Math.floor((Math.random() * 3) + 1);
 								array[i] = numberVlan + " vlan";
-								arrayXml = arrayXml + " -vlans " + array[i + 1];
+								arrayXml = arrayXml + " -vlans " + array[i];
 								break;
 							case "-networkProblems-" :
 								array[i] = "";
@@ -392,7 +392,7 @@ function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,
 					res.send(htmlResponse);
 				}
 				else if (executeSwitchCheck) {
-					checkSwitches(parser,doc,userSFile,htmlResponse,res,true,executeVlanCheck);
+					checkSwitches(doc,userSFile,htmlResponse,res,executeVlanCheck);
 				}
 
 
@@ -520,7 +520,7 @@ function checkLogicConnection (htmlResposeSupport,devicesConnected,TypeLink){
 	return htmlResposeSupport;
 }
 
-function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced, checkVlan){
+function checkSwitches(doc,userSFile,htmlResponse,res,checkVlan){
 
 
 			var switchP = networkProblem.getNumberCommonSwitches(doc);
@@ -589,8 +589,8 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced, checkVl
 					var TypeLink = typeLink(doc);
 					console.log("-----1   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
 					htmlResponseSupport = checkLogicConnection(htmlResponseSupport, devicesConnected, TypeLink);
-					if (exitForced && !checkVlan) {
-						console.log("NO errors");
+					if (htmlResponseSupport.indexOf("ERROR") > -1) {
+						//console.log("NO errors");
 						/*htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
 						 res.send(htmlResponse);*/
 						//check logic
@@ -598,8 +598,14 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced, checkVl
 						res.send(htmlResponse);
 						//console.log(htmlResponse);
 					}
-					else{
-						console.log("I mustn't go out");
+					else if (checkVlan){
+						//console.log("HTML "+htmlResponseSupport);
+						//console.log("Go to Vlan");
+						checkVlans(doc,userSFile,htmlResponse,res,executeVlanCheck);
+					}
+					else {
+						htmlResponse = htmlResponse + htmlResponseSupport + "</ul>";
+						res.send(htmlResponse);
 					}
 				}
 
@@ -615,6 +621,83 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced, checkVl
 				htmlResponse = htmlResponse + "<h5>No errors occured</h5>";
 				res.send(htmlResponse);
 			}*/
+
+
+}
+
+/*function checkVlans(doc,userSFile,htmlResponse,res,checkVlan){
+	var vlanP = networkProblem.getNumberVlan(doc);
+	var vlanU = (xpath.select("//Vlans/Number/text()", userSFile)).toString();
+
+	var htmlResponseSupport="";
+
+	if (vlanP != vlanU){
+		htmlResponse = htmlResponse + "<ul><li>Number of vlans is not equal</li></ul>";
+		res.send(htmlResponse);
+	}
+
+}
+*/
+
+function checkNullFieldVlan (id, name, switchPort, i, htmlResponseSupport){
+	/*if(vlan[i].firstChild.data.trim() == ""){
+		htmlResponseSupport = htmlResponseSupport +"<li>ERROR : Find duplicate or not defined vlan</li>";
+	}
+	else{
+		console.log("OK");
+		console.log(vlan[i].firstChild.data);
+	}
+	console.log(vlan[i].firstChild.data);
+	return htmlResponseSupport;
+	*/
+	console.log("QUI 3");
+	if ((id == null) && (name == null) && (switchPort == null)){
+		htmlResponseSupport = htmlResponseSupport +"<li>ERROR : Find duplicate or not defined vlan</li>";
+	}
+	console.log("QUI 4");
+	return htmlResponseSupport;
+}
+
+function checkVlans(parser,userSFile,htmlResponse,res,checkVlan){
+	fs.readFile(path.join(__dirname+difficultyP), function(err, file) {
+		if (err) {
+			// write an error response or nothing here
+			return;
+		} else {
+			var fileString = file.toString();
+			var doc = parser.parseFromString(fileString, "application/xml");
+
+			var vlanP = networkProblem.getNumberVlan(doc);
+
+			var vlanU = (xpath.select("//Vlans/Number/text()", userSFile)).toString();
+			var htmlResponseSupport="";
+
+			console.log("VLANP "+vlanP + "VLAN U "+vlanU);
+			if (vlanP != vlanU){
+				htmlResponse = htmlResponse + "<ul><li>Number of vlans is not equal</li></ul>";
+				res.send(htmlResponse);
+			}
+			else{
+				console.log("QUI 1");
+				for (var i = 0; i < vlanP; i++) {
+					//var vlan = (xpath.select("/UserSolution/Vlans/Vlan", userSFile));
+					var id = (xpath.select("/UserSolution/Vlans/Vlan/Id", userSFile));
+					var name = (xpath.select("/UserSolution/Vlans/Vlan/Name", userSFile));
+					var switchPort = (xpath.select("/UserSolution/Vlans/Vlan/SwitchPort", userSFile));
+					htmlResponseSupport = htmlResponseSupport + checkNullFieldVlan(id[i], name[i],
+						switchPort[i], htmlResponseSupport);
+				}
+				console.log("QUI 2");
+				console.log("HTMLRESPONSESUPPORT "+htmlResponseSupport);
+				if (htmlResponseSupport.indexOf("ERROR") > -1){
+					htmlResponse = htmlResponse + htmlResponseSupport;
+					res.send(htmlResponse);
+				}
+				console.log("QUI 5");
+				//console.log("QUI 2");
+			}
+		}
+	});
 
 
 }
@@ -638,7 +721,8 @@ function checkUserSolution (req,res){
 			//res.send(htmlResponse);
 			break;
 		case "/Traces/Trace2/trac1.xml":
-			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true,true);
+			checkVlans(parser,userSFile,htmlResponse,res,true);
+			//checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true,true);
 			break;
 		default : 
 			break;

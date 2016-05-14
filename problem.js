@@ -188,6 +188,11 @@ module.exports = {
 		var numberCommonSwitch = (xpath.select("/Problem/Switch/text()", doc)).toString();
 		//console.log("TOTAL SWiTCH "+numberCommonSwitch);
 		return numberCommonSwitch;
-	}
+	},
 
+	//VLANs PART :
+	getNumberVlan : function (doc){
+		var numberVlan = (xpath.select("/Problem/Vlan/text()",doc)).toString();
+		return numberVlan;
+	}
 }

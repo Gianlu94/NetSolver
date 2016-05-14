@@ -16,7 +16,8 @@
 
         //delete vlan from its id
         deleteVlan : function (pos){
-            arraySwitch.splice(pos,1);
+			//console.log("-----------------------DELETE VLAN "+pos);
+            arrayVlan.splice(pos,1);
         },
 
         //get number of Vlan
@@ -45,10 +46,12 @@
 			var vlanNumber = VlanInterface.getVlanNumber(pos);
 			var vlanName =  VlanInterface.getVlanName(pos);
 			var trovato = false;
+
+			
 			for (var i = 0; i < VlanInterface.getVlanLength() && !trovato; i++){
 				if (i != pos){
 					if ((vlanNumber == VlanInterface.getVlanNumber(i)) ||
-						(vlanName.indexOf == VlanInterface.getVlanName(i))){
+						(vlanName == VlanInterface.getVlanName(i))){
 							trovato = true;
 					}
 				}

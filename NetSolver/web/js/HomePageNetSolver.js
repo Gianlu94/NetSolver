@@ -971,16 +971,17 @@ var ViewHome = {
 			var numberVlans = Octopus.getNumberVlan();
 			ConfigurationXml = ConfigurationXml + "<Vlans>\n\t"+XmlViewCreator.element("Number",numberVlans);
 			for (var i = 0; i < numberVlans; i++){
+				ConfigurationXml = ConfigurationXml + "\n\t<Vlan>";
 				if (!Octopus.checkIfVlanAlreadyExist(i)){
 					var idVlan = Octopus.getVlanIdentifier(i);
 					var nameVlan = Octopus.getNameVlan(i);
 					var modeVlan = Octopus.getVlanSwitchPort(i)
-					ConfigurationXml = ConfigurationXml + "\n\t<Vlan>" +
+					ConfigurationXml = ConfigurationXml +
 					"\n\t\t" + XmlViewCreator.element("Id", idVlan) +
 					"\n\t\t" + XmlViewCreator.element("Name", nameVlan) +
-						"\n\t\t" + XmlViewCreator.element("SwitchPort", modeVlan)+
-					"\n\t</Vlan>";
+						"\n\t\t" + XmlViewCreator.element("SwitchPort", modeVlan);
 				}
+				ConfigurationXml = ConfigurationXml + "\n\t</Vlan>";
 			}
 
 
@@ -1026,6 +1027,8 @@ var ViewHome = {
 					$("#hostsDe").removeClass("active");
 					$("#switchH").removeClass("active");
 					$("#switchDe").removeClass("active");
+					$("#vlanH").removeClass("active");
+					$("#vlanDe").removeClass("active");
 
 					//give focus to report section
 					$("#reportH").addClass("active");
