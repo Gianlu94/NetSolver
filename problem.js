@@ -6,6 +6,7 @@ var xpath = require("xpath");
 var Netmask = require('netmask').Netmask
 var path = require("path");
 var fs = require("fs");
+var util = require('util');
 
 var arrayObjectProblem = [];
 module.exports = {
@@ -16,15 +17,20 @@ module.exports = {
     createObjectProblem : function(doc){
         arrayObjectProblem = [];
         var numberNetworkProblem = (xpath.select("/Problem/Number/text()", doc)).toString();
+		console.log("NUmbero Problema "+numberNetworkProblem);
         for (var i = 0; i < numberNetworkProblem; i++){
             var networkProblems = (xpath.select("//NetworkProblem", doc));
-            var networkV = (xpath.select("//" + networkProblems[i].localName + "/Network/text()", doc)).toString();
-            var hostV = (xpath.select("//" + networkProblems[i].localName + "/Hosts/text()", doc)).toString();
+            var networkX = (xpath.select("//" + networkProblems[i].localName + "/Network", doc));
+            var hostX = (xpath.select("//" + networkProblems[i].localName + "/Hosts", doc));
 
+			//console.log("**********HOSTX "+hostX+ "Network "+networkX);
+			var hostV = hostX[i].firstChild.data;
+			var networkV = networkX[i].firstChild.data;
             var block = new Netmask(networkV);
 			//console.log("----block.base "+block.base+" ----val "+networkV);
-            var objectProblem = {network : networkV, host : hostV, netmask : block.mask, broadcast : block.broadcast}
-            arrayObjectProblem.push(objectProblem)
+            var objectProblem = {network : networkV, hostLimit : hostV, host : hostV, hostnetmask : block.mask,
+				broadcast : block.broadcast};
+            arrayObjectProblem.push(objectProblem);
             //console.log("**NETOWRK    "+network);
             //console.log("**HOST    "+host);
             //console.log("Number network problem "+networkProblem.createAndInsertObjectProblem(networkV, hostV,doc));
@@ -66,6 +72,8 @@ module.exports = {
     getTotalNumberHost : function(){
         var total = 0;
         for (var i = 0; i < arrayObjectProblem.length; i++){
+			//var Object = arrayObjectProblem[i].toString()
+			//console.log(util.inspect(arrayObjectProblem, false, null));
             total= parseInt(total)+parseInt(arrayObjectProblem[i].host);
         }
         return total;
@@ -78,7 +86,7 @@ module.exports = {
            // console.log("EXTRAC NETWROK  "+ objectProblem.network);
             var block = new Netmask(objectProblem.network);
            // console.log("EXTRAC NETWROK2  "+ block.base);
-			console.log("**IP "+ip +" block.contains : " +block.contains("192.168.100.001")+" block.base "+block.base);
+			//console.log("**IP "+ip +" block.contains : " +block.contains("192.168.100.001")+" block.base "+block.base);
             if (block.contains(ip)){
                // console.log("HOST BEFORE" + arrayObjectProblem[i].host);
                 //arrayObjectProblem[i].host--;
@@ -97,9 +105,9 @@ module.exports = {
             // console.log("EXTRAC NETWROK  "+ objectProblem.network);
             var block = new Netmask(objectProblem.network);
             // console.log("EXTRAC NETWROK2  "+ block.base);
-            if ((block.contains(ip)) && (objectProblem.host > 0)){
+            if ((block.contains(ip)) && (objectProblem.hostLimit > 0)){
                 // console.log("HOST BEFORE" + arrayObjectProblem[i].host);
-                arrayObjectProblem[i].host--;
+                arrayObjectProblem[i].hostLimit--;
                 //console.log("HOST AFTER" + arrayObjectProblem[i].host);
                 return false;
             }
@@ -139,7 +147,7 @@ module.exports = {
 			var objectProblem = arrayObjectProblem[i];
 			var block = new Netmask(objectProblem.network);
 			if (block.contains(ip)){
-				console.log("Netmask "+ netmask +" block.mask "+block.mask);
+				//console.log("Netmask "+ netmask +" block.mask "+block.mask);
 				if (netmask == block.mask){
 					return true;
 				}
@@ -178,6 +186,7 @@ module.exports = {
 
 	getNumberCommonSwitches : function (doc){
 		var numberCommonSwitch = (xpath.select("/Problem/Switch/text()", doc)).toString();
+		//console.log("TOTAL SWiTCH "+numberCommonSwitch);
 		return numberCommonSwitch;
 	}
 

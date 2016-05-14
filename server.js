@@ -318,7 +318,8 @@ function createObjectProblem (doc){
 }
 */
 
-function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,exitForced,executeSwitchCheck){
+function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,exitForced,executeSwitchCheck,
+						executeVlanCheck){
 	var passed = false;
 	console.log("Problem oks");
 	fs.readFile(path.join(__dirname+difficultyProblemFile), function(err, file) {
@@ -391,7 +392,7 @@ function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,
 					res.send(htmlResponse);
 				}
 				else if (executeSwitchCheck) {
-					checkSwitches(parser,doc,userSFile,htmlResponse,res,true);
+					checkSwitches(parser,doc,userSFile,htmlResponse,res,true,executeVlanCheck);
 				}
 
 
@@ -434,9 +435,10 @@ function typeLink(doc){
 	/*var nHost = (xpath.select("//Hosts/Number/text()", userSFile)).toString();
 	var nSwitch = (xpath.select("//Switches/Number/text()", userSFile)).toString();
 	*/
-	var nSwitch = (xpath.select("//Switch/text()", doc)).toString();
-	var nHosts = (xpath.select("//Hosts/text()", doc)).toString();
-	var Hlink = nHosts;
+	var nSwitch = networkProblem.getNumberCommonSwitches(doc);
+	var numberHost = networkProblem. getTotalNumberHost();
+	console.log("TypeLink "+ nSwitch + " nHISTS "+numberHost);
+	var Hlink = numberHost;
 	var Slink;
 	var Nlink = 0;
 
@@ -452,7 +454,7 @@ function typeLink(doc){
 		Nlink = 1;
 	}
 
-	var Tlink = {Hl: Hlink, Sl : Slink, Nl : Nlink};
+	var Tlink = {Hl: numberHost, Sl : Slink, Nl : Nlink};
 
 	return Tlink;
 }
@@ -495,7 +497,7 @@ function checkLogicConnection (htmlResposeSupport,devicesConnected,TypeLink){
 		console.log("DevicesConnetecd "+i+ " : " +devicesConnected[i] );
 		if(devicesConnected[i].indexOf("Port")>-1){
 			if (TypeLink.Sl == 0){
-				htmlResposeSupport = htmlResposeSupport + "<li>WARNING : Redudant or uneccesary connection found</li>"
+				htmlResposeSupport = htmlResposeSupport + "<li>WARNING : Redudant or unneccesary connection found</li>"
 			}
 			else {
 				TypeLink.Sl--;
@@ -518,7 +520,7 @@ function checkLogicConnection (htmlResposeSupport,devicesConnected,TypeLink){
 	return htmlResposeSupport;
 }
 
-function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
+function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced, checkVlan){
 
 
 			var switchP = networkProblem.getNumberCommonSwitches(doc);
@@ -583,21 +585,24 @@ function checkSwitches(parser,doc,userSFile,htmlResponse,res,exitForced){
 					htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
 					res.send(htmlResponse);
 				}
-				else if (exitForced){
-					console.log("NO errors");
-					/*htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
-					 res.send(htmlResponse);*/
-					//check logic
+				else {
 					var TypeLink = typeLink(doc);
-					//console.log("-----1   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
-					htmlResponseSupport = checkLogicConnection(htmlResponseSupport,devicesConnected,TypeLink);
-					htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
-					res.send(htmlResponse);
-					//console.log(htmlResponse);
+					console.log("-----1   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
+					htmlResponseSupport = checkLogicConnection(htmlResponseSupport, devicesConnected, TypeLink);
+					if (exitForced && !checkVlan) {
+						console.log("NO errors");
+						/*htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
+						 res.send(htmlResponse);*/
+						//check logic
+						htmlResponse = htmlResponse + htmlResponseSupport + "</ul>";
+						res.send(htmlResponse);
+						//console.log(htmlResponse);
+					}
+					else{
+						console.log("I mustn't go out");
+					}
 				}
-				else{
-					console.log("I mustn't go out");
-				}
+
 				//check logic
 				/*var TypeLink = typeLink(userSFile);
 				console.log("HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
@@ -621,16 +626,19 @@ function checkUserSolution (req,res){
 	console.log("DifficultyP " + difficultyP);
 	switch (difficultyP) {
 		case "/Traces/Trace1/trac1.xml":
-			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,true);
+			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,true,false,false);
 			//res.send(htmlResponse);
 			break;
 		case "/Traces/Trace1/trac2.xml":
-			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true);
+			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true,false);
 			/*console.log("FINITO CONTROLLO");
 			checkSwitches(parser,userSFile,difficultyP,htmlResponse,res,false);
 			console.log("FINITO CONTROLLO2");
 			*/
 			//res.send(htmlResponse);
+			break;
+		case "/Traces/Trace2/trac1.xml":
+			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true,true);
 			break;
 		default : 
 			break;
