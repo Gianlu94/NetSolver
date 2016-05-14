@@ -139,6 +139,10 @@ var Model = {
 
 	getVlanSwitchPort : function(pos){
 		return VlanInterface.getVlanSwitchPort(pos);
+	},
+
+	checkIfVlanAlreadyExist : function (pos){
+		return VlanInterface.checkIfVlanAlreadyExist(pos);
 	}
 
 	
@@ -219,6 +223,10 @@ var Octopus = {
 
 	getVlanSwitchPort : function(pos){
 		return Model.getVlanSwitchPort(pos);
+	},
+
+	checkIfVlanAlreadyExist : function (i) {
+		return Model.checkIfVlanAlreadyExist(i);
 	}
 	
 };
@@ -817,13 +825,14 @@ var ViewHome = {
 				//clean previous vlans (View)
 				$("."+id).parent().find("ul").empty();
 
-				//append the available port
+				//append the available vlan
 				for (var i=0;i < Octopus.getNumberVlan(); i++){
 					var vlanName = Octopus.getNameVlan(i);
 					var vlanSwitchPort = Octopus.getVlanSwitchPort(i);
 					var vlanIdentifier = Octopus.getVlanIdentifier(i);
+					var duplicate = Octopus.checkIfVlanAlreadyExist(i);
 					if ((vlanName!="")&&(vlanIdentifier!="")&&(vlanSwitchPort!="")&&
-						(vlanSwitchPort.indexOf("Type")==-1)) {
+						(vlanSwitchPort.indexOf("Type")==-1)&& !duplicate) {
 							var vlanHtml = "<li>" +
 								"<a href='#' data-value='" + vlanName + " : "+vlanSwitchPort+"' >" + vlanName + " : " +
 									vlanSwitchPort+
