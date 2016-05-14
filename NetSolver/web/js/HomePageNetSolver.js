@@ -963,7 +963,28 @@ var ViewHome = {
 				ConfigurationXml = ConfigurationXml + "\t\t\t<PortsLength>"+portNumber+"</PortsLength>"+"\n\t\t</Ports>\n\t</Switch>";
 
 			}
-			ConfigurationXml = ConfigurationXml+"\n</Switches>\n</UserSolution>";
+			ConfigurationXml = ConfigurationXml+"\n</Switches>\n";
+
+
+			//VLANs PART
+
+			var numberVlans = Octopus.getNumberVlan();
+			ConfigurationXml = ConfigurationXml + "<Vlans>\n\t"+XmlViewCreator.element("Number",numberVlans);
+			for (var i = 0; i < numberVlans; i++){
+				if (!Octopus.checkIfVlanAlreadyExist(i)){
+					var idVlan = Octopus.getVlanIdentifier(i);
+					var nameVlan = Octopus.getNameVlan(i);
+					var modeVlan = Octopus.getVlanSwitchPort(i)
+					ConfigurationXml = ConfigurationXml + "\n\t<Vlan>" +
+					"\n\t\t" + XmlViewCreator.element("Id", idVlan) +
+					"\n\t\t" + XmlViewCreator.element("Name", nameVlan) +
+						"\n\t\t" + XmlViewCreator.element("SwitchPort", modeVlan)+
+					"\n\t</Vlan>";
+				}
+			}
+
+
+			ConfigurationXml = ConfigurationXml+"\n</Vlans>\n</UserSolution>";
 			//hostConfigurationXml = hostConfigurationXml+"</Hosts>";
 			console.log(ConfigurationXml);
 			return ConfigurationXml;
