@@ -651,14 +651,25 @@ function checkNullFieldVlan (id, name, switchPort, i, htmlResponseSupport){
 	return htmlResponseSupport;
 	*/
 	console.log("QUI 3");
-	if ((id == null) && (name == null) && (switchPort == null)){
-		htmlResponseSupport = htmlResponseSupport +"<li>ERROR : Find duplicate or not defined vlan</li>";
+	if ((id == undefined) || (name == undefined) || (switchPort == undefined)){
+		//console.log("HRMSUPPOT "+htmlResponseSupport);
+		htmlResponseSupport = "<li>ERROR row " + i + " : null field/s or duplicate vlans found</li>";
 	}
+	else if ((id.firstChild == null) || (name.firstChild == null) || (switchPort.firstChild == null)){
+		htmlResponseSupport = "<li>ERROR row " + i + " : null field/s or duplicate vlans found</li>";
+	}
+	else if (switchPort.firstChild.data.indexOf("Type") > -1){
+		htmlResponseSupport = "<li>ERROR row " + i + " : a not defined SwitchPort found</li>";
+	}
+
+
 	console.log("QUI 4");
 	return htmlResponseSupport;
 }
 
 function checkVlans(parser,userSFile,htmlResponse,res,checkVlan){
+
+	var htmlResponseSupport="";
 	fs.readFile(path.join(__dirname+difficultyP), function(err, file) {
 		if (err) {
 			// write an error response or nothing here
@@ -670,8 +681,6 @@ function checkVlans(parser,userSFile,htmlResponse,res,checkVlan){
 			var vlanP = networkProblem.getNumberVlan(doc);
 
 			var vlanU = (xpath.select("//Vlans/Number/text()", userSFile)).toString();
-			var htmlResponseSupport="";
-
 			console.log("VLANP "+vlanP + "VLAN U "+vlanU);
 			if (vlanP != vlanU){
 				htmlResponse = htmlResponse + "<ul><li>Number of vlans is not equal</li></ul>";
@@ -684,8 +693,9 @@ function checkVlans(parser,userSFile,htmlResponse,res,checkVlan){
 					var id = (xpath.select("/UserSolution/Vlans/Vlan/Id", userSFile));
 					var name = (xpath.select("/UserSolution/Vlans/Vlan/Name", userSFile));
 					var switchPort = (xpath.select("/UserSolution/Vlans/Vlan/SwitchPort", userSFile));
-					htmlResponseSupport = htmlResponseSupport + checkNullFieldVlan(id[i], name[i],
-						switchPort[i], htmlResponseSupport);
+					console.log("i ID "+id[i] + " name "+name[i]+" switchPort "+switchPort[i]);
+					htmlResponseSupport = htmlResponseSupport+checkNullFieldVlan(id[i], name[i],
+						switchPort[i], i, htmlResponseSupport);
 				}
 				console.log("QUI 2");
 				console.log("HTMLRESPONSESUPPORT "+htmlResponseSupport);
