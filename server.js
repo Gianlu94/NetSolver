@@ -526,6 +526,7 @@ function checkSwitches(doc,userSFile,htmlResponse,res,checkVlan){
 			var switchP = networkProblem.getNumberCommonSwitches(doc);
 			var switchU = (xpath.select("//Switches/Number/text()", userSFile)).toString();
 			var devicesConnected=[];
+			var arrayVlanConnected=[];
 
 			var portsL = 0;
 			var portC = 0;
@@ -565,7 +566,9 @@ function checkSwitches(doc,userSFile,htmlResponse,res,checkVlan){
 							var portsN =(xpath.select("/UserSolution/Switches/Switch/Ports/Port/Number", userSFile));
 							var portType = (xpath.select("/UserSolution/Switches/Switch/Ports/Port/TypeConnection", userSFile));
 							var portConnectTo = (xpath.select("/UserSolution/Switches/Switch/Ports/Port/ConnectTo", userSFile));
+							var vlanConnected = (xpath.select("/UserSolution/Switches/Switch/Ports/Port/Vlan", userSFile));
 							devicesConnected.push(portConnectTo[j].firstChild.data);
+							arrayVlanConnected.push(vlanConnected[j].firstChild.data);
 							htmlResponseSupport=CheckIfSwitchIsSetted(portsN[j].firstChild.data,portType[j].firstChild.data,portConnectTo[j].firstChild.data,htmlResponseSupport);
 						}
 						if (htmlResponseSupport.indexOf("ERROR")>-1){
@@ -601,7 +604,7 @@ function checkSwitches(doc,userSFile,htmlResponse,res,checkVlan){
 					else if (checkVlan){
 						//console.log("HTML "+htmlResponseSupport);
 						//console.log("Go to Vlan");
-						checkVlans(doc,userSFile,htmlResponse,res,executeVlanCheck);
+						checkVlans(doc,userSFile,htmlResponse,res,executeVlanCheck,devicesConnected,arrayVlanConnected);
 					}
 					else {
 						htmlResponse = htmlResponse + htmlResponseSupport + "</ul>";
@@ -639,35 +642,80 @@ function checkSwitches(doc,userSFile,htmlResponse,res,checkVlan){
 }
 */
 
-function checkNullFieldVlan (id, name, switchPort, i, htmlResponseSupport){
-	/*if(vlan[i].firstChild.data.trim() == ""){
-		htmlResponseSupport = htmlResponseSupport +"<li>ERROR : Find duplicate or not defined vlan</li>";
-	}
-	else{
-		console.log("OK");
-		console.log(vlan[i].firstChild.data);
-	}
-	console.log(vlan[i].firstChild.data);
-	return htmlResponseSupport;
-	*/
-	console.log("QUI 3");
+function checkNullFieldsVlan (id, name, switchPort, i, htmlResponseSupport){
 	if ((id == undefined) || (name == undefined) || (switchPort == undefined)){
-		//console.log("HRMSUPPOT "+htmlResponseSupport);
-		htmlResponseSupport = "<li>ERROR row " + i + " : null field/s or duplicate vlans found</li>";
+		htmlResponseSupport = htmlResponseSupport+"<li>ERROR row " + i + " : null field/s or duplicate vlans found</li>";
 	}
 	else if ((id.firstChild == null) || (name.firstChild == null) || (switchPort.firstChild == null)){
-		htmlResponseSupport = "<li>ERROR row " + i + " : null field/s or duplicate vlans found</li>";
+		htmlResponseSupport = htmlResponseSupport+"<li>ERROR row " + i + " : null field/s or duplicate vlans found</li>";
 	}
 	else if (switchPort.firstChild.data.indexOf("Type") > -1){
-		htmlResponseSupport = "<li>ERROR row " + i + " : a not defined SwitchPort found</li>";
+		htmlResponseSupport = htmlResponseSupport+ "<li>ERROR row " + i + " : a not defined SwitchPort found</li>";
 	}
 
-
-	console.log("QUI 4");
 	return htmlResponseSupport;
 }
 
-function checkVlans(parser,userSFile,htmlResponse,res,checkVlan){
+function checkLogicConnectionVlan (objectTypeLink,devicesConnected, arrayVlanConnected,htmlResposeSupport, res){
+	var numberVlans = networkProblem.getNumberVlan;
+	var arrayVlanFound = [];
+	console.log("Length "+devicesConnected.length);
+	for (var i = 0; i < devicesConnected.length;i++){
+		var nameVlan = arrayVlanConnected[i];
+		console.log("NAME VLAN "+nameVlan);
+		if (nameVlan.indexOf("Type") == -1){
+			htmlResposeSupport = htmlResposeSupport + "A not defined vlan found";
+			res.send(htmlResposeSupport);
+		}
+		else if (devicesConnected[i].indexOf("Port") > -1){
+			if (objectTypeLink.Sl == 0){
+				htmlResposeSupport = htmlResposeSupport + "<li>WARNING : Redudant or unneccesary mode trunk found</li>";
+			}
+			else {
+				objectTypeLink.Sl--;
+				console.log("Typelink "+TypeLink.Sl);
+			}
+		}
+		else{
+			if (objectTypeLink.Hl == 0){
+				htmlResposeSupport = htmlResposeSupport + "<li>WARNING : Redudant or unneccesary access mode defined</li>";
+			}
+			else{
+				if (arrayVlanFound.indexOf(nameVlan) > -1){
+					arrayVlanFound.push(nameVlan);
+				}
+			}
+		}
+		//if (devicesConnected[i].indexOf("Port") >-1 ){
+		//}
+
+	}
+		/*console.log("DevicesConnetecd "+i+ " : " +devicesConnected[i] );
+		if(devicesConnected[i].indexOf("Port")>-1){
+			if (TypeLink.Sl == 0){
+				htmlResposeSupport = htmlResposeSupport + "<li>WARNING : Redudant or unneccesary connection found</li>"
+			}
+			else {
+				TypeLink.Sl--;
+				console.log("Typelink "+TypeLink.Sl);
+			}
+		}
+		else{
+			TypeLink.Hl--;
+			console.log("Typelink "+TypeLink.Hl);
+		}
+	}
+	if(TypeLink.Hl > 0){
+		htmlResposeSupport = htmlResposeSupport + "<li>ERROR : Host/s not connected yet</li>";
+	}
+	if(TypeLink.Sl > 0){
+		htmlResposeSupport = htmlResposeSupport + "<li>ERROR : Switch/es not connected yet</li>";
+	}*/
+	//console.log("-----2   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
+
+	return htmlResposeSupport;
+}
+function checkVlans(parser,userSFile,htmlResponse,res,checkVlan, devicesConnected, arrayVlanConnected){
 
 	var htmlResponseSupport="";
 	fs.readFile(path.join(__dirname+difficultyP), function(err, file) {
@@ -687,24 +735,32 @@ function checkVlans(parser,userSFile,htmlResponse,res,checkVlan){
 				res.send(htmlResponse);
 			}
 			else{
-				console.log("QUI 1");
 				for (var i = 0; i < vlanP; i++) {
 					//var vlan = (xpath.select("/UserSolution/Vlans/Vlan", userSFile));
 					var id = (xpath.select("/UserSolution/Vlans/Vlan/Id", userSFile));
 					var name = (xpath.select("/UserSolution/Vlans/Vlan/Name", userSFile));
 					var switchPort = (xpath.select("/UserSolution/Vlans/Vlan/SwitchPort", userSFile));
 					console.log("i ID "+id[i] + " name "+name[i]+" switchPort "+switchPort[i]);
-					htmlResponseSupport = htmlResponseSupport+checkNullFieldVlan(id[i], name[i],
+					htmlResponseSupport = htmlResponseSupport+checkNullFieldsVlan(id[i], name[i],
 						switchPort[i], i, htmlResponseSupport);
 				}
-				console.log("QUI 2");
-				console.log("HTMLRESPONSESUPPORT "+htmlResponseSupport);
 				if (htmlResponseSupport.indexOf("ERROR") > -1){
 					htmlResponse = htmlResponse + htmlResponseSupport;
 					res.send(htmlResponse);
 				}
-				console.log("QUI 5");
-				//console.log("QUI 2");
+				else{
+					var objectTypeLink = typeLink(doc);
+					var devicesConnected = [];
+					var arrayVlanConnected = [];
+					devicesConnected.push("Switch 0 : Port 1");
+					devicesConnected.push("Host 0");
+					arrayVlanConnected.push("ammin");
+					arrayVlanConnected.push("ricerca");
+					htmlResponseSupport = checkLogicConnectionVlan(objectTypeLink,devicesConnected, arrayVlanConnected
+						,htmlResponseSupport,res);
+
+				}
+
 			}
 		}
 	});
