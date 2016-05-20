@@ -642,7 +642,8 @@ function checkSwitches(doc,userSFile,htmlResponse,res,checkVlan){
 }
 */
 
-function checkNullFieldsVlan (id, name, switchPort, i, htmlResponseSupport){
+function checkNullFieldsVlan (id, name, switchPort, i){
+	htmlResponseSupport = ""
 	if ((id == undefined) || (name == undefined) || (switchPort == undefined)){
 		htmlResponseSupport = htmlResponseSupport+"<li>ERROR row " + i + " : null field/s or duplicate vlans found</li>";
 	}
@@ -681,9 +682,11 @@ function checkLogicConnectionVlan (objectTypeLink,devicesConnected, arrayVlanCon
 				htmlResposeSupport = htmlResposeSupport + "<li>WARNING : Redudant or unneccesary access mode defined</li>";
 			}
 			else{
-				if (arrayVlanFound.indexOf(nameVlan) > -1){
+				console.log("ArrayVlanString "+arrayVlanFound.toString());
+				/*if (arrayVlanFound.toString().indexOf(nameVlan) == -1){
 					arrayVlanFound.push(nameVlan);
 				}
+				*/
 			}
 		}
 		//if (devicesConnected[i].indexOf("Port") >-1 ){
@@ -742,7 +745,7 @@ function checkVlans(parser,userSFile,htmlResponse,res,checkVlan, devicesConnecte
 					var switchPort = (xpath.select("/UserSolution/Vlans/Vlan/SwitchPort", userSFile));
 					console.log("i ID "+id[i] + " name "+name[i]+" switchPort "+switchPort[i]);
 					htmlResponseSupport = htmlResponseSupport+checkNullFieldsVlan(id[i], name[i],
-						switchPort[i], i, htmlResponseSupport);
+						switchPort[i], i);
 				}
 				if (htmlResponseSupport.indexOf("ERROR") > -1){
 					htmlResponse = htmlResponse + htmlResponseSupport;
