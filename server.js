@@ -436,7 +436,7 @@ function typeLink(doc){
 	var nSwitch = (xpath.select("//Switches/Number/text()", userSFile)).toString();
 	*/
 	var nSwitch = networkProblem.getNumberCommonSwitches(doc);
-	var numberHost = networkProblem. getTotalNumberHost();
+	var numberHost = networkProblem.getTotalNumberHost();
 	console.log("TypeLink "+ nSwitch + " nHISTS "+numberHost);
 	var Hlink = numberHost;
 	var Slink;
@@ -643,7 +643,7 @@ function checkSwitches(doc,userSFile,htmlResponse,res,checkVlan){
 */
 
 function checkNullFieldsVlan (id, name, switchPort, i){
-	htmlResponseSupport = ""
+	var htmlResponseSupport = ""
 	if ((id == undefined) || (name == undefined) || (switchPort == undefined)){
 		htmlResponseSupport = htmlResponseSupport+"<li>ERROR row " + i + " : null field/s or duplicate vlans found</li>";
 	}
@@ -657,29 +657,31 @@ function checkNullFieldsVlan (id, name, switchPort, i){
 	return htmlResponseSupport;
 }
 
-function checkLogicConnectionVlan (objectTypeLink,devicesConnected, arrayVlanConnected,htmlResposeSupport, res){
+function checkLogicConnectionVlan (objectTypeLink,devicesConnected, arrayVlanConnected, res){
+	var htmlResponseSupport  = "";
 	var numberVlans = networkProblem.getNumberVlan;
 	var arrayVlanFound = [];
 	console.log("Length "+devicesConnected.length);
 	for (var i = 0; i < devicesConnected.length;i++){
 		var nameVlan = arrayVlanConnected[i];
 		console.log("NAME VLAN "+nameVlan);
-		if (nameVlan.indexOf("Type") == -1){
-			htmlResposeSupport = htmlResposeSupport + "A not defined vlan found";
-			res.send(htmlResposeSupport);
+		if (nameVlan.indexOf("Vlan") > -1){
+			console.log("QUI 12");
+			htmlResponseSupport = htmlResponseSupport + "<li>A not defined vlan found</li>";
+			return htmlResponseSupport;
 		}
 		else if (devicesConnected[i].indexOf("Port") > -1){
 			if (objectTypeLink.Sl == 0){
-				htmlResposeSupport = htmlResposeSupport + "<li>WARNING : Redudant or unneccesary mode trunk found</li>";
+				htmlResponseSupport = htmlResponseSupport + "<li>WARNING : Redudant or unneccesary mode trunk found</li>";
 			}
 			else {
 				objectTypeLink.Sl--;
-				console.log("Typelink "+TypeLink.Sl);
+				console.log("Typelink "+objectTypeLink.Sl);
 			}
 		}
 		else{
 			if (objectTypeLink.Hl == 0){
-				htmlResposeSupport = htmlResposeSupport + "<li>WARNING : Redudant or unneccesary access mode defined</li>";
+				htmlResponseSupport = htmlResponseSupport + "<li>WARNING : Redudant or unneccesary access mode defined</li>";
 			}
 			else{
 				console.log("ArrayVlanString "+arrayVlanFound.toString());
@@ -716,7 +718,7 @@ function checkLogicConnectionVlan (objectTypeLink,devicesConnected, arrayVlanCon
 	}*/
 	//console.log("-----2   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
 
-	return htmlResposeSupport;
+	return htmlResponseSupport;
 }
 function checkVlans(parser,userSFile,htmlResponse,res,checkVlan, devicesConnected, arrayVlanConnected){
 
@@ -728,7 +730,7 @@ function checkVlans(parser,userSFile,htmlResponse,res,checkVlan, devicesConnecte
 		} else {
 			var fileString = file.toString();
 			var doc = parser.parseFromString(fileString, "application/xml");
-
+			var objectProblem = networkProblem.createObjectProblem(doc);
 			var vlanP = networkProblem.getNumberVlan(doc);
 
 			var vlanU = (xpath.select("//Vlans/Number/text()", userSFile)).toString();
@@ -747,20 +749,25 @@ function checkVlans(parser,userSFile,htmlResponse,res,checkVlan, devicesConnecte
 					htmlResponseSupport = htmlResponseSupport+checkNullFieldsVlan(id[i], name[i],
 						switchPort[i], i);
 				}
+				console.log("BEFORE CHECKING ERROR "+htmlResponseSupport);
 				if (htmlResponseSupport.indexOf("ERROR") > -1){
+					console.log("QUI 11");
 					htmlResponse = htmlResponse + htmlResponseSupport;
 					res.send(htmlResponse);
 				}
 				else{
 					var objectTypeLink = typeLink(doc);
+					console.log("-----1   HLink "+objectTypeLink.Hl+" SLink "+objectTypeLink.Sl);
 					var devicesConnected = [];
 					var arrayVlanConnected = [];
 					devicesConnected.push("Switch 0 : Port 1");
 					devicesConnected.push("Host 0");
 					arrayVlanConnected.push("ammin");
 					arrayVlanConnected.push("ricerca");
-					htmlResponseSupport = checkLogicConnectionVlan(objectTypeLink,devicesConnected, arrayVlanConnected
-						,htmlResponseSupport,res);
+					htmlResponseSupport = checkLogicConnectionVlan(objectTypeLink,devicesConnected, arrayVlanConnected,
+						res,doc);
+					htmlResponse = htmlResponse +htmlResponseSupport;
+					res.send(htmlResponse);
 
 				}
 
