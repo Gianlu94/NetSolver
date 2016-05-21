@@ -256,6 +256,7 @@ function checkIfIsValidAddress (ipA, htmlResponse, checkLimitExceed){
 }
 
 
+//This is the function that gradually creates an array with the duplicate ip
 function checkDuplicateAddress (ipA, hostArray, hostArrayDuplicate){
 
 
@@ -275,6 +276,7 @@ function checkDuplicateAddress (ipA, hostArray, hostArrayDuplicate){
 
 }
 
+//This is the function that check if the given ip is valid or not
 function checkIfIsValidNetmask (netmask, ipA, htmlResponse){
 	if (netmask.firstChild == null){
 		htmlResponse = htmlResponse + "<li> Error : null field</li>";
@@ -318,6 +320,7 @@ function createObjectProblem (doc){
 }
 */
 
+//This is the function from which the check starts
 function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,exitForced,executeSwitchCheck,
 						executeVlanCheck){
 	var passed = false;
@@ -431,6 +434,8 @@ function checkExist(htmlRespone){
 		return false;
 	}
 }
+
+//This is the function that create the object links
 function typeLink(doc){
 	/*var nHost = (xpath.select("//Hosts/Number/text()", userSFile)).toString();
 	var nSwitch = (xpath.select("//Switches/Number/text()", userSFile)).toString();
@@ -459,6 +464,7 @@ function typeLink(doc){
 	return Tlink;
 }
 
+//This is the function that check if the fields of a switch are configured correctly
 function CheckIfSwitchIsSetted (port,typeConnection,connectTo,htmlResponse){
 	connectTo = connectTo.trim();
 	typeConnection = typeConnection.trim();
@@ -492,6 +498,7 @@ function CheckIfSwitchIsSetted (port,typeConnection,connectTo,htmlResponse){
 	return htmlResponse;
 }
 
+//This is the function that check connection betweeen switch/host
 function checkLogicConnection (htmlResposeSupport,devicesConnected,TypeLink){
 	for (var i = 0; i < devicesConnected.length;i++){
 		console.log("DevicesConnetecd "+i+ " : " +devicesConnected[i] );
@@ -520,6 +527,9 @@ function checkLogicConnection (htmlResposeSupport,devicesConnected,TypeLink){
 	return htmlResposeSupport;
 }
 
+/*This is the function (2nd check) called afer checkProcedure.
+  It perfoms switch's checks
+ */
 function checkSwitches(doc,userSFile,htmlResponse,res,checkVlan){
 
 
@@ -783,8 +793,8 @@ function checkUserSolution (req,res){
 			//res.send(htmlResponse);
 			break;
 		case "/Traces/Trace2/trac1.xml":
-			checkVlans(parser,userSFile,htmlResponse,res,true);
-			//checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true,true);
+			//checkVlans(parser,userSFile,htmlResponse,res,true);
+			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true,true);
 			break;
 		default : 
 			break;
