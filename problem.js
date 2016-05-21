@@ -9,13 +9,14 @@ var fs = require("fs");
 var util = require('util');
 
 var arrayObjectProblem = [];
+var docProblem;
 module.exports = {
-
 
 
     //This function extract data from problem's xml and create an object Problem
     createObjectProblem : function(doc){
         arrayObjectProblem = [];
+		docProblem = doc;
         var numberNetworkProblem = (xpath.select("/Problem/Number/text()", doc)).toString();
 		console.log("NUmbero Problema "+numberNetworkProblem);
         for (var i = 0; i < numberNetworkProblem; i++){
@@ -191,8 +192,8 @@ module.exports = {
 	},
 
 	//VLANs PART :
-	getNumberVlan : function (doc){
-		var numberVlan = (xpath.select("/Problem/Vlan/text()",doc)).toString();
+	getNumberVlan : function (){
+		var numberVlan = (xpath.select("/Problem/Vlan/text()",docProblem)).toString();
 		return numberVlan;
 	}
 }

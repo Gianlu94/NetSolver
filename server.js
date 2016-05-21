@@ -659,7 +659,7 @@ function checkNullFieldsVlan (id, name, switchPort, i){
 
 function checkLogicConnectionVlan (objectTypeLink,devicesConnected, arrayVlanConnected, res){
 	var htmlResponseSupport  = "";
-	var numberVlans = networkProblem.getNumberVlan;
+	var numberVlans = networkProblem.getNumberVlan();
 	var arrayVlanFound = [];
 	console.log("Length "+devicesConnected.length);
 	for (var i = 0; i < devicesConnected.length;i++){
@@ -683,41 +683,27 @@ function checkLogicConnectionVlan (objectTypeLink,devicesConnected, arrayVlanCon
 			if (objectTypeLink.Hl == 0){
 				htmlResponseSupport = htmlResponseSupport + "<li>WARNING : Redudant or unneccesary access mode defined</li>";
 			}
-			else{
-				console.log("ArrayVlanString "+arrayVlanFound.toString());
-				/*if (arrayVlanFound.toString().indexOf(nameVlan) == -1){
-					arrayVlanFound.push(nameVlan);
-				}
-				*/
+			else if  (arrayVlanFound.indexOf(nameVlan) == -1){
+				console.log("VLAN NOT FOUND "+nameVlan);
+				numberVlans--;
+				arrayVlanFound.push(nameVlan);
 			}
+
 		}
-		//if (devicesConnected[i].indexOf("Port") >-1 ){
-		//}
 
 	}
-		/*console.log("DevicesConnetecd "+i+ " : " +devicesConnected[i] );
-		if(devicesConnected[i].indexOf("Port")>-1){
-			if (TypeLink.Sl == 0){
-				htmlResposeSupport = htmlResposeSupport + "<li>WARNING : Redudant or unneccesary connection found</li>"
-			}
-			else {
-				TypeLink.Sl--;
-				console.log("Typelink "+TypeLink.Sl);
-			}
-		}
-		else{
-			TypeLink.Hl--;
-			console.log("Typelink "+TypeLink.Hl);
-		}
-	}
-	if(TypeLink.Hl > 0){
-		htmlResposeSupport = htmlResposeSupport + "<li>ERROR : Host/s not connected yet</li>";
-	}
-	if(TypeLink.Sl > 0){
-		htmlResposeSupport = htmlResposeSupport + "<li>ERROR : Switch/es not connected yet</li>";
-	}*/
-	//console.log("-----2   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
 
+	if (objectTypeLink.Hl > 0){
+		htmlResponseSupport = htmlResponseSupport + "<li>ERROR: SwitchPort access wasn't configured</li>";
+	}
+	if (objectTypeLink.Sl > 0){
+		htmlResponseSupport = htmlResponseSupport + "<li>ERROR: SwitchPort mode trunk wasn't configured correctly</li>";
+	}
+	if(numberVlans != 0){
+		htmlResponseSupport = htmlResponseSupport + "<li>ERROR: One or more vlan(s) were not configured</li>";
+	}
+
+	console.log("-----1   HLink "+objectTypeLink.Hl+" SLink "+objectTypeLink.Sl);
 	return htmlResponseSupport;
 }
 function checkVlans(parser,userSFile,htmlResponse,res,checkVlan, devicesConnected, arrayVlanConnected){
