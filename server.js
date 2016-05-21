@@ -614,7 +614,8 @@ function checkSwitches(doc,userSFile,htmlResponse,res,checkVlan){
 					else if (checkVlan){
 						//console.log("HTML "+htmlResponseSupport);
 						//console.log("Go to Vlan");
-						checkVlans(doc,userSFile,htmlResponse,res,executeVlanCheck,devicesConnected,arrayVlanConnected);
+						//checkVlans(doc,userSFile,htmlResponse,res,executeVlanCheck,devicesConnected,arrayVlanConnected);
+						checkVlans(doc, userSFile, htmlResponse, res, devicesConnected, arrayVlanConnected);
 					}
 					else {
 						htmlResponse = htmlResponse + htmlResponseSupport + "</ul>";
@@ -667,7 +668,7 @@ function checkNullFieldsVlan (id, name, switchPort, i){
 	return htmlResponseSupport;
 }
 
-function checkLogicConnectionVlan (objectTypeLink,devicesConnected, arrayVlanConnected, res){
+function checkLogicConnectionVlan (objectTypeLink, devicesConnected, arrayVlanConnected, res){
 	var htmlResponseSupport  = "";
 	var numberVlans = networkProblem.getNumberVlan();
 	var arrayVlanFound = [];
@@ -693,10 +694,13 @@ function checkLogicConnectionVlan (objectTypeLink,devicesConnected, arrayVlanCon
 			if (objectTypeLink.Hl == 0){
 				htmlResponseSupport = htmlResponseSupport + "<li>WARNING : Redudant or unneccesary access mode defined</li>";
 			}
-			else if  (arrayVlanFound.indexOf(nameVlan) == -1){
-				console.log("VLAN NOT FOUND "+nameVlan);
-				numberVlans--;
-				arrayVlanFound.push(nameVlan);
+			else {
+				objectTypeLink.Hl--
+				if  (arrayVlanFound.indexOf(nameVlan) == -1){
+					console.log("VLAN NOT FOUND "+nameVlan);
+					numberVlans--;
+					arrayVlanFound.push(nameVlan);
+				}
 			}
 
 		}
@@ -716,7 +720,7 @@ function checkLogicConnectionVlan (objectTypeLink,devicesConnected, arrayVlanCon
 	console.log("-----1   HLink "+objectTypeLink.Hl+" SLink "+objectTypeLink.Sl);
 	return htmlResponseSupport;
 }
-function checkVlans(parser,userSFile,htmlResponse,res,checkVlan, devicesConnected, arrayVlanConnected){
+/*function checkVlans(parser,userSFile,htmlResponse,res,checkVlan, devicesConnected, arrayVlanConnected){
 
 	var htmlResponseSupport="";
 	fs.readFile(path.join(__dirname+difficultyP), function(err, file) {
@@ -771,6 +775,55 @@ function checkVlans(parser,userSFile,htmlResponse,res,checkVlan, devicesConnecte
 		}
 	});
 
+
+}
+*/
+
+function checkVlans(doc, userSFile, htmlResponse, res, devicesConnected, arrayVlanConnected){
+
+
+	var htmlResponseSupport = "";
+
+	var vlanP = networkProblem.getNumberVlan();
+	var vlanU = (xpath.select("//Vlans/Number/text()", userSFile)).toString();
+	console.log("VLANP "+vlanP + "VLAN U "+vlanU);
+
+	if (vlanP != vlanU){
+		htmlResponse = htmlResponse + "<ul><li>Number of vlans is not equal</li></ul>";
+		res.send(htmlResponse);
+	}
+	else{
+		for (var i = 0; i < vlanP; i++) {
+			//var vlan = (xpath.select("/UserSolution/Vlans/Vlan", userSFile));
+			var id = (xpath.select("/UserSolution/Vlans/Vlan/Id", userSFile));
+			var name = (xpath.select("/UserSolution/Vlans/Vlan/Name", userSFile));
+			var switchPort = (xpath.select("/UserSolution/Vlans/Vlan/SwitchPort", userSFile));
+			console.log("i ID "+id[i] + " name "+name[i]+" switchPort "+switchPort[i]);
+			htmlResponseSupport = htmlResponseSupport+checkNullFieldsVlan(id[i], name[i],
+					switchPort[i], i);
+		}
+		console.log("BEFORE CHECKING ERROR "+htmlResponseSupport);
+		if (htmlResponseSupport.indexOf("ERROR") > -1){
+			console.log("QUI 11");
+			htmlResponse = htmlResponse + htmlResponseSupport;
+			res.send(htmlResponse);
+		}
+		else{
+			var objectTypeLink = typeLink(doc);
+			console.log("-----1   HLink "+objectTypeLink.Hl+" SLink "+objectTypeLink.Sl);
+			/*var devicesConnected = [];
+			var arrayVlanConnected = [];
+			devicesConnected.push("Switch 0 : Port 1");
+			devicesConnected.push("Host 0");
+			arrayVlanConnected.push("ammin");
+			arrayVlanConnected.push("ricerca");*/
+			htmlResponseSupport = checkLogicConnectionVlan(objectTypeLink,devicesConnected, arrayVlanConnected,
+				res,doc);
+			htmlResponse = htmlResponse +htmlResponseSupport;
+			res.send(htmlResponse);
+		}
+
+	}
 
 }
 
