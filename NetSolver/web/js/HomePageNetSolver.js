@@ -655,14 +655,14 @@ var ViewHome = {
 
 				
 				//HostPart : create menù with available hosts
-				var devicesHtml ="<li class='dropdown-submenu'><a tabindex='-1' href='#'>Hosts</a>"+
+				var devicesHtml ="<li class='dropdown-submenu'><a tabindex='-1' href='javascript:return false;'>Hosts</a>"+
 						"<ul class='dropdown-menu scrollable-menu'>";
 				for (var i=0;i < children; i++){
 					if($("#row"+i).hasClass("notSelectedH")){
 
 						var nameH = $("#name"+i).val();
 						devicesHtml = devicesHtml+"<li>"+
-												"<a tabindex='-1'  href='#'  data-value='"+i+"' >"+nameH+
+												"<a tabindex='-1'  href='javascript:return false;'  data-value='"+i+"' >"+nameH+
 											"</a>"+
 											"</li>";
 					}
@@ -671,7 +671,7 @@ var ViewHome = {
 				//Switch part : create menu with available switches
 				devicesHtml =devicesHtml+"</ul></li><li class='dropdown-submenu'\n\
 				><a tabindex='-1'\n\
-				href='#'>Switches</a><ul class='dropdown-menu scrollable-menu'>";
+				href='javascript:return false;'>Switches</a><ul class='dropdown-menu scrollable-menu'>";
 				for (var i = 0; i < Octopus.getNumberOfSwitch(); i++ ){
 					var idSwitch = Octopus.getSwitchId(i);
 
@@ -681,7 +681,7 @@ var ViewHome = {
 						var ports = Octopus.getSwitchPorts(idSwitch);
 						for (var j = 0; j<ports.length; j++){
 
-							devicesHtml = devicesHtml + "<li><a tabindex='-1' href='#' data-value='"+
+							devicesHtml = devicesHtml + "<li><a tabindex='-1' href='javascript:return false;' data-value='"+
 									idSwitch+""+ports[j]+"'>Switch_"+idSwitch+" : Port_"+ports[j]+"</a></li>";
 						}
 
@@ -781,14 +781,14 @@ var ViewHome = {
 				//append the available port
 				for (var i=0;i < arrayPorts.length; i++){
 						var hostHtml = "<li>"+
-											"<a href='#' data-value='"+arrayPorts[i]+"' >"+arrayPorts[i]+
+											"<a href='javascript:return false;' data-value='"+arrayPorts[i]+"' >"+arrayPorts[i]+
 											"</a>"+
 										"</li>";
 						$("."+id).parent().find("ul").append(hostHtml);	
 
 				}
 				var hostHtml = "<li>"+
-					"<a href='#' data-value='Port number' >"+"Port number"+
+					"<a href='javascript:return false;' data-value='Port number' >"+"Port number"+
 					"</a>"+
 					"</li>";
 				$("."+id).parent().find("ul").append(hostHtml);
@@ -839,7 +839,7 @@ var ViewHome = {
 					if ((vlanName!="")&&(vlanIdentifier!="")&&(vlanSwitchPort!="")&&
 						(vlanSwitchPort.indexOf("Type")==-1)&& !duplicate) {
 							var vlanHtml = "<li>" +
-								"<a href='#' data-value='" + vlanName + " : "+vlanSwitchPort+"' >" + vlanName + " : " +
+								"<a href='javascript:return false;' data-value='" + vlanName + " : "+vlanSwitchPort+"' >" + vlanName + " : " +
 									vlanSwitchPort+
 								"</a>" +
 								"</li>";
@@ -848,11 +848,11 @@ var ViewHome = {
 
 				}
 				var vlanHtml = "<li>" +
-					"<a href='#' data-value='trunk'>mode : trunk</a>"+
+					"<a href='javascript:return false;' data-value='trunk'>mode : trunk</a>"+
 					"</a>" +
 					"</li>"+
 					"<li>" +
-					"<a href='#' data-value='vlan'>Vlan</a>"+
+					"<a href='javascript:return false;' data-value='vlan'>Vlan</a>"+
 					"</a>" +
 					"</li>";;
 				$("." + id).parent().find("ul").append(vlanHtml);
