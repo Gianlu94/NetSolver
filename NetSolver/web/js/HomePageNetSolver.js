@@ -787,7 +787,12 @@ var ViewHome = {
 						$("."+id).parent().find("ul").append(hostHtml);	
 
 				}
-				
+				var hostHtml = "<li>"+
+					"<a href='#' data-value='Port number' >"+"Port number"+
+					"</a>"+
+					"</li>";
+				$("."+id).parent().find("ul").append(hostHtml);
+
 			});
 		};
 
@@ -845,7 +850,11 @@ var ViewHome = {
 				var vlanHtml = "<li>" +
 					"<a href='#' data-value='trunk'>mode : trunk</a>"+
 					"</a>" +
-					"</li>";
+					"</li>"+
+					"<li>" +
+					"<a href='#' data-value='vlan'>Vlan</a>"+
+					"</a>" +
+					"</li>";;
 				$("." + id).parent().find("ul").append(vlanHtml);
 
 			});
