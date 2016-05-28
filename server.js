@@ -682,25 +682,35 @@ function checkLogicConnectionVlan (objectTypeLink, devicesConnected, arrayVlanCo
 			return htmlResponseSupport;
 		}
 		else if (devicesConnected[i].indexOf("Port") > -1){
-			if (objectTypeLink.Sl == 0){
-				htmlResponseSupport = htmlResponseSupport + "<li>WARNING : Redudant or unneccesary mode trunk found</li>";
+			if (nameVlan.indexOf("mode") > -1) {
+				if (objectTypeLink.Sl == 0) {
+					htmlResponseSupport = htmlResponseSupport + "<li>WARNING : Redudant or unneccesary mode trunk found</li>";
+				}
+				else {
+					objectTypeLink.Sl--;
+					console.log("Typelink " + objectTypeLink.Sl);
+				}
 			}
-			else {
-				objectTypeLink.Sl--;
-				console.log("Typelink "+objectTypeLink.Sl);
+			else{
+				htmlResponseSupport = htmlResponseSupport + "<li>ERROR : Found vlan access instead of mode trunk</li>";
 			}
 		}
 		else{
-			if (objectTypeLink.Hl == 0){
-				htmlResponseSupport = htmlResponseSupport + "<li>WARNING : Redudant or unneccesary access mode defined</li>";
-			}
-			else {
-				objectTypeLink.Hl--
-				if  (arrayVlanFound.indexOf(nameVlan) == -1){
-					console.log("VLAN NOT FOUND "+nameVlan);
-					numberVlans--;
-					arrayVlanFound.push(nameVlan);
+			if (nameVlan.indexOf("access") > -1) {
+				if (objectTypeLink.Hl == 0) {
+					htmlResponseSupport = htmlResponseSupport + "<li>WARNING : Redudant or unneccesary access mode defined</li>";
 				}
+				else {
+					objectTypeLink.Hl--
+					if (arrayVlanFound.indexOf(nameVlan) == -1) {
+						console.log("VLAN NOT FOUND " + nameVlan);
+						numberVlans--;
+						arrayVlanFound.push(nameVlan);
+					}
+				}
+			}
+			else{
+				htmlResponseSupport = htmlResponseSupport + "<li>ERROR : Found mode trunk instead of \< vlan \> : access</li>";
 			}
 
 		}
@@ -708,10 +718,10 @@ function checkLogicConnectionVlan (objectTypeLink, devicesConnected, arrayVlanCo
 	}
 
 	if (objectTypeLink.Hl > 0){
-		htmlResponseSupport = htmlResponseSupport + "<li>ERROR: SwitchPort access wasn't configured</li>";
+		htmlResponseSupport = htmlResponseSupport + "<li>ERROR: SwitchPort/s access was/were not configured</li>";
 	}
 	if (objectTypeLink.Sl > 0){
-		htmlResponseSupport = htmlResponseSupport + "<li>ERROR: SwitchPort mode trunk wasn't configured correctly</li>";
+		htmlResponseSupport = htmlResponseSupport + "<li>ERROR: SwitchPort/s mode trunk was/were not configured </li>";
 	}
 	if(numberVlans != 0){
 		htmlResponseSupport = htmlResponseSupport + "<li>ERROR: One or more vlan(s) were not configured</li>";
