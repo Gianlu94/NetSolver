@@ -603,18 +603,13 @@ function checkSwitches(doc,userSFile,htmlResponse,res,checkVlan){
 					console.log("-----1   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
 					htmlResponseSupport = checkLogicConnection(htmlResponseSupport, devicesConnected, TypeLink);
 					if (htmlResponseSupport.indexOf("ERROR") > -1) {
-						//console.log("NO errors");
-						/*htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
-						 res.send(htmlResponse);*/
-						//check logic
+
 						htmlResponse = htmlResponse + htmlResponseSupport + "</ul>";
 						res.send(htmlResponse);
-						//console.log(htmlResponse);
+
 					}
 					else if (checkVlan){
-						//console.log("HTML "+htmlResponseSupport);
-						//console.log("Go to Vlan");
-						//checkVlans(doc,userSFile,htmlResponse,res,executeVlanCheck,devicesConnected,arrayVlanConnected);
+
 						checkVlans(doc, userSFile, htmlResponse, res, devicesConnected, arrayVlanConnected);
 					}
 					else {
@@ -623,12 +618,6 @@ function checkSwitches(doc,userSFile,htmlResponse,res,checkVlan){
 					}
 				}
 
-				//check logic
-				/*var TypeLink = typeLink(userSFile);
-				console.log("HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
-				htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
-				res.send(htmlResponse);
-				*/
 
 			}
 			/*else if{
@@ -639,19 +628,9 @@ function checkSwitches(doc,userSFile,htmlResponse,res,checkVlan){
 
 }
 
-/*function checkVlans(doc,userSFile,htmlResponse,res,checkVlan){
-	var vlanP = networkProblem.getNumberVlan(doc);
-	var vlanU = (xpath.select("//Vlans/Number/text()", userSFile)).toString();
-
-	var htmlResponseSupport="";
-
-	if (vlanP != vlanU){
-		htmlResponse = htmlResponse + "<ul><li>Number of vlans is not equal</li></ul>";
-		res.send(htmlResponse);
-	}
-
-}
-*/
+/*
+	This function check if vlan' s fields are null or not
+ */
 
 function checkNullFieldsVlan (id, name, switchPort, i){
 	var htmlResponseSupport = ""
@@ -668,16 +647,19 @@ function checkNullFieldsVlan (id, name, switchPort, i){
 	return htmlResponseSupport;
 }
 
+/*
+ This function check vlan's logic
+ */
+
 function checkLogicConnectionVlan (objectTypeLink, devicesConnected, arrayVlanConnected, res){
 	var htmlResponseSupport  = "";
 	var numberVlans = networkProblem.getNumberVlan();
 	var arrayVlanFound = [];
-	console.log("Length "+devicesConnected.length);
 	for (var i = 0; i < devicesConnected.length;i++){
+
 		var nameVlan = arrayVlanConnected[i];
-		console.log("NAME VLAN "+nameVlan);
+
 		if (nameVlan.indexOf("Vlan") > -1){
-			console.log("QUI 12");
 			htmlResponseSupport = htmlResponseSupport + "<li>A not defined vlan found</li>";
 			return htmlResponseSupport;
 		}
@@ -703,7 +685,6 @@ function checkLogicConnectionVlan (objectTypeLink, devicesConnected, arrayVlanCo
 				else {
 					objectTypeLink.Hl--
 					if (arrayVlanFound.indexOf(nameVlan) == -1) {
-						console.log("VLAN NOT FOUND " + nameVlan);
 						numberVlans--;
 						arrayVlanFound.push(nameVlan);
 					}
@@ -726,68 +707,13 @@ function checkLogicConnectionVlan (objectTypeLink, devicesConnected, arrayVlanCo
 	if(numberVlans != 0){
 		htmlResponseSupport = htmlResponseSupport + "<li>ERROR: One or more vlan(s) were not configured</li>";
 	}
-
-	console.log("-----1   HLink "+objectTypeLink.Hl+" SLink "+objectTypeLink.Sl);
+	
 	return htmlResponseSupport;
 }
-/*function checkVlans(parser,userSFile,htmlResponse,res,checkVlan, devicesConnected, arrayVlanConnected){
 
-	var htmlResponseSupport="";
-	fs.readFile(path.join(__dirname+difficultyP), function(err, file) {
-		if (err) {
-			// write an error response or nothing here
-			return;
-		} else {
-			var fileString = file.toString();
-			var doc = parser.parseFromString(fileString, "application/xml");
-			var objectProblem = networkProblem.createObjectProblem(doc);
-			var vlanP = networkProblem.getNumberVlan(doc);
-
-			var vlanU = (xpath.select("//Vlans/Number/text()", userSFile)).toString();
-			console.log("VLANP "+vlanP + "VLAN U "+vlanU);
-			if (vlanP != vlanU){
-				htmlResponse = htmlResponse + "<ul><li>Number of vlans is not equal</li></ul>";
-				res.send(htmlResponse);
-			}
-			else{
-				for (var i = 0; i < vlanP; i++) {
-					//var vlan = (xpath.select("/UserSolution/Vlans/Vlan", userSFile));
-					var id = (xpath.select("/UserSolution/Vlans/Vlan/Id", userSFile));
-					var name = (xpath.select("/UserSolution/Vlans/Vlan/Name", userSFile));
-					var switchPort = (xpath.select("/UserSolution/Vlans/Vlan/SwitchPort", userSFile));
-					console.log("i ID "+id[i] + " name "+name[i]+" switchPort "+switchPort[i]);
-					htmlResponseSupport = htmlResponseSupport+checkNullFieldsVlan(id[i], name[i],
-						switchPort[i], i);
-				}
-				console.log("BEFORE CHECKING ERROR "+htmlResponseSupport);
-				if (htmlResponseSupport.indexOf("ERROR") > -1){
-					console.log("QUI 11");
-					htmlResponse = htmlResponse + htmlResponseSupport;
-					res.send(htmlResponse);
-				}
-				else{
-					var objectTypeLink = typeLink(doc);
-					console.log("-----1   HLink "+objectTypeLink.Hl+" SLink "+objectTypeLink.Sl);
-					var devicesConnected = [];
-					var arrayVlanConnected = [];
-					devicesConnected.push("Switch 0 : Port 1");
-					devicesConnected.push("Host 0");
-					arrayVlanConnected.push("ammin");
-					arrayVlanConnected.push("ricerca");
-					htmlResponseSupport = checkLogicConnectionVlan(objectTypeLink,devicesConnected, arrayVlanConnected,
-						res,doc);
-					htmlResponse = htmlResponse +htmlResponseSupport;
-					res.send(htmlResponse);
-
-				}
-
-			}
-		}
-	});
-
-
-}
-*/
+/*
+	From this function, vlan's checks start
+ */
 
 function checkVlans(doc, userSFile, htmlResponse, res, devicesConnected, arrayVlanConnected){
 
@@ -796,7 +722,6 @@ function checkVlans(doc, userSFile, htmlResponse, res, devicesConnected, arrayVl
 
 	var vlanP = networkProblem.getNumberVlan();
 	var vlanU = (xpath.select("//Vlans/Number/text()", userSFile)).toString();
-	console.log("VLANP "+vlanP + "VLAN U "+vlanU);
 
 	if (vlanP != vlanU){
 		htmlResponse = htmlResponse + "<ul><li>Number of vlans is not equal</li></ul>";
@@ -804,7 +729,7 @@ function checkVlans(doc, userSFile, htmlResponse, res, devicesConnected, arrayVl
 	}
 	else{
 		for (var i = 0; i < vlanP; i++) {
-			//var vlan = (xpath.select("/UserSolution/Vlans/Vlan", userSFile));
+
 			var id = (xpath.select("/UserSolution/Vlans/Vlan/Id", userSFile));
 			var name = (xpath.select("/UserSolution/Vlans/Vlan/Name", userSFile));
 			var switchPort = (xpath.select("/UserSolution/Vlans/Vlan/SwitchPort", userSFile));
@@ -812,7 +737,6 @@ function checkVlans(doc, userSFile, htmlResponse, res, devicesConnected, arrayVl
 			htmlResponseSupport = htmlResponseSupport+checkNullFieldsVlan(id[i], name[i],
 					switchPort[i], i);
 		}
-		console.log("BEFORE CHECKING ERROR "+htmlResponseSupport);
 		if (htmlResponseSupport.indexOf("ERROR") > -1){
 			console.log("QUI 11");
 			htmlResponse = htmlResponse + htmlResponseSupport;
@@ -821,12 +745,7 @@ function checkVlans(doc, userSFile, htmlResponse, res, devicesConnected, arrayVl
 		else{
 			var objectTypeLink = typeLink(doc);
 			console.log("-----1   HLink "+objectTypeLink.Hl+" SLink "+objectTypeLink.Sl);
-			/*var devicesConnected = [];
-			var arrayVlanConnected = [];
-			devicesConnected.push("Switch 0 : Port 1");
-			devicesConnected.push("Host 0");
-			arrayVlanConnected.push("ammin");
-			arrayVlanConnected.push("ricerca");*/
+
 			htmlResponseSupport = checkLogicConnectionVlan(objectTypeLink,devicesConnected, arrayVlanConnected,
 				res,doc);
 			htmlResponse = htmlResponse +htmlResponseSupport;
@@ -845,18 +764,11 @@ function checkUserSolution (req,res){
 	switch (difficultyP) {
 		case "/Traces/Trace1/trac1.xml":
 			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,true,false,false);
-			//res.send(htmlResponse);
 			break;
 		case "/Traces/Trace1/trac2.xml":
 			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true,false);
-			/*console.log("FINITO CONTROLLO");
-			checkSwitches(parser,userSFile,difficultyP,htmlResponse,res,false);
-			console.log("FINITO CONTROLLO2");
-			*/
-			//res.send(htmlResponse);
 			break;
 		case "/Traces/Trace2/trac1.xml":
-			//checkVlans(parser,userSFile,htmlResponse,res,true);
 			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true,true);
 			break;
 		default : 
