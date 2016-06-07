@@ -898,6 +898,24 @@ var ViewHome = {
 		$("#add_rowS").trigger("click");
 		$("#add_rowV").trigger("click");
 
+		//reset all hosts in tab Hosts
+		var resetHost = function(){
+			for (var i = Octopus.getRow('h'); i >= 0; i--){
+				$("#delete_rowH").trigger("click");
+			}
+			$("#name0").val("Host_0");
+			$("#ip0").val("");
+			$("#net0").val("");
+			$("#ga0").val("");
+			$("#ser0").val("");
+		};
+		
+		//delete solution
+		$("#delete_all").click(function(e){
+			e.preventDefault();
+			resetHost()
+		});
+
 		//create the xml to send to server
 		var createXml = function(){
 			//HOST PART
@@ -1017,7 +1035,6 @@ var ViewHome = {
 						$("#extended").append(xhr.responseText);
 					}
 				}
-
 				xhr.send();
 			}
 
