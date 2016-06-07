@@ -1002,21 +1002,24 @@ var ViewHome = {
 
 		//request problem to server
 		$("#getP").click(function(){
-			$("#panelYourSolution").show();
-			var xhr  = new XMLHttpRequest();
-			xhr.open('GET',"http://localhost:3000/Tracer/?data="+JSON.stringify({'difficulty':ViewHome.param}),true);
-			xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+			if (ViewHome.param) {
+				$("#panelYourSolution").show();
+				var xhr = new XMLHttpRequest();
+				xhr.open('GET', "http://localhost:3000/Tracer/?data=" + JSON.stringify({'difficulty': ViewHome.param}), true);
+				xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 
-			//display the problem after received it
-			xhr.addEventListener("readystatechange", processRequest, false);
-			function processRequest(e) {
-				console.log("CLIENT received respone");
-				if (xhr.readyState == 4 && xhr.status == 200) {
-					$("#extended").empty();
-					$("#extended").append(xhr.responseText);
+				//display the problem after received it
+				xhr.addEventListener("readystatechange", processRequest, false);
+				function processRequest(e) {
+					console.log("CLIENT received respone");
+					if (xhr.readyState == 4 && xhr.status == 200) {
+						$("#extended").empty();
+						$("#extended").append(xhr.responseText);
+					}
 				}
+
+				xhr.send();
 			}
-			xhr.send();
 
 		});
 
