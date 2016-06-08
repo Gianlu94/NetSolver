@@ -555,9 +555,9 @@ var ViewHome = {
 		};
 
 		//function to delete the subrows of a switch (from its id)
-		var deleteFollowingChildren = function(id,row){
+		var deleteFollowingChildren = function(row){
 
-			last1=0;
+			last1=1;
 			lastC = row +""+ last1;
 
 			//until exists a subrow
@@ -598,8 +598,9 @@ var ViewHome = {
 						var rowSupport = row-row;
 
 						//delete all subrows connect to a switch
-						deleteFollowingChildren(id,row);
+						deleteFollowingChildren(row);
 
+						$("#srow"+row+rowSupport).remove();
 						$("button:contains("+switchN+")").html("Host/Devices"+
 						"<span class='caret'> </span>");
 
@@ -913,11 +914,32 @@ var ViewHome = {
 			$("#ga0").val("");
 			$("#ser0").val("");
 		};
-		
+
+		var resetSwitch = function(){
+			for (var i = Octopus.getRow('s'); i > 0; i--){
+				$("#delete_rowS").trigger("click");
+			}
+			deleteFollowingChildren("0");
+			$("#add_row_connection00").show();
+			$("#sname0").text("Switch_0");
+			$("#sname0").html("Switch_0 <span class="+"caret"+"></span>");
+			$(".btnSP00").text("Port number");
+			$(".btnSP00").html("Port number <span class="+"caret"+"></span>");
+			$(".btnST00").text("Type");
+			$(".btnST00").html("Type <span class="+"caret"+"></span>");
+			$(".btnSD00").text("Hosts/Devices");
+			$(".btnSD00").html("Hosts/Devices <span class="+"caret"+"></span>");
+			$(".btnSV00").text("Vlan");
+			$(".btnSV00").html("Vlan <span class="+"caret"+"></span>");
+
+
+		};
+
 		//delete solution
 		$("#delete_all").click(function(e){
 			e.preventDefault();
 			resetHost()
+			resetSwitch();
 			console.log("Switch Number "+Octopus.getRow('s'));
 		});
 
