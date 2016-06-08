@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<Problem>
+    <Number>2</Number>
+    <NetworkProblem>
+        <Network>192.168.100.000/28</Network>
+        <Hosts>2</Hosts>
+    </NetworkProblem>
+    <NetworkProblem>
+        <Network>192.168.100.000/28</Network>
+        <Hosts>2</Hosts>
+    </NetworkProblem>
+    <Switch>3</Switch>
+    <Vlan>
+-wrap-</Vlan>
+</Problem>

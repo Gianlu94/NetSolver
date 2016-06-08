@@ -1,0 +1,16 @@
+-wrap-  
+Supponendo di avere i seguenti dati : -number- 2 
+-wrap- 
+-networkProblems-  
+1) La rete  -network- , costituita da -hosts- 
+-networkProbleme- 
+-wrap-  
+-networkProblems- 
+2) La rete  -network- , costituita da -hosts- 
+-networkProbleme-  
+-wrap- 
+  3) -switch- 
+-wrap- 
+  4) -vlans- 
+-wrap- -wrap-  
+Fonire una possibile "struttura" di rete, configurando correttamente host, switch e vlans.
