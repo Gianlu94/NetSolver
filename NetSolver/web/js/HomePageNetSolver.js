@@ -40,14 +40,17 @@ var Model = {
 				if (this.row >= 1){
 					this.row--;
 				}
+				break;
 			case 's' :
 				if (this.rowS >= 1){
 					this.rowS--;
 				}
+				break;
 			case 'v' :
 				if (this.rowVl >= 1){
 					this.rowVl--;
 				}
+				break;
 				
 			default : break;
 				
@@ -321,6 +324,7 @@ var ViewHome = {
 
 						// Add the compiled html to the page
 						$('#'+appendTo).append(theCompiledHtml);
+						console.log("Number Switch when inserts "+Octopus.getRow('s'));
 						
 						break;
 					case "add_rowS" :
@@ -914,6 +918,7 @@ var ViewHome = {
 		$("#delete_all").click(function(e){
 			e.preventDefault();
 			resetHost()
+			console.log("Switch Number "+Octopus.getRow('s'));
 		});
 
 		//create the xml to send to server
