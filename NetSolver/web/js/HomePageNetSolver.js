@@ -903,7 +903,7 @@ var ViewHome = {
 		$("#add_rowS").trigger("click");
 		$("#add_rowV").trigger("click");
 
-		//reset all hosts in tab Hosts
+		//reset all hosts in tab Host
 		var resetHost = function(){
 			for (var i = Octopus.getRow('h'); i >= 0; i--){
 				$("#delete_rowH").trigger("click");
@@ -911,10 +911,11 @@ var ViewHome = {
 			$("#name0").val("Host_0");
 			$("#ip0").val("");
 			$("#net0").val("");
-			$("#ga0").val("");
+			$("#gat0").val("");
 			$("#ser0").val("");
 		};
 
+		//reset all switch in tab Switch
 		var resetSwitch = function(){
 			for (var i = Octopus.getRow('s'); i > 0; i--){
 				$("#delete_rowS").trigger("click");
@@ -935,11 +936,25 @@ var ViewHome = {
 
 		};
 
+		//reset all vlans in tab Vlan
+		var resetVlan = function(){
+			for (var i = Octopus.getRow('v'); i > 0; i--){
+				$("#delete_rowV").trigger("click");
+			}
+			$("#vNumber0").val("");
+			$("#vName0").val("");
+			$(".btnVl0").text("Type");
+			$(".btnVl0").html("Type <span class ="+"caret"+"></span>");
+
+
+		};
+
 		//delete solution
 		$("#delete_all").click(function(e){
 			e.preventDefault();
 			resetHost()
 			resetSwitch();
+			resetVlan();
 			console.log("Switch Number "+Octopus.getRow('s'));
 		});
 
