@@ -923,6 +923,7 @@ var ViewHome = {
 		addRow("add_rowH","hostConfiguration");
 		addRow("add_rowS","switchConfiguration");
 		addRow("add_rowV","vlanConfiguration");
+		addRow("add_rowHu","hubConfiguration");
 		deleteRow("delete_rowH");
 		deleteRow("delete_rowS");
 		deleteRow("delete_rowV");
@@ -931,6 +932,7 @@ var ViewHome = {
 		$("#add_rowH").trigger("click");
 		$("#add_rowS").trigger("click");
 		$("#add_rowV").trigger("click");
+		$("#add_rowHu").trigger("click");
 
 		//reset all hosts in tab Host
 		var resetHost = function(){

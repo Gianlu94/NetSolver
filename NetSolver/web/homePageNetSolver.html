@@ -84,7 +84,7 @@ and open the template in the editor.
 						<li id="vlanH"><a href="#vlanDe" data-toggle="tab">Vlan</a></li>
 						<li><a href="#routersDe" data-toggle="tab">Routers</a></li>
 						<li><a href="#modemsDe" data-toggle="tab">Modems</a></li>
-						<li><a href="#hubsDe" data-toggle="tab">Hubs</a></li>
+						<li id ="hubH" ><a href="#hubDe" data-toggle="tab">Hubs</a></li>
 						<li id="reportH"><a href="#reportDe" data-toggle="tab" class="pull-right">Report</a></li>
 					</ul>   
 				</div>
@@ -296,7 +296,7 @@ and open the template in the editor.
 						<div class="tab-pane" id="modemsDe">
 							To develop
 						</div>
-						<div class="tab-pane" id="hubsDe">
+						<div class="tab-pane" id="hubDe">
 							<table class="table table-hover" id="tableHub">
 								<thead>
 								  <tr>
@@ -307,7 +307,7 @@ and open the template in the editor.
 									<th><button id="checkSolution" type="submit" class="btn btn-info pull-right">Check</button></th>
 								  </tr>
 								</thead>
-								<tbody id="HubConfiguration">
+								<tbody id="hubConfiguration">
 									<script id="hub-template" type="text/x-handlebars-template">
 								  	<tr id="{{hubId}}">
 											<td>
@@ -343,8 +343,8 @@ and open the template in the editor.
 									</script>
 								</tbody>
 							</table>
-							<button id="add_rowV" class="btn btn-success pull-left">Add Hub</button>
-							<button id="delete_rowV" class="btn btn-danger pull-right">Delete Hub</button>
+							<button id="add_rowHu" class="btn btn-success pull-left">Add Hub</button>
+							<button id="delete_rowHu" class="btn btn-danger pull-right">Delete Hub</button>
 						</div>
 						<div class="tab-pane" id="reportDe">
 						</div>
