@@ -14,6 +14,7 @@ var Model = {
 		this.row=-1;
 		this.rowS=-1;
 		this.rowVl=-1;
+		this.rowHu=-1;
 	},
 
 	//Increment row number of switch and host and get it
@@ -28,6 +29,9 @@ var Model = {
 			case 'v' :
 				this.rowVl++;
 				return this.rowVl;
+			case 'u' :
+				this.rowHu++;
+				return this.rowHu;
 			default : break;
 				
 		}
@@ -51,13 +55,17 @@ var Model = {
 					this.rowVl--;
 				}
 				break;
-				
+			case 'u' :
+				if (this.rowHu >= 1){
+					this.rowHu--;
+				}
+				break;
 			default : break;
 				
 		}
 	},
 
-	/*get the current row of host and switches (-1 = means that you can't delete
+	/*get the current row of host, switch, vlan and hub  (-1 = means that you can't delete
 	the first host/switch*/
 	rowIndex : function(w){
 		switch (w){
@@ -78,6 +86,13 @@ var Model = {
 			case 'v' :
 				if (this.rowVl > 0){
 					return this.rowVl;
+				}
+				else{
+					return -1;
+				}
+			case 'u' :
+				if (this.rowHu > 0){
+					return this.rowHu;
 				}
 				else{
 					return -1;
@@ -414,7 +429,7 @@ var ViewHome = {
 						break;
 					case "add_rowHu" :
 						e.preventDefault();
-
+						var row = Octopus.incrementRow('u');
 
 
 						// Grab the template script
@@ -642,7 +657,11 @@ var ViewHome = {
 						$("#vlrow"+row).remove();
 						Octopus.deleteVlan(row);
 						Octopus.decrement('v')
-
+					case "delete_rowHu" :
+						console.log("HUB ROW "+row);
+						var row = Octopus.getRow('u');
+						$("#huId"+row).remove();
+						Octopus.decrement('u')
 
 						break;
 					default : break;
@@ -927,6 +946,7 @@ var ViewHome = {
 		deleteRow("delete_rowH");
 		deleteRow("delete_rowS");
 		deleteRow("delete_rowV");
+		deleteRow("delete_rowHu");
 
 		//insert a minimum of 1 host/device/vlan
 		$("#add_rowH").trigger("click");
