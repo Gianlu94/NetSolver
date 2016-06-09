@@ -378,7 +378,7 @@ var ViewHome = {
 
 						//settings for the new row
 						assignValueByDropDown("dropdownST"+row+rowSupport,"btnST"+row+rowSupport);
-						addSubRow("add_row_connection"+row+rowSupport,"srow"+row+rowSupport);
+						addSubRow("add_row_connection"+row+rowSupport,"srow"+row+rowSupport, 's');
 						//deleteSubRow("delete_row_connection"+row+rowSupport);
 
 						seeDevice("btnSD"+row+rowSupport);
@@ -454,6 +454,7 @@ var ViewHome = {
 						var theCompiledHtml = theTemplate(context);
 
 						$("#"+appendTo).append(theCompiledHtml);
+						addSubRow("add_srow_hub"+row+"0","huId"+row+"0", 'u');
 						
 						break;
 
@@ -505,70 +506,136 @@ var ViewHome = {
 		};
 
 		
-		//function to add Switch's subrows
-		var addSubRow = function (id,srow){
+		//function to add Switch/Hubs subrows
+		var addSubRow = function (id,srow,device){
 			$("#"+id).click(function(e){
 				e.preventDefault();
-				var rowD;
 				var length = getPartLength(id);
-				var last2_1 = getSwitchPart(length,id);
-				var last1 = parseInt(id.slice(-1));
+				switch (device) {
+					case 's' :
+						var rowD;
+						var last2_1 = getSwitchPart(length, id);
+						var last1 = parseInt(id.slice(-1));
 
-				if (last1==-1){
-					last1++;
-				}
+						if (last1 == -1) {
+							last1++;
+						}
 
-				if (last1 < 7){
-					$("#add_row_connection"+last2_1+last1).hide();
-					last1++;
+						if (last1 < 7) {
+							$("#add_row_connection" + last2_1 + last1).hide();
+							last1++;
 
-					// Grab the template script
-					var theTemplateScript = $("#switch2-template").html();
+							// Grab the template script
+							var theTemplateScript = $("#switch2-template").html();
 
-					// Compile the template
-					var theTemplate = Handlebars.compile(theTemplateScript);
+							// Compile the template
+							var theTemplate = Handlebars.compile(theTemplateScript);
 
 
-					// Define our data object
-					var context={
-						"srowId": "srow"+last2_1+last1,
-						"btnSP": "btnSP"+last2_1+last1,
-						"dropdownSP": "dropdownSP"+last2_1+last1,
-						"btnST": "btnST"+last2_1+last1,
-						"dropdownST": "dropdownST"+last2_1+last1,
-						"btnSD": "btnSD"+last2_1+last1,
-						"dropdownSD": "dropdownSD"+last2_1+last1,
-						"btnSV": "btnSV"+last2_1+last1,
-						"dropdownSV": "dropdownSV"+last2_1+last1,
-						"add_row_connection": "add_row_connection"+last2_1+last1,
-						"delete_row_connection": "delete_row_connection"+last2_1+last1
-					};
+							// Define our data object
+							var context = {
+								"srowId": "srow" + last2_1 + last1,
+								"btnSP": "btnSP" + last2_1 + last1,
+								"dropdownSP": "dropdownSP" + last2_1 + last1,
+								"btnST": "btnST" + last2_1 + last1,
+								"dropdownST": "dropdownST" + last2_1 + last1,
+								"btnSD": "btnSD" + last2_1 + last1,
+								"dropdownSD": "dropdownSD" + last2_1 + last1,
+								"btnSV": "btnSV" + last2_1 + last1,
+								"dropdownSV": "dropdownSV" + last2_1 + last1,
+								"add_row_connection": "add_row_connection" + last2_1 + last1,
+								"delete_row_connection": "delete_row_connection" + last2_1 + last1
+							};
 
-					// Pass our data to the template
-					var theCompiledHtml = theTemplate(context);
+							// Pass our data to the template
+							var theCompiledHtml = theTemplate(context);
 
-					//hide delete of the previous element
-					last1--;
-					$("#delete_row_connection"+last2_1+last1).hide();
+							//hide delete of the previous element
+							last1--;
+							$("#delete_row_connection" + last2_1 + last1).hide();
 
-					$(theCompiledHtml).insertAfter("#srow"+last2_1+last1);
-					last1++;
+							$(theCompiledHtml).insertAfter("#srow" + last2_1 + last1);
+							last1++;
 
-					//settings for subrow
-					addSubRow("add_row_connection"+last2_1+last1,"srow"+last2_1+last1);
-					deleteSubRow("delete_row_connection"+last2_1+last1);
+							//settings for subrow
+							addSubRow("add_row_connection" + last2_1 + last1, "srow" + last2_1 + last1, 's');
+							deleteSubRow("delete_row_connection" + last2_1 + last1);
 
-					
-					assignValueByDropDown("dropdownST"+last2_1+last1,"btnST"+last2_1+last1);
-					
-					seeDevice("btnSD"+last2_1+last1);
-					assignConnnect("dropdownSD"+last2_1+last1);
-					
-					portsAvailable("btnSP"+last2_1+last1);
-					assignPort("dropdownSP"+last2_1+last1);
 
-					vlanAvailable("btnSV"+last2_1+last1);
-					assignVlan("dropdownSV"+last2_1+last1);
+							assignValueByDropDown("dropdownST" + last2_1 + last1, "btnST" + last2_1 + last1);
+
+							seeDevice("btnSD" + last2_1 + last1);
+							assignConnnect("dropdownSD" + last2_1 + last1);
+
+							portsAvailable("btnSP" + last2_1 + last1);
+							assignPort("dropdownSP" + last2_1 + last1);
+
+							vlanAvailable("btnSV" + last2_1 + last1);
+							assignVlan("dropdownSV" + last2_1 + last1);
+						}
+						break;
+					case 'u':
+						console.log("Length HUb "+length);
+						var last2_1 = getSwitchPart(length, id);
+						var last1 = parseInt(id.slice(-1));
+
+						if (last1 == -1) {
+							last1++;
+						}
+						console.log("last2_1 "+last2_1);
+						console.log("last1 "+last1);
+
+						if (last1 < 7) {
+							$("#add_srow_hub" + last2_1 + last1).hide();
+							last1++;
+
+							// Grab the template script
+							var theTemplateScript = $("#hub-template2").html();
+
+							// Compile the template
+							var theTemplate = Handlebars.compile(theTemplateScript);
+
+
+							// Define our data object
+							var context = {
+								"hubId": "huId"+last2_1+last1,
+								"btnHI": "btnHI"+last2_1+last1,
+								"btnHT": "btnHT"+last2_1+last1,
+								"btnHC": "btnHC"+last2_1+last1,
+								"add_srow_hub": "add_srow_hub"+last2_1+last1,
+								"delete_srow_hub": "delete_srow_hub"+last2_1+last1
+
+							};
+
+							// Pass our data to the template
+							var theCompiledHtml = theTemplate(context);
+
+							//hide delete of the previous element
+							last1--;
+							$("#delete_srow_hub" + last2_1 + last1).hide();
+
+							$(theCompiledHtml).insertAfter("#huId" + last2_1 + last1);
+							last1++;
+
+							//settings for subrow
+							addSubRow("add_srow_hub" + last2_1 + last1, "huId" + last2_1 + last1, 'u');
+							/*deleteSubRow("delete_row_connection" + last2_1 + last1);
+
+
+							assignValueByDropDown("dropdownST" + last2_1 + last1, "btnST" + last2_1 + last1);
+
+							seeDevice("btnSD" + last2_1 + last1);
+							assignConnnect("dropdownSD" + last2_1 + last1);
+
+							portsAvailable("btnSP" + last2_1 + last1);
+							assignPort("dropdownSP" + last2_1 + last1);
+
+							vlanAvailable("btnSV" + last2_1 + last1);
+							assignVlan("dropdownSV" + last2_1 + last1);
+							*/
+						}
+						break;
+					default : break;
 				}
 
 				
@@ -659,9 +726,8 @@ var ViewHome = {
 						Octopus.deleteVlan(row);
 						Octopus.decrement('v')
 					case "delete_rowHu" :
-						console.log("HUB ROW "+row);
 						var row = Octopus.getRow('u');
-						$("#huId"+row).remove();
+						$("#huId"+row+"0").remove();
 						Octopus.decrement('u')
 
 						break;
