@@ -412,6 +412,35 @@ var ViewHome = {
 
 
 						break;
+					case "add_rowHu" :
+						e.preventDefault();
+
+
+
+						// Grab the template script
+						var theTemplateScript = $("#hub-template").html();
+
+						// Compile the template
+						var theTemplate = Handlebars.compile(theTemplateScript);
+
+
+						// Define our data object
+						var context={
+							"hubId": "huId"+row,
+							"hName": "hName"+row,
+							"btnHI": "btnHI"+row,
+							"btnHT": "btnHT"+row,
+							"btnHC": "btnHC"+row
+
+						};
+
+						// Pass our data to the template
+						var theCompiledHtml = theTemplate(context);
+
+						$("#"+appendTo).append(theCompiledHtml);
+						
+						break;
+
 							
 					default : break;
 				}
