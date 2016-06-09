@@ -441,11 +441,12 @@ var ViewHome = {
 
 						// Define our data object
 						var context={
-							"hubId": "huId"+row,
-							"hName": "hName"+row,
-							"btnHI": "btnHI"+row,
-							"btnHT": "btnHT"+row,
-							"btnHC": "btnHC"+row
+							"hubId": "huId"+row+"0",
+							"hName": "hName"+row+"0",
+							"btnHI": "btnHI"+row+"0",
+							"btnHT": "btnHT"+row+"0",
+							"btnHC": "btnHC"+row+"0",
+							"add_srow_hub": "add_srow_hub"+row+"0"
 
 						};
 
