@@ -559,7 +559,7 @@ var ViewHome = {
 
 							//settings for subrow
 							addSubRow("add_row_connection" + last2_1 + last1, "srow" + last2_1 + last1, 's');
-							deleteSubRow("delete_row_connection" + last2_1 + last1);
+							deleteSubRow("delete_row_connection" + last2_1 + last1, 's');
 
 
 							assignValueByDropDown("dropdownST" + last2_1 + last1, "btnST" + last2_1 + last1);
@@ -619,9 +619,9 @@ var ViewHome = {
 
 							//settings for subrow
 							addSubRow("add_srow_hub" + last2_1 + last1, "huId" + last2_1 + last1, 'u');
-							/*deleteSubRow("delete_row_connection" + last2_1 + last1);
+							deleteSubRow("delete_srow_hub" + last2_1 + last1, 'u');
 
-
+							/*
 							assignValueByDropDown("dropdownST" + last2_1 + last1, "btnST" + last2_1 + last1);
 
 							seeDevice("btnSD" + last2_1 + last1);
@@ -737,26 +737,39 @@ var ViewHome = {
 		});
 
 		//function to delete a single subrow of a Switch
-		var deleteSubRow = function(id){
+		var deleteSubRow = function(id, device){
 			$("#"+id).click(function(e){
 				e.preventDefault();
-
 				var length = getPartLength(id);
-				var last2_1 = getSwitchPart(length,id);
+				var last2_1 = getSwitchPart(length, id);
 				var last1 = parseInt(id.slice(-1));
-				
-				releaseHS($(".btnSD"+last2_1+""+last1).text());
+				switch(device) {
+					case 's' :
 
-				var PortToEliminate = $(".btnSP"+last2_1+""+last1).text();
-				if (!isNaN(PortToEliminate)){
-					Octopus.releaseSwitchPort(last2_1,PortToEliminate);
+						releaseHS($(".btnSD" + last2_1 + "" + last1).text());
+
+						var PortToEliminate = $(".btnSP" + last2_1 + "" + last1).text();
+						if (!isNaN(PortToEliminate)) {
+							Octopus.releaseSwitchPort(last2_1, PortToEliminate);
+						}
+						$("#srow" + last2_1 + last1).remove();
+
+						//show the add and delete button of the previous row
+						last1--;
+						$("#add_row_connection" + last2_1 + last1).show();
+						$("#delete_row_connection" + last2_1 + last1).show();
+						break;
+					case 'u':
+						console.log("HERE  ");
+						$("#huId" + last2_1 + last1).remove();
+
+						//show the add and delete button of the previous row
+						last1--;
+						$("#add_srow_hub" + last2_1 + last1).show();
+						$("#delete_srow_hub" + last2_1 + last1).show();
+						break;
+					default : break;
 				}
-				$("#srow"+last2_1+last1).remove();
-
-				//show the add and delete button of the previous row
-				last1--;
-				$("#add_row_connection"+last2_1+last1).show();
-				$("#delete_row_connection"+last2_1+last1).show();	
 			});
 		}
 		
