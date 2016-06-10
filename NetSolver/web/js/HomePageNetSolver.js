@@ -161,6 +161,15 @@ var Model = {
 
 	checkIfVlanAlreadyExist : function (pos){
 		return VlanInterface.checkIfVlanAlreadyExist(pos);
+	},
+
+	//Hub
+	insertHub : function (id){
+		HubInterface.createHub(id);
+	},
+	
+	deleteHub : function (id) {
+		HubInterface.deleteHub(id);
 	}
 
 	
@@ -245,6 +254,15 @@ var Octopus = {
 
 	checkIfVlanAlreadyExist : function (i) {
 		return Model.checkIfVlanAlreadyExist(i);
+	},
+
+	//Hub
+	insertHub : function (id){
+		Model.insertHub(id);
+	},
+
+	deleteHub : function (id){
+		Model.deleteHub(id);
 	}
 	
 };
@@ -275,9 +293,10 @@ var ViewHome = {
 		  selected from its dropdown-menù
 		 */
 		var assignValueByDropDown = function (id,btnCl){
-			
-			$("#"+id+ " li a").click(function(){
 
+			console.log ("ID "+id + " btnCL "+btnCl);
+			$("#"+id+ " li a").click(function(e){
+				//e.preventDefault();
 				switch (btnCl){
 					//if I press the difficulty button -> set the new current difficulty
 					case "btnD" :
@@ -430,7 +449,7 @@ var ViewHome = {
 					case "add_rowHu" :
 						e.preventDefault();
 						var row = Octopus.incrementRow('u');
-
+						var rowSupport = row-row;
 
 						// Grab the template script
 						var theTemplateScript = $("#hub-template").html();
@@ -441,20 +460,26 @@ var ViewHome = {
 
 						// Define our data object
 						var context={
-							"hubId": "huId"+row+"0",
-							"hName": "hName"+row+"0",
-							"btnHI": "btnHI"+row+"0",
-							"btnHT": "btnHT"+row+"0",
-							"btnHC": "btnHC"+row+"0",
-							"add_srow_hub": "add_srow_hub"+row+"0"
+							"hubId": "huId"+row+rowSupport,
+							"hName": "hName"+row+rowSupport,
+							"btnHI": "btnHI"+row+rowSupport,
+							"btnHT": "btnHT"+row+rowSupport,
+							"btnHC": "btnHC"+row+rowSupport,
+							"dropdownHT": "dropdownHT"+row+rowSupport,
+							"add_srow_hub": "add_srow_hub"+row+rowSupport
 
 						};
 
 						// Pass our data to the template
 						var theCompiledHtml = theTemplate(context);
 
+						//create and display the new hub
+						Octopus.insertHub(row);
 						$("#"+appendTo).append(theCompiledHtml);
-						addSubRow("add_srow_hub"+row+"0","huId"+row+"0", 'u');
+
+						//settings for the new row
+						addSubRow("add_srow_hub"+row+rowSupport,"huId"+row+rowSupport, 'u');
+						assignValueByDropDown("dropdownHT"+row+rowSupport,"btnHT"+row+rowSupport);
 						
 						break;
 
@@ -602,6 +627,7 @@ var ViewHome = {
 								"btnHI": "btnHI"+last2_1+last1,
 								"btnHT": "btnHT"+last2_1+last1,
 								"btnHC": "btnHC"+last2_1+last1,
+								"dropdownHT": "dropdownHT"+last2_1+last1,
 								"add_srow_hub": "add_srow_hub"+last2_1+last1,
 								"delete_srow_hub": "delete_srow_hub"+last2_1+last1
 
@@ -621,9 +647,11 @@ var ViewHome = {
 							addSubRow("add_srow_hub" + last2_1 + last1, "huId" + last2_1 + last1, 'u');
 							deleteSubRow("delete_srow_hub" + last2_1 + last1, 'u');
 
-							/*
-							assignValueByDropDown("dropdownST" + last2_1 + last1, "btnST" + last2_1 + last1);
 
+							console.log("LASTsub " +last2_1+last1);
+							assignValueByDropDown("dropdownHT" + last2_1 + last1, "btnHT" + last2_1 + last1);
+
+							/*
 							seeDevice("btnSD" + last2_1 + last1);
 							assignConnnect("dropdownSD" + last2_1 + last1);
 
@@ -728,7 +756,9 @@ var ViewHome = {
 					case "delete_rowHu" :
 						var row = Octopus.getRow('u');
 						$("#huId"+row+"0").remove();
-						Octopus.decrement('u')
+
+						Octopus.deleteHub(row);
+						Octopus.decrement('u');
 
 						break;
 					default : break;
@@ -761,6 +791,8 @@ var ViewHome = {
 						break;
 					case 'u':
 						console.log("HERE  ");
+						//var PortToEliminate = $(".btnSP" + last2_1 + "" + last1).text();
+
 						$("#huId" + last2_1 + last1).remove();
 
 						//show the add and delete button of the previous row
