@@ -1047,13 +1047,13 @@ var ViewHome = {
 							Octopus.releaseHubPort(last2, previousPort);
 						}
 
-						console.log("CACCCCAAAA");
 						newPort = $(this).text();
+						
 						Octopus.setHubPort(last2, newPort);
 						break;
 				}
-				$("." + "btnSP" + lastC + ":first-child").html(newPort + "<span class='caret'> </span>");
-				$("." + "btnSP" + lastC + ":first-child").val(newPort);
+				$("." + "btnHI" + lastC + ":first-child").html(newPort + "<span class='caret'> </span>");
+				$("." + "btnHI" + lastC + ":first-child").val(newPort);
 			});
 		};
 
