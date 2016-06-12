@@ -170,6 +170,18 @@ var Model = {
 	
 	deleteHub : function (id) {
 		HubInterface.deleteHub(id);
+	},
+
+	getHubPorts : function (id){
+		return HubInterface.getHubPorts(id);
+	},
+
+	setHubPort : function(id,port){
+		HubInterface.setHubPort(id,port);
+	},
+
+	releaseHubPort : function(id, port){
+		HubInterface.releaseHubPort(id, port);
 	}
 
 	
@@ -263,8 +275,21 @@ var Octopus = {
 
 	deleteHub : function (id){
 		Model.deleteHub(id);
+	},
+
+	setHubPort : function(id,port){
+		Model.setHubPort(id,port);
+	},
+
+	releaseHubPort : function(id, port){
+		Model.releaseHubPort(id, port);
+	},
+
+	getHubPorts : function (id){
+		return Model.getHubPorts(id);
 	}
-	
+
+
 };
 
 //A view used to create and xml element (tag name,<content>)
@@ -403,8 +428,8 @@ var ViewHome = {
 						seeDevice("btnSD"+row+rowSupport);
 						assignConnnect("dropdownSD"+row+rowSupport);
 
-						portsAvailable("btnSP"+row+rowSupport);
-						assignPort("dropdownSP"+row+rowSupport);
+						portsAvailable("btnSP"+row+rowSupport,'s');
+						assignPort("dropdownSP"+row+rowSupport,'s');
 
 						vlanAvailable("btnSV"+row+rowSupport);
 						assignVlan("dropdownSV"+row+rowSupport);
@@ -466,6 +491,7 @@ var ViewHome = {
 							"btnHT": "btnHT"+row+rowSupport,
 							"btnHC": "btnHC"+row+rowSupport,
 							"dropdownHT": "dropdownHT"+row+rowSupport,
+							"dropdownHI": "dropdownHI"+row+rowSupport,
 							"add_srow_hub": "add_srow_hub"+row+rowSupport
 
 						};
@@ -474,12 +500,16 @@ var ViewHome = {
 						var theCompiledHtml = theTemplate(context);
 
 						//create and display the new hub
-						Octopus.insertHub(row);
 						$("#"+appendTo).append(theCompiledHtml);
 
 						//settings for the new row
 						addSubRow("add_srow_hub"+row+rowSupport,"huId"+row+rowSupport, 'u');
 						assignValueByDropDown("dropdownHT"+row+rowSupport,"btnHT"+row+rowSupport);
+
+						portsAvailable("btnHI" + row + rowSupport, 'u');
+						assignPort("dropdownHI" + row + rowSupport, 'u');
+
+						Octopus.insertHub(row);
 						
 						break;
 
@@ -592,8 +622,8 @@ var ViewHome = {
 							seeDevice("btnSD" + last2_1 + last1);
 							assignConnnect("dropdownSD" + last2_1 + last1);
 
-							portsAvailable("btnSP" + last2_1 + last1);
-							assignPort("dropdownSP" + last2_1 + last1);
+							portsAvailable("btnSP" + last2_1 + last1, 's');
+							assignPort("dropdownSP" + last2_1 + last1, 's');
 
 							vlanAvailable("btnSV" + last2_1 + last1);
 							assignVlan("dropdownSV" + last2_1 + last1);
@@ -628,6 +658,7 @@ var ViewHome = {
 								"btnHT": "btnHT"+last2_1+last1,
 								"btnHC": "btnHC"+last2_1+last1,
 								"dropdownHT": "dropdownHT"+last2_1+last1,
+								"dropdownHI": "dropdownHI"+last2_1+last1,
 								"add_srow_hub": "add_srow_hub"+last2_1+last1,
 								"delete_srow_hub": "delete_srow_hub"+last2_1+last1
 
@@ -651,6 +682,8 @@ var ViewHome = {
 							console.log("LASTsub " +last2_1+last1);
 							assignValueByDropDown("dropdownHT" + last2_1 + last1, "btnHT" + last2_1 + last1);
 
+							portsAvailable("btnHI" + last2_1 + last1, 'u');
+							assignPort("dropdownHI" + last2_1 + last1, 'u');
 							/*
 							seeDevice("btnSD" + last2_1 + last1);
 							assignConnnect("dropdownSD" + last2_1 + last1);
@@ -931,57 +964,96 @@ var ViewHome = {
 
 		
 		//function to manage ports' availability
-		var portsAvailable = function(id){
+		var portsAvailable = function(id, device){
 			$("."+id).click(function(){
 
 				var length = getPartLength(id);
 				var last2_1 = getSwitchPart(length,id);
+				switch (device) {
+					case 's' :
+						//get the available ports given the id of the switch
+						var arrayPorts = Octopus.getSwitchPorts(last2_1);
 
-				//get the available ports given the id of the switch
-				var arrayPorts = Octopus.getSwitchPorts(last2_1);
+						//clean previous port (View)
+						$("." + id).parent().find("ul").empty();
 
-				//clean previous port (View)
-				$("."+id).parent().find("ul").empty();
+						//append the available port
+						for (var i = 0; i < arrayPorts.length; i++) {
+							var hostHtml = "<li>" +
+								"<a href='javascript:return false;' data-value='" + arrayPorts[i] + "' >" + arrayPorts[i] +
+								"</a>" +
+								"</li>";
+							$("." + id).parent().find("ul").append(hostHtml);
 
-				//append the available port
-				for (var i=0;i < arrayPorts.length; i++){
-						var hostHtml = "<li>"+
-											"<a href='javascript:return false;' data-value='"+arrayPorts[i]+"' >"+arrayPorts[i]+
-											"</a>"+
-										"</li>";
-						$("."+id).parent().find("ul").append(hostHtml);	
+						}
+						var hostHtml = "<li>" +
+							"<a href='javascript:return false;' data-value='Port number' >" + "Port number" +
+							"</a>" +
+							"</li>";
+						$("." + id).parent().find("ul").append(hostHtml);
+						break;
+					case 'u' :
+						//get the available ports given the id of the hub
+						var hubPorts = Octopus.getHubPorts(last2_1);
 
+						//clean previous port (View)
+						$("." + id).parent().find("ul").empty();
+
+						//append the available port
+						for (var i = 0; i < hubPorts.length; i++) {
+							var hostHtml = "<li>" +
+								"<a href='javascript:return false;' data-value='" + hubPorts[i] + "' >" + hubPorts[i] +
+								"</a>" +
+								"</li>";
+							$("." + id).parent().find("ul").append(hostHtml);
+
+						}
+						var hostHtml = "<li>" +
+							"<a href='javascript:return false;' data-value='Port number' >" + "Port number" +
+							"</a>" +
+							"</li>";
+						$("." + id).parent().find("ul").append(hostHtml);
+
+						break;
+					default : break;
 				}
-				var hostHtml = "<li>"+
-					"<a href='javascript:return false;' data-value='Port number' >"+"Port number"+
-					"</a>"+
-					"</li>";
-				$("."+id).parent().find("ul").append(hostHtml);
 
 			});
 		};
 
 		//function to set port from ports' list
-		var assignPort = function(id){
+		var assignPort = function(id, device){
 			$("#"+id).on("click","li a", function(){
-
-				var previousPort = $("#"+id).parent().find("button").text();
-
+				var previousPort = $("#" + id).parent().find("button").text();
 				var length = getPartLength(id);
-				var last2 = getSwitchPart(length,id);
+				var last2 = getSwitchPart(length, id);
 				var last1 = id.slice(-1);
-				var lastC = last2+""+last1;
+				var lastC = last2 + "" + last1;
+				var newPort;
+				switch (device) {
+					case 's':
+						//if it's a port (not default option)
+						if (!isNaN(previousPort)) {
+							Octopus.releaseSwitchPort(last2, previousPort);
+						}
 
-				//if it's a port (not default option)
-				if (!isNaN(previousPort)){
-					Octopus.releaseSwitchPort(last2,previousPort);
+						newPort = $(this).text();
+						Octopus.setSwitchPort(last2, newPort);
+
+						break;
+					case 'u':
+						//if it's a port (not default option)
+						if (!isNaN(previousPort)) {
+							Octopus.releaseHubPort(last2, previousPort);
+						}
+
+						console.log("CACCCCAAAA");
+						newPort = $(this).text();
+						Octopus.setHubPort(last2, newPort);
+						break;
 				}
-
-				var newPort = $(this).text();
-				Octopus.setSwitchPort(last2,newPort);
-
-				$("."+"btnSP"+lastC+":first-child").html(newPort+"<span class='caret'> </span>");
-				$("."+"btnSP"+lastC+":first-child").val(newPort);
+				$("." + "btnSP" + lastC + ":first-child").html(newPort + "<span class='caret'> </span>");
+				$("." + "btnSP" + lastC + ":first-child").val(newPort);
 			});
 		};
 

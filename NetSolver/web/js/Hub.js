@@ -7,7 +7,6 @@
 
 		//create and add one hub
 		createHub: function (id) {
-
 			//Hub object {id:number,list of ports}
 			var Hub = {
 				idS: id,
@@ -20,7 +19,6 @@
 				p7: 7,
 				p8: 8
 			};
-
 			arrayHub.push(Hub);
 
 		},
@@ -79,7 +77,7 @@
 		},
 
 		//set a specific port of a hub as not free anymore
-		SetHubPort : function(id,port){
+		setHubPort : function(id,port){
 			var found = false;
 			for (var i = 0; arrayHub.length && !found; i++){
 				if (arrayHub[i].idS == id){
