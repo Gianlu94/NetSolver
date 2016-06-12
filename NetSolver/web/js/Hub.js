@@ -23,8 +23,16 @@
 
 		},
 
+		//get switch's id from index
+		getHubId : function (index){
+			if (index < arraySwitch.length){
+				return arraySwitch[index].idS;
+			}
+		},
+
 		//get hub object from its id
 		getHub : function (id){
+			console.log("Getting hub "+id);
 			for (var i = 0; i<arrayHub.length;i++){
 				var Hub = arrayHub[i];
 				if (Hub.idS == id)
@@ -116,6 +124,7 @@
 		releaseHubPort : function (id,port){
 			var found = false;
 			for (var i = 0; arrayHub.length && !found; i++){
+				console.log("Release HUb port id = "+id + " ids = "+arrayHub[i].idS);
 				if (arrayHub[i].idS == id){
 					found = true;
 					if (port == 1){
@@ -146,6 +155,11 @@
 				}
 			}
 		},
+
+		//get the number of the current switches
+		getArrayHubLength : function(){
+			return arrayHub.length;
+		}
 
 	};
 
