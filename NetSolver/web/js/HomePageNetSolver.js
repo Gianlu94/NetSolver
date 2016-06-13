@@ -873,7 +873,7 @@ var ViewHome = {
 
 				$("."+id).parent().find("ul").empty();
 
-				
+				console.log("VALUE************"+ $("."+id).parent().find("ul") );
 				//HostPart : create menù with available hosts
 				var devicesHtml ="<li class='dropdown-submenu'><a tabindex='-1' href='javascript:return false;'>Hosts</a>"+
 						"<ul class='dropdown-menu scrollable-menu'>";
@@ -894,7 +894,7 @@ var ViewHome = {
 				href='javascript:return false;'>Switches</a><ul class='dropdown-menu scrollable-menu'>";
 				for (var i = 0; i < Octopus.getNumberOfSwitch(); i++ ){
 					var idSwitch = Octopus.getSwitchId(i);
-
+					//console.log("************** NUMEBERSWITCH"+ Octopus.getNumberOfSwitch());
 					//getting the available ports of a different switch
 					if (device.indexOf('s') > -1) {
 						if (idSwitch != last2_1) {
@@ -924,14 +924,15 @@ var ViewHome = {
 				href='javascript:return false;'>Hub</a><ul class='dropdown-menu scrollable-menu'>";
 				for (var i = 0; i < Octopus.getNumberOfHub(); i++ ){
 					var idHub = Octopus.getHubId(i);
-					console.log("ID HUb "+idHub + "Position "+i);
 					if (device.indexOf('u') > -1) {
+						console.log("I'M IN HUB");
 						//getting the available ports of a different hub
 						if (idHub != last2_1) {
-
-							var ports = Octopus.getHubPorts(idSwitch);
+							console.log("YES WE CAN");
+							var ports = Octopus.getHubPorts(idHub);
+							console.log("PORTS LENGTH "+ports.length);
 							for (var j = 0; j < ports.length; j++) {
-
+								console.log("HUB "+idHub +" PORT "+ports[j]);
 								devicesHtml = devicesHtml + "<li><a tabindex='-1' href='javascript:return false;' data-value='" +
 									idHub + "" + ports[j] + "'>Hub_" + idHub + " : Port_" + ports[j] + "</a></li>";
 							}
@@ -986,10 +987,10 @@ var ViewHome = {
 
 				if (previouSelected.indexOf("Switch") > -1) isSwitchPrevious = true;
 				if (currentSelected.indexOf("Switch") > -1) isSwitchCurrent = true;
-				console.log("ISSWTICH "+ isSwitchPrevious);
+				/*console.log("ISSWTICH "+ isSwitchPrevious);
 				console.log("ISSWTICH "+ isSwitchCurrent);
 				console.log("ISINTAbWSWTICH "+ isInTabSwitch);
-				console.log("PREVIOUSSELETCED"+ previouSelected);
+				console.log("PREVIOUSSELETCED"+ previouSelected);*/
 
 
 
@@ -1007,6 +1008,7 @@ var ViewHome = {
 							Octopus.releaseSwitchPort(last2S, portN);
 						}
 						else{
+							console.log("rwelease HUB PORT lasts2s "+last2S+" portN "+portN);
 							Octopus.releaseHubPort(last2S,portN);
 						}
 
@@ -1032,6 +1034,7 @@ var ViewHome = {
 						Octopus.setSwitchPort(last2S, portN);
 					}
 					else {
+						console.log("SET HUB PORT lasts2s "+last2S+" portN "+portN);
 						Octopus.setHubPort(last2S, portN);
 					}
 
