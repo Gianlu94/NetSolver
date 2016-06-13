@@ -510,6 +510,7 @@ var ViewHome = {
 							"btnHC": "btnHC"+row+rowSupport,
 							"dropdownHT": "dropdownHT"+row+rowSupport,
 							"dropdownHC": "dropdownHC"+row+rowSupport,
+							"dropdownHI": "dropdownHI"+row+rowSupport,
 							"add_srow_hub": "add_srow_hub"+row+rowSupport
 
 						};
@@ -680,6 +681,7 @@ var ViewHome = {
 								"btnHC": "btnHC"+last2_1+last1,
 								"dropdownHT": "dropdownHT"+last2_1+last1,
 								"dropdownHC": "dropdownHC"+last2_1+last1,
+								"dropdownHI": "dropdownHI"+last2_1+last1,
 								"add_srow_hub": "add_srow_hub"+last2_1+last1,
 								"delete_srow_hub": "delete_srow_hub"+last2_1+last1
 
@@ -1131,6 +1133,7 @@ var ViewHome = {
 		//function to set port from ports' list
 		var assignPort = function(id, device){
 			$("#"+id).on("click","li a", function(){
+				console.log("QUIIIIIIIIIIII");
 				var previousPort = $("#" + id).parent().find("button").text();
 				var length = getPartLength(id);
 				var last2 = getSwitchPart(length, id);
@@ -1156,9 +1159,11 @@ var ViewHome = {
 						if (!isNaN(previousPort)) {
 							Octopus.releaseHubPort(last2, previousPort);
 						}
+						console.log("***********PREVIOUSPORT "+previousPort);
 
 						newPort = $(this).text();
 						Octopus.setHubPort(last2, newPort);
+						console.log("***********last2 "+last2 + " NEWPORT "+newPort);
 						$("." + "btnHI" + lastC + ":first-child").html(newPort + "<span class='caret'> </span>");
 						$("." + "btnHI" + lastC + ":first-child").val(newPort);
 
