@@ -739,8 +739,12 @@ var ViewHome = {
 					var port = switchPort[1];
 
 					var portN = port.charAt(port.indexOf('_')+1);
-
-					Octopus.releaseSwitchPort(last2S,portN);
+					if (device.indexOf("Switch") > -1) {
+						Octopus.releaseSwitchPort(last2S, portN);
+					}
+					else{
+						Octopus.releaseHubPort(last2S, portN);
+					}
 				}
 				else{
 					var hostPart=getHostPart(device);
@@ -752,21 +756,38 @@ var ViewHome = {
 		};
 
 		//function to delete the subrows of a switch (from its id)
-		var deleteFollowingChildren = function(row){
+		var deleteFollowingChildren = function(row,device){
 
 			last1=1;
 			lastC = row +""+ last1;
 
 			//until exists a subrow
-			while ($("#srow"+lastC).length){
+			switch (device){
+				case 's' :
+					while ($("#srow"+lastC).length){
 
-				releaseHS($(".btnSD"+lastC).text());
+						releaseHS($(".btnSD"+lastC).text());
 
-				$("#srow"+lastC).remove();
-				last1++;
-				lastC = row + "" +last1;
+						$("#srow"+lastC).remove();
+						last1++;
+						lastC = row + "" +last1;
+					}
+					break;
+				case 'u':
+					while ($("#huId"+lastC).length){
+
+						releaseHS($(".btnHC"+lastC).text());
+
+						$("#huId"+lastC).remove();
+						last1++;
+						lastC = row + "" +last1;
+					}
+					break;
+				default : break;
 			}
-			
+
+
+
 		};
 		
 		
@@ -794,9 +815,12 @@ var ViewHome = {
 						var switchN = $("#sname"+row).val();
 						var rowSupport = row-row;
 
-						//delete all subrows connect to a switch
-						deleteFollowingChildren(row);
+						console.log("SWITCH NAME "+switchN);
 
+						//delete all subrows connect to a switch
+						deleteFollowingChildren(row, 's');
+
+						releaseHS($(".btnSD"+row+rowSupport).text());
 						$("#srow"+row+rowSupport).remove();
 						$("button:contains("+switchN+")").html("Host/Devices"+
 						"<span class='caret'> </span>");
@@ -809,10 +833,20 @@ var ViewHome = {
 						var row = Octopus.getRow('v');
 						$("#vlrow"+row).remove();
 						Octopus.deleteVlan(row);
-						Octopus.decrement('v')
+						Octopus.decrement('v');
 					case "delete_rowHu" :
 						var row = Octopus.getRow('u');
+						var rowSupport = row-row;
+						var hubN = $("#hName"+row+rowSupport).val();
+
+						console.log("HUB NAME "+hubN);
+
+
+						deleteFollowingChildren(row, 'u');
+						releaseHS($(".btnHC"+row+rowSupport).text());
 						$("#huId"+row+"0").remove();
+						$("button:contains("+hubN+")").html("Host/Devices"+
+							"<span class='caret'> </span>");
 
 						Octopus.deleteHub(row);
 						Octopus.decrement('u');
@@ -836,6 +870,7 @@ var ViewHome = {
 						releaseHS($(".btnSD" + last2_1 + "" + last1).text());
 
 						var PortToEliminate = $(".btnSP" + last2_1 + "" + last1).text();
+						console.log("PORTTO ELIMINATE "+PortToEliminate);
 						if (!isNaN(PortToEliminate)) {
 							Octopus.releaseSwitchPort(last2_1, PortToEliminate);
 						}
@@ -849,8 +884,15 @@ var ViewHome = {
 					case 'u':
 						console.log("HERE  ");
 						//var PortToEliminate = $(".btnSP" + last2_1 + "" + last1).text();
+						releaseHS($(".btnHC" + last2_1 + "" + last1).text());
 
+						var PortToEliminate = $(".btnHI" + last2_1 + "" + last1).text();
 						$("#huId" + last2_1 + last1).remove();
+
+						if (!isNaN(PortToEliminate)) {
+							Octopus.releaseHubPort(last2_1, PortToEliminate);
+						}
+						$("#huIdrow" + last2_1 + last1).remove();
 
 						//show the add and delete button of the previous row
 						last1--;
