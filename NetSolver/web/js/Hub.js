@@ -25,8 +25,8 @@
 
 		//get switch's id from index
 		getHubId : function (index){
-			if (index < arraySwitch.length){
-				return arraySwitch[index].idS;
+			if (index < arrayHub.length){
+				return arrayHub[index].idS;
 			}
 		},
 
