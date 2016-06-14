@@ -1342,12 +1342,30 @@ var ViewHome = {
 
 		};
 
+		//reset all hubs
+		var resetHub = function (){
+			for (var i = Octopus.getRow('u'); i > 0; i--){
+				$("#delete_rowHu").trigger("click");
+			}
+			deleteFollowingChildren("0");
+			$("#add_srow_hub00").show();
+			$("#hName00").text("Switch_0");
+			$("#hName00").html("Switch_0 <span class="+"caret"+"></span>");
+			$(".btnHI00").text("Interface");
+			$(".btnHI00").html("Interface <span class="+"caret"+"></span>");
+			$(".btnHT00").text("Type");
+			$(".btnHT00").html("Type <span class="+"caret"+"></span>");
+			$(".btnHC00").text("Hosts/Devices");
+			$(".btnHC00").html("Hosts/Devices <span class="+"caret"+"></span>");
+		}
+
 		//delete solution
 		$("#delete_all").click(function(e){
 			e.preventDefault();
 			resetHost()
 			resetSwitch();
 			resetVlan();
+			resetHub();
 			console.log("Switch Number "+Octopus.getRow('s'));
 		});
 
