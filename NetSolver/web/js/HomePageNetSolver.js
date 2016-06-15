@@ -1468,7 +1468,7 @@ var ViewHome = {
 
 			//HUB PART
 			var numberOfHub = Octopus.getNumberOfHub();
-			ConfigurationXml = ConfigurationXml + "<Hubs>\n\t"+XmlViewCreator.element("Number",numberOfSwitch);
+			ConfigurationXml = ConfigurationXml + "<Hubs>\n\t"+XmlViewCreator.element("Number",numberOfHub);
 			for (var i = 0; i < numberOfHub; i++){
 
 				ConfigurationXml = ConfigurationXml + "\n\t<Hub>\n";
