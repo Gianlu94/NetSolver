@@ -459,10 +459,11 @@ function typeLink(doc){
 	*/
 	var nSwitch = networkProblem.getNumberCommonSwitches(doc);
 	var numberHost = networkProblem.getTotalNumberHost();
+	var numberHub = networkProblem.getNumberHub();
 	console.log("TypeLink "+ nSwitch + " nHISTS "+numberHost);
 	var Hlink = numberHost;
-	var Slink;
-	var Nlink = 0;
+	var Slink = 0;
+	var Ulink = 0;
 
 	if (nSwitch ==1){
 		Slink = 0;
@@ -475,8 +476,18 @@ function typeLink(doc){
 		Slink = 2;
 		Nlink = 1;
 	}
+	//duplicate (see details)
+	if (numberHub == 1){
+		Ulink = 0;
+	}
+	else if (numberHub == 2){
+		Ulink = 1;
+	}
+	else if (numberHub == 3){
+		Ulink = 2;
+	}
 
-	var Tlink = {Hl: numberHost, Sl : Slink, Nl : Nlink};
+	var Tlink = {Hl: numberHost, Sl : Slink, Ul : Ulink};
 
 	return Tlink;
 }
@@ -520,12 +531,23 @@ function checkLogicConnection (htmlResposeSupport,devicesConnected,TypeLink){
 	for (var i = 0; i < devicesConnected.length;i++){
 		console.log("DevicesConnetecd "+i+ " : " +devicesConnected[i] );
 		if(devicesConnected[i].indexOf("Port")>-1){
-			if (TypeLink.Sl == 0){
-				htmlResposeSupport = htmlResposeSupport + "<li>WARNING : Redudant or unneccesary connection found</li>"
+			if(devicesConnected[i].indexOf("Hub") > -1){
+				if (TypeLink.Ul == 0){
+					htmlResposeSupport = htmlResposeSupport + "<li>WARNING : Redudant or unneccesary connection found</li>"
+				}
+				else {
+					TypeLink.Ul--;
+					console.log("Typelink "+TypeLink.Ul);
+				}
 			}
-			else {
-				TypeLink.Sl--;
-				console.log("Typelink "+TypeLink.Sl);
+			else{
+				if (TypeLink.Sl == 0){
+					htmlResposeSupport = htmlResposeSupport + "<li>WARNING : Redudant or unneccesary connection found</li>"
+				}
+				else {
+					TypeLink.Sl--;
+					console.log("Typelink "+TypeLink.Sl);
+				}
 			}
 		}
 		else{
@@ -538,6 +560,9 @@ function checkLogicConnection (htmlResposeSupport,devicesConnected,TypeLink){
 	}
 	if(TypeLink.Sl > 0){
 		htmlResposeSupport = htmlResposeSupport + "<li>ERROR : Switch/es not connected yet</li>";
+	}
+	if(TypeLink.Ul > 0){
+		htmlResposeSupport = htmlResposeSupport + "<li>ERROR : Hub/s not connected yet</li>";
 	}
 	//console.log("-----2   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
 
@@ -789,6 +814,8 @@ function checkHub (doc, userSFile, htmlResponse, res){
 	var portsL = 0;
 	var portC = 0;
 
+	var devicesConnected=[];
+
 	if (hubP != hubU){
 		htmlResponse = htmlResponse + "<ul><li>Number of hub is not equal</li></ul>";
 		res.send(htmlResponse);
@@ -821,6 +848,7 @@ function checkHub (doc, userSFile, htmlResponse, res){
 					var portType = (xpath.select("/UserSolution/Hubs/Hub/Interfaces/Interface/TypeConnection", userSFile));
 					var portConnectTo = (xpath.select("/UserSolution/Hubs/Hub/Interfaces/Interface/ConnectTo", userSFile));
 					console.log("PORTSN " + portsN + "PORTTYPE "+portType+ "PORTCONNECTTO "+portConnectTo);
+					devicesConnected.push(portConnectTo[j].firstChild.data);
 					htmlResponseSupport=CheckIfSwitchIsSetted(portsN[j].firstChild.data,portType[j].firstChild.data,portConnectTo[j].firstChild.data,htmlResponseSupport);
 				}
 				if (htmlResponseSupport.indexOf("ERROR")>-1){
@@ -838,8 +866,8 @@ function checkHub (doc, userSFile, htmlResponse, res){
 			res.send(htmlResponse);
 		}
 		else {
-			/*var TypeLink = typeLink(doc);
-			console.log("-----1   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
+			var TypeLink = typeLink(doc);
+			console.log("-----1   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Ulink "+TypeLink.Ul);
 			htmlResponseSupport = checkLogicConnection(htmlResponseSupport, devicesConnected, TypeLink);
 			if (htmlResponseSupport.indexOf("ERROR") > -1) {
 
@@ -848,10 +876,10 @@ function checkHub (doc, userSFile, htmlResponse, res){
 
 			}
 			else {
-			*/
-				htmlResponse = htmlResponse + htmlResponseSupport + "</ul>";
-				res.send(htmlResponse);
-			//}
+
+				/*htmlResponse = htmlResponse + htmlResponseSupport + "</ul>";
+				res.send(htmlResponse);*/
+			}
 		}
 
 	}
