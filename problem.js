@@ -195,5 +195,11 @@ module.exports = {
 	getNumberVlan : function (){
 		var numberVlan = (xpath.select("/Problem/Vlan/text()",docProblem)).toString();
 		return numberVlan;
+	},
+
+	//HUB PART :
+	getNumberHub : function(){
+		var numberHub = (xpath.select("/Problem/Hub/text()",docProblem)).toString();
+		return numberHub;
 	}
 }

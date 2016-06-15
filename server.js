@@ -99,7 +99,7 @@ function createXmlProblem(arrayXml,difficultyP){
 				break;
 			case "-hubs" :
 				xw.startElement('Hub');
-				
+
 				xw.text(arrayXml[i+1]);
 
 				xw.endElement();
@@ -335,7 +335,7 @@ function createObjectProblem (doc){
 
 //This is the function from which the check starts
 function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,exitForced,executeSwitchCheck,
-						executeVlanCheck){
+						executeVlanCheck, executeHubCheck){
 	var passed = false;
 	console.log("Problem oks");
 	fs.readFile(path.join(__dirname+difficultyProblemFile), function(err, file) {
@@ -408,8 +408,12 @@ function checkProcedure(parser,userSFile,difficultyProblemFile,htmlResponse,res,
 					res.send(htmlResponse);
 				}
 				else if (executeSwitchCheck) {
-					checkSwitches(doc,userSFile,htmlResponse,res,executeVlanCheck);
+					checkSwitches(doc,userSFile,htmlResponse,res,executeVlanCheck, executeHubCheck);
 				}
+				else if (executeHubCheck){
+					checkHub(doc,userSFile,htmlResponse,res);
+				}
+
 
 
 			}
@@ -543,7 +547,7 @@ function checkLogicConnection (htmlResposeSupport,devicesConnected,TypeLink){
 /*This is the function (2nd check) called afer checkProcedure.
   It perfoms switch's checks
  */
-function checkSwitches(doc,userSFile,htmlResponse,res,checkVlan){
+function checkSwitches(doc,userSFile,htmlResponse,res,checkVlan, executeCheckHub){
 
 
 			var switchP = networkProblem.getNumberCommonSwitches(doc);
@@ -622,8 +626,11 @@ function checkSwitches(doc,userSFile,htmlResponse,res,checkVlan){
 
 					}
 					else if (checkVlan){
-
+						//Insert Chek on Hub
 						checkVlans(doc, userSFile, htmlResponse, res, devicesConnected, arrayVlanConnected);
+					}
+					else if (executeCheckHub){
+						checkHub(doc,userSFile,htmlResponse,res);
 					}
 					else {
 						htmlResponse = htmlResponse + htmlResponseSupport + "</ul>";
@@ -769,6 +776,29 @@ function checkVlans(doc, userSFile, htmlResponse, res, devicesConnected, arrayVl
 
 }
 
+/*
+	*This function startc checks on hub
+ */
+
+function checkHub (doc, userSFile, htmlResponse, res){
+	var htmlResponseSupport = "";
+
+	var hubP = networkProblem.getNumberHub();
+	var hubU = (xpath.select("//Hubs/Number/text()", userSFile)).toString();
+
+	console.log("hubP "+hubP+ "hubU "+hubU);
+	if (hubP != hubU){
+		htmlResponse = htmlResponse + "<ul><li>Number of hub is not equal</li></ul>";
+		console.log("ERRORE");
+		res.send(htmlResponse);
+	}else{
+		htmlResponse = htmlResponse + "<h5>No errors occured</h5>";
+		console.log("ok");
+		//res.send(htmlResponse);
+	}
+
+}
+
 function checkUserSolution (req,res){
 	var htmlResponse ="<h3>List of errors </h3>";
 	var parser = new DOMParser();
@@ -776,13 +806,16 @@ function checkUserSolution (req,res){
 	console.log("DifficultyP " + difficultyP);
 	switch (difficultyP) {
 		case "/Traces/Trace1/trac1.xml":
-			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,true,false,false);
+			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,true,false,false,false);
 			break;
 		case "/Traces/Trace1/trac2.xml":
-			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true,false);
+			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true,false,false);
+			break;
+		case "/Traces/Trace1/trac3.xml":
+			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,false,false,true);
 			break;
 		case "/Traces/Trace2/trac1.xml":
-			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true,true);
+			checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true,true,false);
 			break;
 		default : 
 			break;
