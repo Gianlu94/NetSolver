@@ -97,6 +97,13 @@ function createXmlProblem(arrayXml,difficultyP){
 				//xw.text(numberHosts);
 				xw.endElement();
 				break;
+			case "-hubs" :
+				xw.startElement('Hub');
+				
+				xw.text(arrayXml[i+1]);
+
+				xw.endElement();
+				break;
    		    default : break;
    		}    	
     }
@@ -122,7 +129,7 @@ function DifficultyFile (difficulty,req,res) {
 	var randomFileToSend;
 	switch (difficulty){
 		case '1' :
-			randomFileToSend = parseInt(((Math.random() * 2) + 1));
+			randomFileToSend = parseInt(((Math.random() * 3) + 1));
 			console.log("RandomFileTo send" + randomFileToSend);
 			break;
 		case '2' :
@@ -167,13 +174,19 @@ function DifficultyFile (difficulty,req,res) {
 								break;
 							case "-switch-" :
 								var numberSwitch = Math.floor((Math.random() * 3) + 1);
-								array[i] = numberSwitch + " switches";
+								array[i] = numberSwitch + " switch";
 								arrayXml = arrayXml + " -switch " + array[i];
 								break;
 							case "-vlans-" :
 								var numberVlan = Math.floor((Math.random() * 3) + 1);
 								array[i] = numberVlan + " vlan";
 								arrayXml = arrayXml + " -vlans " + array[i];
+								break;
+							case "-hub-" :
+								//to demostrate work
+								var numberHub = 1
+								array[i] = numberHub + " hub";
+								arrayXml = arrayXml + " -hubs " + array[i];
 								break;
 							case "-networkProblems-" :
 								array[i] = "";
