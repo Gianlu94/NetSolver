@@ -1463,9 +1463,53 @@ var ViewHome = {
 				}
 				ConfigurationXml = ConfigurationXml + "\n\t</Vlan>";
 			}
+			ConfigurationXml = ConfigurationXml + "\n</Vlans>\n";
 
 
-			ConfigurationXml = ConfigurationXml+"\n</Vlans>\n</UserSolution>";
+			//HUB PART
+			var numberOfHub = Octopus.getNumberOfHub();
+			ConfigurationXml = ConfigurationXml + "<Hubs>\n\t"+XmlViewCreator.element("Number",numberOfSwitch);
+			for (var i = 0; i < numberOfHub; i++){
+
+				ConfigurationXml = ConfigurationXml + "\n\t<Hub>\n";
+				var hubIdP = Octopus.getHubId(i);
+
+
+				var hName = $("#hName"+hubIdP+"0").val();
+
+
+				ConfigurationXml = ConfigurationXml+"\t\t"+ XmlViewCreator.element("Name",hName)+"\n\t\t<Interfaces>\n";
+				var portNumber = 0;
+				var exit = false;
+
+				for (var j = 0; j < 8 && !exit; j++){
+					var hubInterface = hubIdP+""+j;
+
+					//if row exists
+					if ($("#huId"+hubInterface).length) {
+						var hPort = $(".btnHI"+hubInterface).text();
+
+						var selectedConnection = $("#dropdownHT" + hubInterface).parent().find("button").text();
+						var connectTo = $("#dropdownHC" + hubInterface).parent().find("button").text();
+
+
+						ConfigurationXml = ConfigurationXml + "\t\t\t<Interface>\n\t\t\t\t" + XmlViewCreator.element("Number", hPort.trim()) +
+							"\n\t\t\t\t" + XmlViewCreator.element("TypeConnection", selectedConnection.trim()) +
+							"\n\t\t\t\t" + XmlViewCreator.element("ConnectTo", connectTo) +
+							"\n\t\t\t</Interface>\n";
+						portNumber++;
+					}
+					else{
+						exit=true;
+					}
+				}
+				ConfigurationXml = ConfigurationXml + "\t\t\t<InterfacesLength>"+portNumber+"</InterfacesLength>"+"\n\t\t</Interfaces>\n\t</Hub>";
+
+			}
+			ConfigurationXml = ConfigurationXml+"\n</Hubs>\n</UserSolution>";
+
+
+
 			//hostConfigurationXml = hostConfigurationXml+"</Hosts>";
 			console.log(ConfigurationXml);
 			return ConfigurationXml;
@@ -1511,6 +1555,8 @@ var ViewHome = {
 					$("#switchDe").removeClass("active");
 					$("#vlanH").removeClass("active");
 					$("#vlanDe").removeClass("active");
+					$("#hubH").removeClass("active");
+					$("#hubDe").removeClass("active");
 
 					//give focus to report section
 					$("#reportH").addClass("active");
