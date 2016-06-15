@@ -492,7 +492,7 @@ function CheckIfSwitchIsSetted (port,typeConnection,connectTo,htmlResponse){
 	if ((typeConnection != "straight")&&(typeConnection != "cross")){
 		htmlResponse = htmlResponse + "<li>- ERROR : Type Connnection not defined</li>";
 	}
-	if ((connectTo=="Hosts/Devices")||(connectTo=="Hosts")||(connectTo=="Switches")){
+	if ((connectTo=="Hosts/Devices")||(connectTo=="Hosts")||(connectTo=="Switches")||(connectTo == "Hub")){
 		htmlResponse = htmlResponse + "<li>- ERROR : Not connect to defined</li>";
 	}
 	else {
@@ -786,15 +786,74 @@ function checkHub (doc, userSFile, htmlResponse, res){
 	var hubP = networkProblem.getNumberHub();
 	var hubU = (xpath.select("//Hubs/Number/text()", userSFile)).toString();
 
-	console.log("hubP "+hubP+ "hubU "+hubU);
+	var portsL = 0;
+	var portC = 0;
+
 	if (hubP != hubU){
 		htmlResponse = htmlResponse + "<ul><li>Number of hub is not equal</li></ul>";
-		console.log("ERRORE");
 		res.send(htmlResponse);
 	}else{
-		htmlResponse = htmlResponse + "<h5>No errors occured</h5>";
-		console.log("ok");
-		//res.send(htmlResponse);
+		htmlResponseSupport = htmlResponseSupport + "<ul>";
+		var errorFound = false;
+		//extract hub data from xml
+		var listHub = (xpath.select("/UserSolution/Hubs/Hub", userSFile));
+
+		for (var i=0; i<hubP && !errorFound; i++){
+
+			var name = (xpath.select("/UserSolution/Hubs/Hub/Name", userSFile));
+
+			if (name[i].firstChild==null){
+				htmlResponseSupport = htmlResponseSupport+"<li>Error Hub name line "+i+": Null field found </li>";
+
+			}
+			else{
+				console.log("*****NAME HUB "+name[i].firstChild.data);
+				var nameS= name[i].firstChild.data;
+				console.log("NAME "+nameS);
+				htmlResponseSupport = htmlResponseSupport+"<h4>    "+nameS+"</h4><ul>";
+				//getting the ports of switch i
+				var tempL = (xpath.select("/UserSolution/Hubs/Hub/Interfaces/InterfacesLength", userSFile));
+				portsL = portsL +parseInt(tempL[i].firstChild.data);
+				console.log("PORT L BEFORE "+portsL);
+				for (var j = portC; j < portsL; j++){
+					console.log("STEP "+j);
+					var portsN =(xpath.select("/UserSolution/Hubs/Hub/Interfaces/Interface/Number", userSFile));
+					var portType = (xpath.select("/UserSolution/Hubs/Hub/Interfaces/Interface/TypeConnection", userSFile));
+					var portConnectTo = (xpath.select("/UserSolution/Hubs/Hub/Interfaces/Interface/ConnectTo", userSFile));
+					console.log("PORTSN " + portsN + "PORTTYPE "+portType+ "PORTCONNECTTO "+portConnectTo);
+					htmlResponseSupport=CheckIfSwitchIsSetted(portsN[j].firstChild.data,portType[j].firstChild.data,portConnectTo[j].firstChild.data,htmlResponseSupport);
+				}
+				if (htmlResponseSupport.indexOf("ERROR")>-1){
+					errorFound = true;
+				}
+				htmlResponseSupport = htmlResponseSupport+"</ul>";
+
+			}
+
+
+
+		}
+		if (errorFound){
+			htmlResponse = htmlResponse+htmlResponseSupport+"</ul>";
+			res.send(htmlResponse);
+		}
+		else {
+			/*var TypeLink = typeLink(doc);
+			console.log("-----1   HLink "+TypeLink.Hl+" SLink "+TypeLink.Sl+" Nlink "+TypeLink.Nl);
+			htmlResponseSupport = checkLogicConnection(htmlResponseSupport, devicesConnected, TypeLink);
+			if (htmlResponseSupport.indexOf("ERROR") > -1) {
+
+				htmlResponse = htmlResponse + htmlResponseSupport + "</ul>";
+				res.send(htmlResponse);
+
+			}
+			else {
+			*/
+				htmlResponse = htmlResponse + htmlResponseSupport + "</ul>";
+				res.send(htmlResponse);
+			//}
+		}
+
 	}
 
 }
