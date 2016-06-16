@@ -54,6 +54,14 @@ module.exports = {
         return ipA
     },
 
+	//normalize network Address
+	normalizeNetworkAddress : function (networkAddress){
+		var networkAddress_2 = networkAddress.split("/");
+		console.log("Network Address split "+networkAddress_2[0]);
+		return networkAddress_2;
+
+	},
+
 	//get network address from NetworkAddress.txt
 	getNetworkAddress : function(ipA){
 		var ipA2 = ipA.split(".");

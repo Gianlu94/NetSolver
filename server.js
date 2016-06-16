@@ -20,6 +20,7 @@ var networkProblem = require("./problem.js");
 
 var parser = new xml2js.Parser();
 var difficultyP="";
+var networkGiven = [];
 
 //var arrayObjectProblem = [];
 
@@ -117,11 +118,40 @@ function createXmlProblem(arrayXml,difficultyP){
 	//console.log(xw.toString());
 }
 
+//Support function used to give different networks
+function networkAlreadyGiven(network){
+	var trovato = false;
+
+	for (var i = 0; i < networkGiven.length && !trovato; i++){
+		var networkInArray = networkGiven[i];
+		if (network.toString().localeCompare(networkInArray) == 0){
+			trovato = true;
+		}
+	}
+	if (trovato){
+		return true;
+	}
+	else{
+		console.log("PUSHING NETWORK "+network);
+		networkGiven.push(network);
+		return false;
+	}
+}
+
 //get network address from NetworkAddress.txt
 function setNetworkAddress (arrayN){
-		 var randomNetworkToSend = parseInt(Math.random()*3);
-		console.log("*RANDOMNETWORKTOSEND "+randomNetworkToSend);
-		 return arrayN[randomNetworkToSend];
+	var foundNetwork = false;
+	var randomNetworkToSend;
+	while (!foundNetwork) {
+		var randomNetworkToSend = parseInt(Math.random() * 3);
+		console.log("I would like to send network in position " + randomNetworkToSend);
+		//networkProblem.normalizeNetworkAddress(arrayN[randomNetworkToSend]);
+		if (!networkAlreadyGiven(networkProblem.normalizeNetworkAddress(arrayN[randomNetworkToSend]))){
+			foundNetwork = true;
+		}
+		//console.log("*RANDOMNETWORKTOSEND " + randomNetworkToSend);
+	}
+	return arrayN[randomNetworkToSend];
 }
 
 function DifficultyFile (difficulty,req,res) {
@@ -916,6 +946,7 @@ app.get("/Tracer", function(req,res){
 	var queryObj = querystring.parse(url2.query);
 	var obj = JSON.parse(queryObj.data);
 	var difficulty = obj.difficulty;
+	networkGiven.length = 0;
 	//console.log("REQUEST RECEIVED difficulty "+difficulty);
 	DifficultyFile(difficulty,req,res);
 });
