@@ -1313,7 +1313,7 @@ var ViewHome = {
 			for (var i = Octopus.getRow('s'); i > 0; i--){
 				$("#delete_rowS").trigger("click");
 			}
-			deleteFollowingChildren("0");
+			deleteFollowingChildren("0",'s');
 			$("#add_row_connection00").show();
 			$("#sname0").text("Switch_0");
 			$("#sname0").html("Switch_0 <span class="+"caret"+"></span>");
@@ -1347,7 +1347,7 @@ var ViewHome = {
 			for (var i = Octopus.getRow('u'); i > 0; i--){
 				$("#delete_rowHu").trigger("click");
 			}
-			deleteFollowingChildren("0");
+			deleteFollowingChildren("0",'u');
 			$("#add_srow_hub00").show();
 			$("#hName00").text("Switch_0");
 			$("#hName00").html("Switch_0 <span class="+"caret"+"></span>");
