@@ -34,12 +34,7 @@
         getVlanName : function(pos){
             return $("#vName"+pos).val();
         },
-
-        //get SwitchPort
-        getVlanSwitchPort : function (pos) {
-            return $(".btnVl"+pos).text();
-        },
-
+		
 		//check if the given vlan already exist
 		checkIfVlanAlreadyExist : function (pos) {
 			//console.log("VLAN "+VlanInterface.getVlanNumber(pos));
