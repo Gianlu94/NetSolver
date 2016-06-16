@@ -1238,14 +1238,12 @@ var ViewHome = {
 				//append the available vlan
 				for (var i=0;i < Octopus.getNumberVlan(); i++){
 					var vlanName = Octopus.getNameVlan(i);
-					var vlanSwitchPort = Octopus.getVlanSwitchPort(i);
 					var vlanIdentifier = Octopus.getVlanIdentifier(i);
 					var duplicate = Octopus.checkIfVlanAlreadyExist(i);
-					if ((vlanName!="")&&(vlanIdentifier!="")&&(vlanSwitchPort!="")&&
-						(vlanSwitchPort.indexOf("Type")==-1)&& !duplicate) {
+					if ((vlanName!="")&&(vlanIdentifier!="")&& (!duplicate)) {
 							var vlanHtml = "<li>" +
-								"<a href='javascript:return false;' data-value='" + vlanName + " : "+vlanSwitchPort+"' >" + vlanName + " : " +
-									vlanSwitchPort+
+								"<a href='javascript:return false;' data-value='" + vlanName + " : '"+"access"+"' >" + vlanName + " : " +
+									"access"+
 								"</a>" +
 								"</li>";
 							$("." + id).parent().find("ul").append(vlanHtml);
