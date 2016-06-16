@@ -7,6 +7,12 @@
 	//interface to deal with switches
 	var SwitchInterface = {
 
+		//reset array Switch
+		resetArraySwitch : function(){
+			arraySwitch.length = 0;
+			SwitchInterface.createSwitch("0");
+		},
+
 		//create and add one switch
 		createSwitch : function(id){
 			//Switch object {id:number,list of ports}

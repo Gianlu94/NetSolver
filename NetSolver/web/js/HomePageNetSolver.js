@@ -101,9 +101,13 @@ var Model = {
 				
 		}
 	},
-	
+
 	insertSwitch : function(id){
 		SwitchInterface.createSwitch(id);
+	},
+
+	resetArraySwitch : function(){
+		SwitchInterface.resetArraySwitch();
 	},
 	
 	getSwitchId : function (index){
@@ -172,6 +176,10 @@ var Model = {
 		HubInterface.deleteHub(id);
 	},
 
+	resetArrayHub : function(){
+		HubInterface.resetArrayHub();
+	},
+
 	getHubId : function (id){
 		return HubInterface.getHubId(id);
 	},
@@ -218,7 +226,11 @@ var Octopus = {
 	insertSwitch : function(id){
 		Model.insertSwitch(id);
 	},
-	
+
+	resetArraySwitch : function(){
+		Model.resetArraySwitch();
+	},
+
 	getSwitchId : function (index){
 		return Model.getSwitchId(index);
 	},
@@ -283,6 +295,10 @@ var Octopus = {
 
 	deleteHub : function (id){
 		Model.deleteHub(id);
+	},
+
+	resetArrayHub : function(){
+		Model.resetArrayHub();
 	},
 
 	getHubId : function (id){
@@ -1298,9 +1314,15 @@ var ViewHome = {
 
 		//reset all hosts in tab Host
 		var resetHost = function(){
+			var idFirst = $("#row0");
 			for (var i = Octopus.getRow('h'); i >= 0; i--){
 				$("#delete_rowH").trigger("click");
 			}
+			if ((idFirst).hasClass("SelectedH")){
+				idFirst.removeClass("SelectedH");
+				idFirst.addClass("notSelectedH");
+			}
+			idFirst.val("Host_0");
 			$("#name0").val("Host_0");
 			$("#ip0").val("");
 			$("#net0").val("");
@@ -1313,7 +1335,10 @@ var ViewHome = {
 			for (var i = Octopus.getRow('s'); i > 0; i--){
 				$("#delete_rowS").trigger("click");
 			}
+
 			deleteFollowingChildren("0",'s');
+			Octopus.resetArraySwitch();
+
 			$("#add_row_connection00").show();
 			$("#sname0").text("Switch_0");
 			$("#sname0").html("Switch_0 <span class="+"caret"+"></span>");
@@ -1347,7 +1372,10 @@ var ViewHome = {
 			for (var i = Octopus.getRow('u'); i > 0; i--){
 				$("#delete_rowHu").trigger("click");
 			}
+
 			deleteFollowingChildren("0",'u');
+			Octopus.resetArrayHub();
+
 			$("#add_srow_hub00").show();
 			$("#hName00").text("Switch_0");
 			$("#hName00").html("Switch_0 <span class="+"caret"+"></span>");

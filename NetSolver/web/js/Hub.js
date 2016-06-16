@@ -5,6 +5,14 @@
 
 	var HubInterface = {
 
+
+		//reset array Hub
+		resetArrayHub : function(){
+			arrayHub.length = 0;
+			HubInterface.createHub("0");
+		},
+
+
 		//create and add one hub
 		createHub: function (id) {
 			//Hub object {id:number,list of ports}
@@ -87,9 +95,11 @@
 		//set a specific port of a hub as not free anymore
 		setHubPort : function(id,port){
 			var found = false;
+			console.log("SET HUB PORT ID "+id+ " PORT "+port);
 			for (var i = 0; arrayHub.length && !found; i++){
 				if (arrayHub[i].idS == id){
 					found = true;
+					console.log("TRVOCATO");
 					if (port == 1){
 						arrayHub[i].p1 = 0;
 					}
@@ -124,7 +134,7 @@
 		releaseHubPort : function (id,port){
 			var found = false;
 			for (var i = 0; arrayHub.length && !found; i++){
-				console.log("Release HUb port id = "+id + " ids = "+arrayHub[i].idS);
+				//console.log("Release HUb port id = "+id + " ids = "+arrayHub[i].idS);
 				if (arrayHub[i].idS == id){
 					found = true;
 					if (port == 1){
