@@ -487,9 +487,6 @@ var ViewHome = {
 							"vlanId": "vlrow"+row,
 							"vNumber": "vNumber"+row,
 							"vName": "vName"+row,
-							"btnVl": "btnVl"+row,
-							"dropdownVl": "dropdownVl"+row
-
 						};
 
 						// Pass our data to the template
@@ -498,9 +495,6 @@ var ViewHome = {
 						//create and display the new vlan
 						Octopus.createVlan(row);
 						$("#"+appendTo).append(theCompiledHtml);
-
-						//set dropdown switchPort
-						assignValueByDropDown("dropdownVl"+row,"btnVl"+row);
 
 
 						break;
