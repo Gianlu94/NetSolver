@@ -1478,8 +1478,7 @@ var ViewHome = {
 					var modeVlan = Octopus.getVlanSwitchPort(i)
 					ConfigurationXml = ConfigurationXml +
 					"\n\t\t" + XmlViewCreator.element("Id", idVlan) +
-					"\n\t\t" + XmlViewCreator.element("Name", nameVlan) +
-						"\n\t\t" + XmlViewCreator.element("SwitchPort", modeVlan);
+					"\n\t\t" + XmlViewCreator.element("Name", nameVlan);
 				}
 				ConfigurationXml = ConfigurationXml + "\n\t</Vlan>";
 			}
