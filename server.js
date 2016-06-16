@@ -118,7 +118,7 @@ function createXmlProblem(arrayXml,difficultyP){
 	//console.log(xw.toString());
 }
 
-//Support function used to give different networks
+//support function used to give different networks
 function networkAlreadyGiven(network){
 	var trovato = false;
 
@@ -185,6 +185,9 @@ function DifficultyFile (difficulty,req,res) {
 					var arrayClient = "";
 					var arrayXml = "";
 					var array2 = file2.toString().split('\n');
+
+					var numberVlan;
+
 					for (var i = 0; i < array.length; i++) {
 						array[i] = array[i].trim();
 						switch (array[i]) {
@@ -195,6 +198,8 @@ function DifficultyFile (difficulty,req,res) {
 							case "-number-" :
 								array[i] = "";
 								arrayXml = arrayXml + " -number " + array[i + 1];
+								//First Simple Solution
+								numberVlan = array[i+1];
 								array[i + 1] = "";
 								break;
 							case "-hosts-" :
@@ -208,7 +213,6 @@ function DifficultyFile (difficulty,req,res) {
 								arrayXml = arrayXml + " -switch " + array[i];
 								break;
 							case "-vlans-" :
-								var numberVlan = Math.floor((Math.random() * 3) + 1);
 								array[i] = numberVlan + " vlan";
 								arrayXml = arrayXml + " -vlans " + array[i];
 								break;
