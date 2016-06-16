@@ -711,16 +711,13 @@ function checkSwitches(doc,userSFile,htmlResponse,res,checkVlan, executeCheckHub
 	This function check if vlan' s fields are null or not
  */
 
-function checkNullFieldsVlan (id, name, switchPort, i){
+function checkNullFieldsVlan (id, name, i){
 	var htmlResponseSupport = ""
-	if ((id == undefined) || (name == undefined) || (switchPort == undefined)){
+	if ((id == undefined) || (name == undefined)){
 		htmlResponseSupport = htmlResponseSupport+"<li>ERROR row " + i + " : null field/s or duplicate vlans found</li>";
 	}
-	else if ((id.firstChild == null) || (name.firstChild == null) || (switchPort.firstChild == null)){
+	else if ((id.firstChild == null) || (name.firstChild == null)){
 		htmlResponseSupport = htmlResponseSupport+"<li>ERROR row " + i + " : null field/s or duplicate vlans found</li>";
-	}
-	else if (switchPort.firstChild.data.indexOf("Type") > -1){
-		htmlResponseSupport = htmlResponseSupport+ "<li>ERROR row " + i + " : a not defined SwitchPort found</li>";
 	}
 
 	return htmlResponseSupport;
@@ -811,10 +808,8 @@ function checkVlans(doc, userSFile, htmlResponse, res, devicesConnected, arrayVl
 
 			var id = (xpath.select("/UserSolution/Vlans/Vlan/Id", userSFile));
 			var name = (xpath.select("/UserSolution/Vlans/Vlan/Name", userSFile));
-			var switchPort = (xpath.select("/UserSolution/Vlans/Vlan/SwitchPort", userSFile));
-			console.log("i ID "+id[i] + " name "+name[i]+" switchPort "+switchPort[i]);
-			htmlResponseSupport = htmlResponseSupport+checkNullFieldsVlan(id[i], name[i],
-					switchPort[i], i);
+			//console.log("i ID "+id[i] + " name "+name[i]+" switchPort "+switchPort[i]);
+			htmlResponseSupport = htmlResponseSupport+checkNullFieldsVlan(id[i], name[i], i);
 		}
 		if (htmlResponseSupport.indexOf("ERROR") > -1){
 			console.log("QUI 11");
