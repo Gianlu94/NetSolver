@@ -159,10 +159,6 @@ var Model = {
 		return VlanInterface.getVlanLength();
 	},
 
-	getVlanSwitchPort : function(pos){
-		return VlanInterface.getVlanSwitchPort(pos);
-	},
-
 	checkIfVlanAlreadyExist : function (pos){
 		return VlanInterface.checkIfVlanAlreadyExist(pos);
 	},
@@ -278,10 +274,6 @@ var Octopus = {
 
 	getNumberVlan : function(){
 		return Model.getNumberVlan();
-	},
-
-	getVlanSwitchPort : function(pos){
-		return Model.getVlanSwitchPort(pos);
 	},
 
 	checkIfVlanAlreadyExist : function (i) {
@@ -1475,7 +1467,6 @@ var ViewHome = {
 				if (!Octopus.checkIfVlanAlreadyExist(i)){
 					var idVlan = Octopus.getVlanIdentifier(i);
 					var nameVlan = Octopus.getNameVlan(i);
-					var modeVlan = Octopus.getVlanSwitchPort(i)
 					ConfigurationXml = ConfigurationXml +
 					"\n\t\t" + XmlViewCreator.element("Id", idVlan) +
 					"\n\t\t" + XmlViewCreator.element("Name", nameVlan);
