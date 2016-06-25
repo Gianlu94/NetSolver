@@ -1,6 +1,8 @@
 /*
     This file is used to deal with Object Problem created from the
-    XML description of the problem
+    XML description of the problem.
+    At the same time it contains some function used to extract or do
+    some checks on Problem's data.
  */
 var xpath = require("xpath");
 var Netmask = require('netmask').Netmask
@@ -18,23 +20,20 @@ module.exports = {
         arrayObjectProblem = [];
 		docProblem = doc;
         var numberNetworkProblem = (xpath.select("/Problem/Number/text()", doc)).toString();
-		console.log("NUmbero Problema "+numberNetworkProblem);
+
         for (var i = 0; i < numberNetworkProblem; i++){
             var networkProblems = (xpath.select("//NetworkProblem", doc));
             var networkX = (xpath.select("//" + networkProblems[i].localName + "/Network", doc));
             var hostX = (xpath.select("//" + networkProblems[i].localName + "/Hosts", doc));
 
-			//console.log("**********HOSTX "+hostX+ "Network "+networkX);
 			var hostV = hostX[i].firstChild.data;
 			var networkV = networkX[i].firstChild.data;
             var block = new Netmask(networkV);
-			//console.log("----block.base "+block.base+" ----val "+networkV);
+
             var objectProblem = {network : networkV, hostLimit : hostV, host : hostV, hostnetmask : block.mask,
 				broadcast : block.broadcast};
             arrayObjectProblem.push(objectProblem);
-            //console.log("**NETOWRK    "+network);
-            //console.log("**HOST    "+host);
-            //console.log("Number network problem "+networkProblem.createAndInsertObjectProblem(networkV, hostV,doc));
+
         }
     },
 	
@@ -43,7 +42,7 @@ module.exports = {
         var ipA2 = ipA.split(".");
         ipA="";
         for (var i = 0; i< ipA2.length; i++){
-            //console.log("IPA "+ i +" = "+parseInt(ipA2[i]));
+
             if (i == ipA2.length-1){
                 ipA = ipA + parseInt(ipA2[i]);
             }
@@ -57,7 +56,7 @@ module.exports = {
 	//normalize network Address
 	normalizeNetworkAddress : function (networkAddress){
 		var networkAddress_2 = networkAddress.split("/");
-		console.log("Network Address split "+networkAddress_2[0]);
+
 		return networkAddress_2;
 
 	},
@@ -67,7 +66,7 @@ module.exports = {
 		var ipA2 = ipA.split(".");
 		ipA="";
 		for (var i = 0; i< ipA2.length; i++){
-			//console.log("IPA "+ i +" = "+parseInt(ipA2[i]));
+
 			if (i == ipA2.length-1){
 				ipA = ipA + parseInt(ipA2[i]);
 			}
@@ -77,12 +76,12 @@ module.exports = {
 		}
 		return ipA
 	},
+
     //This function get the total number of hosts from the problem
     getTotalNumberHost : function(){
         var total = 0;
         for (var i = 0; i < arrayObjectProblem.length; i++){
-			//var Object = arrayObjectProblem[i].toString()
-			//console.log(util.inspect(arrayObjectProblem, false, null));
+
             total= parseInt(total)+parseInt(arrayObjectProblem[i].host);
         }
         return total;
@@ -92,14 +91,10 @@ module.exports = {
     belongNetwork : function(ip){
         for (var i = 0; i < arrayObjectProblem.length; i++){
             var objectProblem = arrayObjectProblem[i];
-           // console.log("EXTRAC NETWROK  "+ objectProblem.network);
-            var block = new Netmask(objectProblem.network);
-           // console.log("EXTRAC NETWROK2  "+ block.base);
-			//console.log("**IP "+ip +" block.contains : " +block.contains("192.168.100.001")+" block.base "+block.base);
+			var block = new Netmask(objectProblem.network);
+
             if (block.contains(ip)){
-               // console.log("HOST BEFORE" + arrayObjectProblem[i].host);
-                //arrayObjectProblem[i].host--;
-                //console.log("HOST AFTER" + arrayObjectProblem[i].host);
+
                 return true;
             }
         }
@@ -111,13 +106,13 @@ module.exports = {
     LimitExceed : function(ip){
         for (var i = 0; i < arrayObjectProblem.length; i++){
             var objectProblem = arrayObjectProblem[i];
-            // console.log("EXTRAC NETWROK  "+ objectProblem.network);
+
             var block = new Netmask(objectProblem.network);
-            // console.log("EXTRAC NETWROK2  "+ block.base);
+
             if ((block.contains(ip)) && (objectProblem.hostLimit > 0)){
-                // console.log("HOST BEFORE" + arrayObjectProblem[i].host);
+
                 arrayObjectProblem[i].hostLimit--;
-                //console.log("HOST AFTER" + arrayObjectProblem[i].host);
+
                 return false;
             }
         }
@@ -126,7 +121,7 @@ module.exports = {
 
     //check if the following ip is equal to the network address
     isNetworkAddress : function(ip){
-        //console.log("**IP "+ip);
+
         for (var i = 0; i < arrayObjectProblem.length; i++){
 			var objectProblem = arrayObjectProblem[i];
 			var block = new Netmask(objectProblem.network);
@@ -139,7 +134,7 @@ module.exports = {
 
 	//check if the following ip is equal to the netmask address
 	isNetmaskAddress : function(ip){
-		//console.log("**IP "+ip);
+
 		for (var i = 0; i < arrayObjectProblem.length; i++){
 			var objectProblem = arrayObjectProblem[i];
 			var block = new Netmask(objectProblem.network);
@@ -156,7 +151,7 @@ module.exports = {
 			var objectProblem = arrayObjectProblem[i];
 			var block = new Netmask(objectProblem.network);
 			if (block.contains(ip)){
-				//console.log("Netmask "+ netmask +" block.mask "+block.mask);
+
 				if (netmask == block.mask){
 					return true;
 				}
@@ -168,7 +163,7 @@ module.exports = {
 
 	//check if the following ip is equal to the broadcast address
 	isBroadcastAddress : function(ip){
-		//console.log("**IP "+ip);
+
 		for (var i = 0; i < arrayObjectProblem.length; i++){
 			var objectProblem = arrayObjectProblem[i];
 			var block = new Netmask(objectProblem.network);
@@ -179,7 +174,7 @@ module.exports = {
 		return false;
 	},
 
-    //get newtrok address of a specific host
+    //get newtork address of a specific host
     getNetworkAddress : function (ip){
         for (var i = 0; i < arrayObjectProblem.length; i++) {
             var objectProblem = arrayObjectProblem[i];
@@ -195,7 +190,7 @@ module.exports = {
 
 	getNumberCommonSwitches : function (doc){
 		var numberCommonSwitch = (xpath.select("/Problem/Switch/text()", doc)).toString();
-		//console.log("TOTAL SWiTCH "+numberCommonSwitch);
+
 		return numberCommonSwitch;
 	},
 
