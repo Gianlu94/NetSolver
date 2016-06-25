@@ -249,9 +249,8 @@ functionUse = {
 			else{
 				var objectTypeLink = networkProblem.typeLink(doc);
 	
-				htmlResponseSupport = networkProblem.checkLogicConnectionVlan(objectTypeLink,devicesConnected, arrayVlanConnected,
+				htmlResponseSupport = htmlResponseSupport+networkProblem.checkLogicConnectionVlan(objectTypeLink,devicesConnected, arrayVlanConnected,
 					res,doc);
-				console.log("***HTMMLMVLMOMOVIDOI"+ htmlResponseSupport);
 				if (htmlResponseSupport.indexOf("ERROR") > -1) {
 
 					//no ul
@@ -301,7 +300,7 @@ functionUse = {
 				var name = receivedSolution.getHubNames(userSFile);
 	
 				if (name[i].firstChild==null){
-					htmlResponseSupport = htmlResponseSupport+"<li>Error Hub name line "+i+": Null field found </li>";
+					htmlResponseSupport = htmlResponseSupport+"<li>ERROR Hub name line "+i+": Null field found </li>";
 	
 				}
 				else{

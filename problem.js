@@ -358,7 +358,7 @@ module.exports = {
 			var nameVlan = arrayVlanConnected[i];
 
 			if (nameVlan.indexOf("Vlan") > -1){
-				htmlResponseSupport = htmlResponseSupport + "<li> A not defined vlan found</li>";
+				htmlResponseSupport = htmlResponseSupport + "<li> ERROR : A not defined vlan found</li>";
 				return htmlResponseSupport;
 			}
 			else if (devicesConnected[i].indexOf("Port") > -1){
