@@ -7,7 +7,10 @@ var path = require("path");
 var url = require("url");
 var fs = require("fs");
 var XmlWriter = require('xml-writer');
+
+//My modules
 var networkProblem = require("./problem.js");
+var generateData = require("./generate_data.js")
 
 
 var networkGiven = [];
@@ -162,12 +165,12 @@ module.exports = {
 									array[i + 1] = "";
 									break;
 								case "-hosts-" :
-									var numberHosts = Math.floor((Math.random() * 1) + 2);
+									var numberHosts = generateData.generateHost(difficulty, randomFileToSend);
 									array[i] = numberHosts + " hosts";
 									arrayXml = arrayXml + " -hosts " + array[i];
 									break;
 								case "-switch-" :
-									var numberSwitch = Math.floor((Math.random() * 3) + 1);
+									var numberSwitch = generateData.generateSwitch(difficulty, randomFileToSend);
 									array[i] = numberSwitch + " switch";
 									arrayXml = arrayXml + " -switch " + array[i];
 									break;
@@ -177,7 +180,7 @@ module.exports = {
 									break;
 								case "-hub-" :
 									//to demostrate work
-									var numberHub = 1
+									var numberHub = generateData.generateHub(difficulty, randomFileToSend);
 									array[i] = numberHub + " hub";
 									arrayXml = arrayXml + " -hubs " + array[i];
 									break;
