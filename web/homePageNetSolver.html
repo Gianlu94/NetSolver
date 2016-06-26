@@ -106,7 +106,7 @@ and open the template in the editor.
 								<tbody id="hostConfiguration">
 								  <script id="host-template" type="text/x-handlebars-template">
 								  	<tr id={{rowId}} class="notSelectedH">
-								  		<td><input type="text" id={{idH}} name={{nameH}}
+								  		<td><input readonly type="text" id={{idH}} name={{nameH}}
 												placeholder='Host Name' value={{valueH}}
 											class="form-control"/></td>
 										<td><input type="text" id={{ipH}} name={{ipHname}}  
@@ -143,7 +143,7 @@ and open the template in the editor.
 								<tbody id="switchConfiguration">
 								<script id="switch-template" type="text/x-handlebars-template">
 								  <tr id="{{srowId}}">
-									<td><input type="text" id="{{sname}}" 
+									<td><input readonly type="text" id="{{sname}}" 
 											   name='{{snam}}'  placeholder='Switch
 											   Name' class="form-control"
 											   value="{{valueS}}" /></td>
@@ -302,7 +302,7 @@ and open the template in the editor.
 									<script id="hub-template" type="text/x-handlebars-template">
 								  	<tr id="{{hubId}}">
 											<td>
-												<input type="text" id="{{hName}}" 
+												<input readonly type="text" id="{{hName}}" 
 											   placeholder="Hub name"  value="{{valueU}}"
 											   class="form-control"
 											   />
