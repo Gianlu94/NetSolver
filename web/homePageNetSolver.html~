@@ -15,6 +15,7 @@ and open the template in the editor.
 		<link href="/general.css" rel="stylesheet">
 		<script src="/Switch.js"></script>
 		<script src="/Vlan.js"></script>
+		<script src="/Hub.js"></script>
 		<script src="/HomePageNetSolver.js"></script>
 	</head>
 	<body>
@@ -35,36 +36,36 @@ and open the template in the editor.
 									type="button" data-toggle="dropdown">
 							<span class="caret"></span></button>
 							<ul class="dropdown-menu" id="dropdownDI">
-								<li><a href="#" data-value="1">1</a></li>
-								<li><a href="#" data-value="2">2</a></li>
-								<li><a href="#" data-value="3">3</a></li>
+								<li><a href="javascript:return false;"  data-value="1">1</a></li>
+								<li><a href="javascript:return false;"  data-value="2">2</a></li>
+								<li><a href="javascript:return false;"  data-value="3">3</a></li>
 							</ul>
 						</div>
 					<li><button id="getP" type="button" href="#tab1"  data-toggle="tab" 
 						class="btn btn-primary pull-left">Get A Problem</button>
 					</li>
-					<li><button type="button" href="#tab2"  data-toggle="tab" 
+					<!--<li><button type="button" href="#tab2"  data-toggle="tab" 
 						class="btn btn-primary pull-right">Define network 
 							requirments</button>
-					</li>
+					</li>-->
 				</ul>    
 			</div>
 			<div class="panel-body contentPanelHome">
 				<div class="tab-content">
 					<div class="tab-pane active" id="tab1">
 						<ul class="nav nav-tabs" id="product-table">
-							<li><a href="#extended" data-toggle="tab">Extended</a>
+							<li><a href="#extended" data-toggle="tab">Problema</a>
 							</li>
-							<li><a href="#compact" data-toggle="tab">Compact</a>
-							</li>
+							<!--<li><a href="#compact" data-toggle="tab">Compact</a>
+							</li>-->
 						</ul>
 						<div class="tab-content">
 							
 								<div class="tab-pane active" id="extended">
 								</div>
 							
-							<div class="tab-pane" id="compact">
-							</div>
+							<!--<div class="tab-pane" id="compact">
+							</div>-->
 						</div>
 					</div>
 					<div class="tab-pane" id="tab2">To develop</div>
@@ -75,14 +76,16 @@ and open the template in the editor.
 		<form id="NetworkConfList">
 			<div class="panel panel-default col-md-10 col-md-offset-1" id="panelYourSolution">
 				<div class="panel-heading">
-					<h4>Your solution</h4>
+					<h4>Your solution
+					<button id="delete_all" class="btn btn-danger pull-right">Reset configuration</button>
+					</h4>
 					<ul class="nav nav nav-tabs nav-tabs-horizontal">
 						<li class="active" id="hostH"><a href="#hostsDe" data-toggle="tab">Host</a></li>
 						<li id="switchH"><a href="#switchDe" data-toggle="tab">Switch</a></li>
 						<li id="vlanH"><a href="#vlanDe" data-toggle="tab">Vlan</a></li>
 						<li><a href="#routersDe" data-toggle="tab">Routers</a></li>
 						<li><a href="#modemsDe" data-toggle="tab">Modems</a></li>
-						<li><a href="#hubsDe" data-toggle="tab">Hubs</a></li>
+						<li id ="hubH" ><a href="#hubDe" data-toggle="tab">Hubs</a></li>
 						<li id="reportH"><a href="#reportDe" data-toggle="tab" class="pull-right">Report</a></li>
 					</ul>   
 				</div>
@@ -150,13 +153,13 @@ and open the template in the editor.
 											<span class="caret"></span></button>
 												<ul class="dropdown-menu" id="{{dropdownSP}}">
 													<li><a href="javascript:return false;" data-value="1">1</a></li>
-													<li><a href="javascript:return false;"  data-value="2">2</a></li>
-													<li><a href="javascript:return false;"  data-value="3">3</a></li>
-													<li><a href="javascript:return false;"  data-value="4">4</a></li>
-													<li><a href="javascript:return false;"  data-value="5">5</a></li>
-													<li><a href="javascript:return false;"  data-value="6">6</a></li>
-													<li><a href="javascript:return false;"  data-value="7">7</a></li>
-													<li><a href="javascript:return false;"  data-value="8">8</a></li>
+													<li><a href="javascript:return false;" data-value="2">2</a></li>
+													<li><a href="javascript:return false;" data-value="3">3</a></li>
+													<li><a href="javascript:return false;" data-value="4">4</a></li>
+													<li><a href="javascript:return false;" data-value="5">5</a></li>
+													<li><a href="javascript:return false;" data-value="6">6</a></li>
+													<li><a href="javascript:return false;" data-value="7">7</a></li>
+													<li><a href="javascript:return false;" data-value="8">8</a></li>
 												</ul>
 										</div>
 									</td>
@@ -165,9 +168,9 @@ and open the template in the editor.
 											<button class="btn {{btnST}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Type
 											<span class="caret"></span></button>
 												<ul class="dropdown-menu" id="{{dropdownST}}">
-													<li><a href="javascript:return false;"  data-value="straight">straight</a></li>
-													<li><a href="javascript:return false;"  data-value="cross">cross</a></li>
-													<li><a href="javascript:return false;"  data-value="Type">Type</a></li>
+													<li><a href="javascript:return false;" data-value="straight">straight</a></li>
+													<li><a href="javascript:return false;" data-value="cross">cross</a></li>
+													<li><a href="javascript:return false;" data-value="Type">Type</a></li>
 												</ul>
 										</div>
 									</td>
@@ -198,14 +201,14 @@ and open the template in the editor.
 											<button class="btn {{btnSP}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Port number
 											<span class="caret"></span></button>
 												<ul class="dropdown-menu" id="{{dropdownSP}}">
-													<li><a href="javascript:return false;"  data-value="1">1</a></li>
-													<li><a href="javascript:return false;"  data-value="2">2</a></li>
-													<li><a href="javascript:return false;"  data-value="3">3</a></li>
-													<li><a href="javascript:return false;"  data-value="4">4</a></li>
-													<li><a href="javascript:return false;"  data-value="5">5</a></li>
-													<li><a href="javascript:return false;"  data-value="6">6</a></li>
-													<li><a href="javascript:return false;"  data-value="7">7</a></li>
-													<li><a href="javascript:return false;"  data-value="8">8</a></li>
+													<li><a href="javascript:return false;" data-value="1">1</a></li>
+													<li><a href="javascript:return false;" data-value="2">2</a></li>
+													<li><a href="javascript:return false;" data-value="3">3</a></li>
+													<li><a href="javascript:return false;" data-value="4">4</a></li>
+													<li><a href="javascript:return false;" data-value="5">5</a></li>
+													<li><a href="javascript:return false;" data-value="6">6</a></li>
+													<li><a href="javascript:return false;" data-value="7">7</a></li>
+													<li><a href="javascript:return false;" data-value="8">8</a></li>
 												</ul>
 										</div>
 									</td>
@@ -214,9 +217,9 @@ and open the template in the editor.
 											<button class="btn {{btnST}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Type
 											<span class="caret"></span></button>
 												<ul class="dropdown-menu" id="{{dropdownST}}">
-													<li><a href="javascript:return false;"  data-value="straight">straight</a></li>
-													<li><a href="javascript:return false;"  data-value="cross">cross</a></li>
-													<li><a href="javascript:return false;"  data-value="Type">Type</a></li>
+													<li><a href="javascript:return false;" data-value="straight">straight</a></li>
+													<li><a href="javascript:return false;" data-value="cross">cross</a></li>
+													<li><a href="javascript:return false;" data-value="Type">Type</a></li>
 												</ul>
 										</div>
 									</td>
@@ -252,7 +255,6 @@ and open the template in the editor.
 								  <tr>
 									<th>Number</th>
 									<th>Name</th>
-									<th>SwitchPort</th>
 									<th><button id="checkSolution" type="submit" class="btn btn-info pull-right">Check</button></th>
 								  </tr>
 								</thead>
@@ -271,15 +273,6 @@ and open the template in the editor.
 											   class="form-control"
 											   />
 											</td>
-											<td>
-												<div class="dropdown">
-													<button class="btn {{btnVl}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Type<span class="caret"></span></button>
-														<ul class="dropdown-menu" id="{{dropdownVl}}">
-															<li><a href="javascript:return false;" data-value="access">access</a></li>
-															<li><a href="javascript:return false;"  data-value="Type">Type</a></li>
-														</ul>
-												</div>
-											</td>
 										</tr>
 									
 									</script>
@@ -294,8 +287,96 @@ and open the template in the editor.
 						<div class="tab-pane" id="modemsDe">
 							To develop
 						</div>
-						<div class="tab-pane" id="hubsDe">
-							To develop
+						<div class="tab-pane" id="hubDe">
+							<table class="table table-hover" id="tableHub">
+								<thead>
+								  <tr>
+									<th>Name</th>
+									<th>Interface</th>
+									<th>Type of connection</th>
+									<th>Connect to</th>
+									<th><button id="checkSolution" type="submit" class="btn btn-info pull-right">Check</button></th>
+								  </tr>
+								</thead>
+								<tbody id="hubConfiguration">
+									<script id="hub-template" type="text/x-handlebars-template">
+								  	<tr id="{{hubId}}">
+											<td>
+												<input type="text" id="{{hName}}" 
+											   placeholder="Hub name"  value="{{valueU}}"
+											   class="form-control"
+											   />
+											</td>
+											<td>
+												<div class="dropdown">
+													<button class="btn {{btnHI}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Interface
+													<span class="caret"></span></button>
+													<ul class="dropdown-menu" id="{{dropdownHI}}">	
+													</ul>
+												</div>
+											</td>
+											<td>
+												<div class="dropdown">
+													<button class="btn {{btnHT}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Type<span class="caret"></span></button>
+														<ul class="dropdown-menu" id="{{dropdownHT}}">
+															<li><a href="javascript:return false;" data-value="straight">straight</a></li>
+															<li><a href="javascript:return false;" data-value="cross">cross</a></li>
+															<li><a href="javascript:return false;" data-value="Type">Type</a></li>
+														</ul>
+												</div>
+											</td>
+											<td>
+												<div class="dropdown">
+													<button class="btn {{btnHC}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Hosts/Devices<span class="caret"></span></button>
+														<ul class="dropdown-menu" id="{{dropdownHC}}">
+														</ul>
+												</div>
+											</td>
+											<td>
+												<button id="{{add_srow_hub}}" class="btn btn-success pull-left">+</button>
+											</td>
+										</tr>
+									
+									</script>
+									<script id="hub-template2" type="text/x-handlebars-template">
+								  	<tr id="{{hubId}}">
+								  			<td></td>
+											<td>
+												<div class="dropdown">
+													<button class="btn {{btnHI}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Interface
+													<span class="caret"></span></button>
+													<ul class="dropdown-menu" id="{{dropdownHI}}">	
+													</ul>
+												</div>
+											</td>
+											<td>
+												<div class="dropdown">
+													<button class="btn {{btnHT}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Type<span class="caret"></span></button>
+														<ul class="dropdown-menu" id="{{dropdownHT}}">
+															<li><a href="javascript:return false;" data-value="straight">straight</a></li>
+															<li><a href="javascript:return false;" data-value="cross">cross</a></li>
+															<li><a href="javascript:return false;" data-value="Type">Type</a></li>
+														</ul>
+												</div>
+											</td>
+											<td>
+												<div class="dropdown">
+													<button class="btn {{btnHC}} btn-default dropdown-toggle" type="button" data-toggle="dropdown">Hosts/Devices<span class="caret"></span></button>
+														<ul class="dropdown-menu" id="{{dropdownHC}}">
+														</ul>
+												</div>
+											</td>
+											<td>
+												<button id="{{add_srow_hub}}" class="btn btn-success pull-left">+</button>
+												<button id="{{delete_srow_hub}}" class="btn btn-danger pull-left delete_srow_hub">-</button>
+											</td>
+										</tr>
+									
+									</script>
+								</tbody>
+							</table>
+							<button id="add_rowHu" class="btn btn-success pull-left">Add Hub</button>
+							<button id="delete_rowHu" class="btn btn-danger pull-right">Delete Hub</button>
 						</div>
 						<div class="tab-pane" id="reportDe">
 						</div>

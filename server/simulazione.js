@@ -7,7 +7,7 @@ var path = require("path");
 
 //My modules
 
-var checkSolution = require("./check_solution");
+var checkSolution = require("./check_solution.js");
 var networkProblem = require("./problem.js");
 var creationProblem = require("./create_problems.js");
 
@@ -19,25 +19,27 @@ app.use(bodyParser.text());
 
 
 //define static files
-app.use(express.static(__dirname+"/NetSolver/web/css" ));
-app.use(express.static(__dirname+"/NetSolver/web/js" ));
+app.use(express.static(__dirname+"/../web/prefabs/css" ));
+app.use(express.static(__dirname+"/../web/js" ));
 
 
 //manage  the request of a network problem
-app.get("/Tracer", function(req,res){
+app.get("/Tracks", function(req,res){
 	difficultyP = networkProblem.extractDifficulty(req,res);
 	creationProblem.difficultyFile(difficultyP, req, res);
 });
 
 //solution of  network problem
 app.post("/Solution", function(req, res){
-	
+	console.log("I'm checking solution");
 	checkSolution.checkUserSolution(req,res,creationProblem.problemPath);
 });
 
 //load homePage
 app.get("/NetSolver/web/homeNetSolver.html", function(req,res){
-	res.sendFile(path.join(__dirname+"/NetSolver/web/homePageNetSolver.html"));
+	console.log("CSS :" +(path.join(__dirname+"/../web/prefabs/css" )));
+	console.log("Taken : "+ (path.join(__dirname+"/../web/homePageNetSolver.html")));
+	res.sendFile(path.join(__dirname+"/../web/homePageNetSolver.html"));
 });
 
 //server up

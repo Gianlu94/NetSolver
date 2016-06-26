@@ -127,14 +127,14 @@ module.exports = {
 				break;
 			default : break;
 		}
-		fs.readFile(path.join(__dirname+"/Traces/Trace"+difficulty+"/trac"+randomFileToSend+".txt"), function(err1, file1) {
-			module.exports.problemPath="/Traces/Trace"+difficulty+"/trac"+randomFileToSend+".xml";
+		fs.readFile(path.join(__dirname+"/../Tracks/Track"+difficulty+"/track"+randomFileToSend+".txt"), function(err1, file1) {
+			module.exports.problemPath="/../Tracks/Track"+difficulty+"/track"+randomFileToSend+".xml";
 			if(err1) {
 				// write an error response or nothing here
 				return;
 			}
 			else {
-				fs.readFile(path.join(__dirname+"/ServerRes/NetworkAddress.txt"), function(err2, file2) {
+				fs.readFile(path.join(__dirname+"/../ServerRes/NetworkAddress.txt"), function(err2, file2) {
 					if (err2){
 						// write an error response or nothing here
 						return;

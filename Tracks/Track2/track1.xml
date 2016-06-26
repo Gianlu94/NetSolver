@@ -2,13 +2,13 @@
 <Problem>
     <Number>2</Number>
     <NetworkProblem>
-        <Network>192.168.100.000/28</Network>
+        <Network>192.168.200.000/27</Network>
         <Hosts>2</Hosts>
     </NetworkProblem>
     <NetworkProblem>
-        <Network>192.168.100.000/28</Network>
+        <Network>180.100.001.000/28</Network>
         <Hosts>2</Hosts>
     </NetworkProblem>
-    <Switch>1</Switch>
-    <Vlan>3</Vlan>
+    <Switch>3</Switch>
+    <Vlan>2</Vlan>
 </Problem>

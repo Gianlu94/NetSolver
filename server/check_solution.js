@@ -19,17 +19,18 @@ module.exports = {
 		var htmlResponse ="<h3>List of errors </h3>";
 		var parser = new DOMParser();
 		var userSFile = parser.parseFromString(req.body, "application/xml");
+		console.log("DIFFICULTY FILE " + difficultyP);
 		switch (difficultyP) {
-			case "/Traces/Trace1/trac1.xml":
+			case "/../Tracks/Track1/track1.xml":
 				functionUse.checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,true,false,false,false);
 				break;
-			case "/Traces/Trace1/trac2.xml":
+			case "/../Tracks/Track1/track2.xml":
 				functionUse.checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true,false,false);
 				break;
-			case "/Traces/Trace1/trac3.xml":
+			case "/../Tracks/Track1/track3.xml":
 				functionUse.checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,false,false,true);
 				break;
-			case "/Traces/Trace2/trac1.xml":
+			case "/../Tracks/Track2/track1.xml":
 				functionUse.checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true,true,false);
 				break;
 			default :
@@ -43,7 +44,8 @@ functionUse = {
 							  executeVlanCheck, executeHubCheck) {
 		var passed = false;
 		var htmlResponseSupport = "";
-		fs.readFile(path.join(__dirname + difficultyProblemFile), function (err, file) {
+		console.log("checkdpath " + path.join(__dirname +difficultyProblemFile));
+		fs.readFile(path.join(__dirname +difficultyProblemFile), function (err, file) {
 			if (err) {
 				// write an error response or nothing here
 				return;

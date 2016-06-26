@@ -1537,6 +1537,7 @@ var ViewHome = {
 				xhr.addEventListener("readystatechange", processRequest, false);
 				function processRequest(e) {
 					console.log("CLIENT received respone");
+					console.log("xhr responsetext " + xhr.responseText);
 					if (xhr.readyState == 4 && xhr.status == 200) {
 						$("#extended").empty();
 						$("#extended").append(xhr.responseText);
