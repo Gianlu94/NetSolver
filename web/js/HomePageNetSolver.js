@@ -833,7 +833,12 @@ var ViewHome = {
 						break;
 					case "delete_rowV" :
 						var row = Octopus.getRow('v');
+						var vlanN = $("#vName"+row).val();
+
 						$("#vlrow"+row).remove();
+
+						$("button:contains("+vlanN+")").html("Host/Devices"+
+							"<span class='caret'> </span>");
 						Octopus.deleteVlan(row);
 						Octopus.decrement('v');
 					case "delete_rowHu" :
