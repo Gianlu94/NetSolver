@@ -12,7 +12,7 @@ var xpath = require("xpath");
 var networkProblem = require("./problem.js");
 var creationProblem = require("./create_problems.js");
 var receivedSolution =  require("./received_solution.js");
-var errorCostant = require("./error_costant.js");
+var errorCostant = require("./error_constant.js");
 
 module.exports = {
 

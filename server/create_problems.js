@@ -11,7 +11,7 @@ var XmlWriter = require('xml-writer');
 //My modules
 var networkProblem = require("./problem.js");
 var generateData = require("./generate_data.js");
-var errorCostant = require("./error_costant.js");
+var errorCostant = require("./error_constant.js");
 
 
 var networkGiven = [];
