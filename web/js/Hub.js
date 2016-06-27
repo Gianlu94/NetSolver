@@ -40,7 +40,6 @@
 
 		//get hub object from its id
 		getHub : function (id){
-			console.log("Getting hub "+id);
 			for (var i = 0; i<arrayHub.length;i++){
 				var Hub = arrayHub[i];
 				if (Hub.idS == id)
@@ -58,7 +57,6 @@
 					removed = true;
 				}
 			}
-			console.log("LENGTH AFTER DELETION "+arrayHub.length);
 		},
 
 		//get hub's ports (0 = not empty port)
@@ -95,11 +93,9 @@
 		//set a specific port of a hub as not free anymore
 		setHubPort : function(id,port){
 			var found = false;
-			console.log("SET HUB PORT ID "+id+ " PORT "+port);
 			for (var i = 0; arrayHub.length && !found; i++){
 				if (arrayHub[i].idS == id){
 					found = true;
-					console.log("TRVOCATO");
 					if (port == 1){
 						arrayHub[i].p1 = 0;
 					}
@@ -134,7 +130,6 @@
 		releaseHubPort : function (id,port){
 			var found = false;
 			for (var i = 0; arrayHub.length && !found; i++){
-				//console.log("Release HUb port id = "+id + " ids = "+arrayHub[i].idS);
 				if (arrayHub[i].idS == id){
 					found = true;
 					if (port == 1){

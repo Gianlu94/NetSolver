@@ -71,7 +71,6 @@ module.exports = {
 		xw.endDocument();
 		fs.writeFile(__dirname+difficultyP, xw.toString(), function (err) {
 			if (err) return console.log(err);
-			console.log("Creation oks");
 		});
 		
 	},
@@ -101,7 +100,6 @@ module.exports = {
 		var randomNetworkToSend;
 		while (!foundNetwork) {
 			var randomNetworkToSend = parseInt(Math.random() * 3);
-			console.log("I would like to send network in position " + randomNetworkToSend);
 			
 			if (!module.exports.networkAlreadyGiven(networkProblem.normalizeNetworkAddress(arrayN[randomNetworkToSend]))){
 				foundNetwork = true;
@@ -111,22 +109,20 @@ module.exports = {
 		return arrayN[randomNetworkToSend];
 	},
 
-	/*This function selects the trace of problem to send to the student (related to
+	/*This function selects the trace of the problem to send to the student (related to
 	  the difficulty he gave) and creates support array.
 	 */
 	difficultyFile : function (difficulty, req, res){
 
 		networkGiven.length = 0;
-		console.log("PARAM "+ difficulty);
+		
 		var randomFileToSend;
 		switch (difficulty){
 			case '1' :
 				randomFileToSend = parseInt(((Math.random() * 3) + 1));
-				console.log("RandomFileTo send" + randomFileToSend);
 				break;
 			case '2' :
 				randomFileToSend = parseInt(((Math.random() * 1) + 1));
-				console.log("RandomFileTo send" + randomFileToSend);
 				break;
 			default : break;
 		}

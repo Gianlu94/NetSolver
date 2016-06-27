@@ -31,14 +31,11 @@ app.get("/Tracks", function(req,res){
 
 //solution of  network problem
 app.post("/Solution", function(req, res){
-	console.log("I'm checking solution");
 	checkSolution.checkUserSolution(req,res,creationProblem.problemPath);
 });
 
 //load homePage
 app.get("/NetSolver/web/homeNetSolver.html", function(req,res){
-	console.log("CSS :" +(path.join(__dirname+"/../web/prefabs/css" )));
-	console.log("Taken : "+ (path.join(__dirname+"/../web/homePageNetSolver.html")));
 	res.sendFile(path.join(__dirname+"/../web/homePageNetSolver.html"));
 });
 

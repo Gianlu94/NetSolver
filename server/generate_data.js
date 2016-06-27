@@ -1,6 +1,9 @@
 /*
-	This file contains methods that generated appropriate data (host,switch,hub...)
-	from the given problem
+	This file contains methods that generate appropriate data (host,switch,hub...)
+	for the given problem
+		problemFolder : Int
+		problemFile: Int
+	
  */
 
 module.exports = {

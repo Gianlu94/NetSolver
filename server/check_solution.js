@@ -19,7 +19,6 @@ module.exports = {
 		var htmlResponse ="<h3>List of errors </h3>";
 		var parser = new DOMParser();
 		var userSFile = parser.parseFromString(req.body, "application/xml");
-		console.log("DIFFICULTY FILE " + difficultyP);
 		switch (difficultyP) {
 			case "/../Tracks/Track1/track1.xml":
 				functionUse.checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,true,false,false,false);
@@ -44,7 +43,7 @@ functionUse = {
 							  executeVlanCheck, executeHubCheck) {
 		var passed = false;
 		var htmlResponseSupport = "";
-		console.log("checkdpath " + path.join(__dirname +difficultyProblemFile));
+	
 		fs.readFile(path.join(__dirname +difficultyProblemFile), function (err, file) {
 			if (err) {
 				// write an error response or nothing here
@@ -175,7 +174,7 @@ functionUse = {
 						
 						devicesConnected.push(portConnectTo[j].firstChild.data);
 						arrayVlanConnected.push(vlanConnected[j].firstChild.data);
-						htmlResponseSupport=networkProblem.checkIfSwitchIsSetted(portsN[j].firstChild.data,portType[j].firstChild.data,portConnectTo[j].firstChild.data,htmlResponseSupport);
+						htmlResponseSupport=networkProblem.checkIfDeviceIsSetted(portsN[j].firstChild.data,portType[j].firstChild.data,portConnectTo[j].firstChild.data,htmlResponseSupport);
 					}
 					if (htmlResponseSupport.indexOf("ERROR")>-1){
 						errorFound = true;
@@ -204,7 +203,7 @@ functionUse = {
 	
 				}
 				else if (checkVlan){
-					//Insert Chek on Hub
+					//Insert check on hub
 					functionUse.checkVlans(doc, userSFile, htmlResponse, res, devicesConnected, arrayVlanConnected);
 				}
 				else if (executeCheckHub){
@@ -320,7 +319,7 @@ functionUse = {
 						var portConnectTo = receivedSolution.getHubPortsConnectTo(userSFile);
 						
 						devicesConnected.push(portConnectTo[j].firstChild.data);
-						htmlResponseSupport=networkProblem.checkIfSwitchIsSetted(portsN[j].firstChild.data,portType[j].firstChild.data,portConnectTo[j].firstChild.data,htmlResponseSupport);
+						htmlResponseSupport=networkProblem.checkIfDeviceIsSetted(portsN[j].firstChild.data,portType[j].firstChild.data,portConnectTo[j].firstChild.data,htmlResponseSupport);
 					}
 					if (htmlResponseSupport.indexOf("ERROR")>-1){
 						errorFound = true;

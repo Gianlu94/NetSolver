@@ -29,7 +29,7 @@ module.exports = {
 		return difficulty;
 	},
 
-    //This function extracts data from problem's xml and create an object Problem
+    //This function extracts data from problem's xml and creates an object Problem
     createObjectProblem : function(doc){
         arrayObjectProblem = [];
 		docProblem = doc;
@@ -91,7 +91,7 @@ module.exports = {
 		return ipA
 	},
 
-    //This function get the total number of hosts from the problem
+    //This function gets the total number of hosts from the problem
     getTotalNumberHost : function(){
         var total = 0;
         for (var i = 0; i < arrayObjectProblem.length; i++){
@@ -101,7 +101,7 @@ module.exports = {
         return total;
     },
 
-    //Check If the ip belongs to a network and not exceed limit number of host of that network
+    //Check if the ip belongs to a network and doesn't exceed limit number of host of that network
     belongNetwork : function(ip){
         for (var i = 0; i < arrayObjectProblem.length; i++){
             var objectProblem = arrayObjectProblem[i];
@@ -191,12 +191,11 @@ module.exports = {
 
 	},
 
-	//This is the function that check if the given ip is valid or not
+	//This is the function that checks if the given ip is valid or not
 	checkIfIsValidNetmask : function(netmask, ipA, htmlResponse, row){
 		if (netmask.firstChild == null){
 			htmlResponse = htmlResponse + "<li> ERROR row_"+row+ ": null field found</li>";
 		}
-		//else if(!networkProblem.isNetmaskAddressIndex(netmask.firstChild.data, index)){
 		else {
 			if (ipA.firstChild != null){
 				var ipV = ipA.firstChild.data;
@@ -293,7 +292,7 @@ module.exports = {
 	},
 
 	//This is the function that checks if the fields of a switch are configured correctly
-	checkIfSwitchIsSetted : function (port,typeConnection,connectTo,htmlResponse){
+	checkIfDeviceIsSetted : function (port,typeConnection,connectTo,htmlResponse){
 		connectTo = connectTo.trim();
 		typeConnection = typeConnection.trim();
 		port = port.trim();
@@ -329,9 +328,9 @@ module.exports = {
 		return numberVlan;
 	},
 
-	/*
-	 This function check if vlan' s fields are null or not
-	 */
+
+	//This function check if vlan' s fields are null or not
+
 
 	checkNullFieldsVlan : function(id, name, i){
 		var htmlResponseSupport = ""

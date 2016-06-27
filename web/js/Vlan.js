@@ -16,7 +16,6 @@
 
         //delete vlan from its id
         deleteVlan : function (pos){
-			//console.log("-----------------------DELETE VLAN "+pos);
             arrayVlan.splice(pos,1);
         },
 
@@ -37,7 +36,6 @@
 		
 		//check if the given vlan already exist
 		checkIfVlanAlreadyExist : function (pos) {
-			//console.log("VLAN "+VlanInterface.getVlanNumber(pos));
 			var vlanNumber = VlanInterface.getVlanNumber(pos);
 			var vlanName =  VlanInterface.getVlanName(pos);
 			var trovato = false;
