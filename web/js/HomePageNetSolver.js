@@ -896,7 +896,35 @@ var ViewHome = {
 					default : break;
 				}
 			});
-		}
+		};
+
+
+		//function to create rows for the Connect To Field
+		var createRowConnectTo =  function (id, device){
+
+			devicesHtml = "";
+			switch (device){
+				case 's' :
+					var ports = Octopus.getSwitchPorts(id);
+					for (var j = 0; j < ports.length; j++) {
+
+						devicesHtml = devicesHtml + "<li><a tabindex='-1' href='javascript:return false;' data-value='" +
+							id + "" + ports[j] + "'>Switch_" + id + " : Port_" + ports[j] + "</a></li>";
+					}
+					break;
+				case 'u':
+					var ports = Octopus.getHubPorts(id);
+					for (var j = 0; j < ports.length; j++) {
+
+						devicesHtml = devicesHtml + "<li><a tabindex='-1' href='javascript:return false;' data-value='" +
+							id + "" + ports[j] + "'>Hub_" + id + " : Port_" + ports[j] + "</a></li>";
+					}
+					break;
+				default : break;
+			}
+			return devicesHtml;
+
+		};
 		
 		//fuction to see the list of the available devices (in the connect to section)
 		var seeDevice = function(id, device){
@@ -935,22 +963,14 @@ var ViewHome = {
 					if (device.indexOf('s') > -1) {
 						if (idSwitch != last2_1) {
 
-							var ports = Octopus.getSwitchPorts(idSwitch);
-							for (var j = 0; j < ports.length; j++) {
-
-								devicesHtml = devicesHtml + "<li><a tabindex='-1' href='javascript:return false;' data-value='" +
-									idSwitch + "" + ports[j] + "'>Switch_" + idSwitch + " : Port_" + ports[j] + "</a></li>";
-							}
+							devicesHtml = devicesHtml + createRowConnectTo(idSwitch, 's');
 
 						}
 					}
 					else{
-						var ports = Octopus.getSwitchPorts(idSwitch);
-						for (var j = 0; j < ports.length; j++) {
 
-							devicesHtml = devicesHtml + "<li><a tabindex='-1' href='javascript:return false;' data-value='" +
-								idSwitch + "" + ports[j] + "'>Switch_" + idSwitch + " : Port_" + ports[j] + "</a></li>";
-						}
+						devicesHtml = devicesHtml + createRowConnectTo(idSwitch,'s');
+
 					}
 				}
 
@@ -965,23 +985,13 @@ var ViewHome = {
 						//getting the available ports of a different hub
 						if (idHub != last2_1) {
 
-							var ports = Octopus.getHubPorts(idHub);
-
-							for (var j = 0; j < ports.length; j++) {
-								console.log("HUB "+idHub +" PORT "+ports[j]);
-								devicesHtml = devicesHtml + "<li><a tabindex='-1' href='javascript:return false;' data-value='" +
-									idHub + "" + ports[j] + "'>Hub_" + idHub + " : Port_" + ports[j] + "</a></li>";
-							}
+							devicesHtml = devicesHtml + createRowConnectTo(idHub,'u');
 
 						}
 					}
 					else{
-						var ports = Octopus.getHubPorts(idHub);
-						for (var j = 0; j < ports.length; j++) {
 
-							devicesHtml = devicesHtml + "<li><a tabindex='-1' href='javascript:return false;' data-value='" +
-								idHub + "" + ports[j] + "'>Hub_" + idHub + " : Port_" + ports[j] + "</a></li>";
-						}
+						devicesHtml = devicesHtml + createRowConnectTo(idHub,'u');
 
 					}
 				}
