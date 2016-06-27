@@ -1511,9 +1511,14 @@ var ViewHome = {
 				//display the problem after received it
 				xhr.addEventListener("readystatechange", processRequest, false);
 				function processRequest(e) {
-					if (xhr.readyState == 4 && xhr.status == 200) {
-						$("#extended").empty();
-						$("#extended").append(xhr.responseText);
+					if (xhr.readyState == 4) {
+						if (xhr.status == 200) {
+							$("#extended").empty();
+							$("#extended").append(xhr.responseText);
+						}
+						else if (xhr.status == 500){
+							alert(xhr.responseText);
+						}
 					}
 				}
 				xhr.send();
@@ -1530,25 +1535,29 @@ var ViewHome = {
 
 			xhr.addEventListener("readystatechange", processRequest, false);
 			function processRequest(e) {
-				if (xhr.readyState == 4 && xhr.status == 200) {
+				if (xhr.readyState == 4) {
+					if (xhr.status == 200) {
+						//no focus
+						$("#hostH").removeClass("active");
+						$("#hostsDe").removeClass("active");
+						$("#switchH").removeClass("active");
+						$("#switchDe").removeClass("active");
+						$("#vlanH").removeClass("active");
+						$("#vlanDe").removeClass("active");
+						$("#hubH").removeClass("active");
+						$("#hubDe").removeClass("active");
 
-					//no focus
-					$("#hostH").removeClass("active");
-					$("#hostsDe").removeClass("active");
-					$("#switchH").removeClass("active");
-					$("#switchDe").removeClass("active");
-					$("#vlanH").removeClass("active");
-					$("#vlanDe").removeClass("active");
-					$("#hubH").removeClass("active");
-					$("#hubDe").removeClass("active");
+						//give focus to report section
+						$("#reportH").addClass("active");
+						$("#reportDe").addClass("active");
 
-					//give focus to report section
-					$("#reportH").addClass("active");
-					$("#reportDe").addClass("active");
-
-					//show server's response
-					$("#reportDe").empty();
-					$("#reportDe").html(xhr.responseText);
+						//show server's response
+						$("#reportDe").empty();
+						$("#reportDe").html(xhr.responseText);
+					}
+					else if (xhr.status == 500){
+						alert(xhr.responseText);
+					}
 				}	
 			}
 

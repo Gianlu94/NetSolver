@@ -12,6 +12,7 @@ var xpath = require("xpath");
 var networkProblem = require("./problem.js");
 var creationProblem = require("./create_problems.js");
 var receivedSolution =  require("./received_solution.js");
+var errorCostant = require("./error_costant.js");
 
 module.exports = {
 
@@ -46,6 +47,8 @@ functionUse = {
 	
 		fs.readFile(path.join(__dirname +difficultyProblemFile), function (err, file) {
 			if (err) {
+				res.writeHead(500, {'Content-Type': 'text/html'});
+				res.end(errorCostant.internalServerError, "utf-8");
 				// write an error response or nothing here
 				return;
 			} else {

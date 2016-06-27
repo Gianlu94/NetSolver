@@ -10,7 +10,8 @@ var XmlWriter = require('xml-writer');
 
 //My modules
 var networkProblem = require("./problem.js");
-var generateData = require("./generate_data.js")
+var generateData = require("./generate_data.js");
+var errorCostant = require("./error_costant.js");
 
 
 var networkGiven = [];
@@ -19,7 +20,7 @@ module.exports = {
 
 	problemPath : "",
 
-	createXmlProblem : function(arrayXml, difficultyP){
+	createXmlProblem : function(arrayXml, difficultyP, res){
 		var xw = new XmlWriter(true);
 		xw.startDocument();
 		xw.startElement('Problem');
@@ -70,7 +71,10 @@ module.exports = {
 		xw.endElement();
 		xw.endDocument();
 		fs.writeFile(__dirname+difficultyP, xw.toString(), function (err) {
-			if (err) return console.log(err);
+			if (err) {
+				res.writeHead(500, {'Content-Type': 'text/html'});
+				res.end(errorCostant.internalServerError, "utf-8");
+			}
 		});
 		
 	},
@@ -130,12 +134,16 @@ module.exports = {
 			module.exports.problemPath="/../Tracks/Track"+difficulty+"/track"+randomFileToSend+".xml";
 			if(err1) {
 				// write an error response or nothing here
+				res.writeHead(500, {'Content-Type': 'text/html'});
+				res.end(errorCostant.internalServerError, "utf-8");
 				return;
 			}
 			else {
 				fs.readFile(path.join(__dirname+"/../ServerRes/NetworkAddress.txt"), function(err2, file2) {
 					if (err2){
 						// write an error response or nothing here
+						res.writeHead(500, {'Content-Type': 'text/html'});
+						res.end(errorCostant.internalServerError, "utf-8");
 						return;
 					}
 					else {
@@ -196,7 +204,7 @@ module.exports = {
 							}
 							arrayClient = arrayClient + " " + array[i];
 						}
-						module.exports.createXmlProblem(arrayXml.split(" "), module.exports.problemPath);
+						module.exports.createXmlProblem(arrayXml.split(" "), module.exports.problemPath, res);
 						res.writeHead(200, {'Content-Type': 'text/html'});
 						res.end(arrayClient.toString(), "utf-8");
 					}
