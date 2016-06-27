@@ -386,7 +386,7 @@ var ViewHome = {
 						
 						// Define our data object
 						var context={
-							"rowId": "row"+row,
+							"rowId": "hrow"+row,
 							"idH": "name"+row,
 							"nameH": "nam"+row,
 							"valueH": "Host_"+row,
@@ -502,7 +502,7 @@ var ViewHome = {
 
 						// Define our data object
 						var context={
-							"hubId": "huId"+row+rowSupport,
+							"hubId": "hurow"+row+rowSupport,
 							"hName": "hName"+row+rowSupport,
 							"valueU": "Hub_"+row,
 							"btnHI": "btnHI"+row+rowSupport,
@@ -522,7 +522,7 @@ var ViewHome = {
 						$("#"+appendTo).append(theCompiledHtml);
 
 						//settings for the new row
-						addSubRow("add_srow_hub"+row+rowSupport,"huId"+row+rowSupport, 'u');
+						addSubRow("add_srow_hub"+row+rowSupport,"hurow"+row+rowSupport, 'u');
 						assignValueByDropDown("dropdownHT"+row+rowSupport,"btnHT"+row+rowSupport);
 
 						portsAvailable("btnHI" + row + rowSupport, 'u');
@@ -658,8 +658,6 @@ var ViewHome = {
 						if (last1 == -1) {
 							last1++;
 						}
-						console.log("last2_1 "+last2_1);
-						console.log("last1 "+last1);
 
 						if (last1 < 7) {
 							$("#add_srow_hub" + last2_1 + last1).hide();
@@ -674,7 +672,7 @@ var ViewHome = {
 
 							// Define our data object
 							var context = {
-								"hubId": "huId"+last2_1+last1,
+								"hubId": "hurow"+last2_1+last1,
 								"btnHI": "btnHI"+last2_1+last1,
 								"btnHT": "btnHT"+last2_1+last1,
 								"btnHC": "btnHC"+last2_1+last1,
@@ -693,11 +691,11 @@ var ViewHome = {
 							last1--;
 							$("#delete_srow_hub" + last2_1 + last1).hide();
 
-							$(theCompiledHtml).insertAfter("#huId" + last2_1 + last1);
+							$(theCompiledHtml).insertAfter("#hurow" + last2_1 + last1);
 							last1++;
 
 							//settings for subrow
-							addSubRow("add_srow_hub" + last2_1 + last1, "huId" + last2_1 + last1, 'u');
+							addSubRow("add_srow_hub" + last2_1 + last1, "hurow" + last2_1 + last1, 'u');
 							deleteSubRow("delete_srow_hub" + last2_1 + last1, 'u');
 
 
@@ -766,11 +764,11 @@ var ViewHome = {
 					}
 					break;
 				case 'u':
-					while ($("#huId"+lastC).length){
+					while ($("#hurow"+lastC).length){
 
 						releaseHS($(".btnHC"+lastC).text());
 
-						$("#huId"+lastC).remove();
+						$("#hurow"+lastC).remove();
 						last1++;
 						lastC = row + "" +last1;
 					}
@@ -792,7 +790,7 @@ var ViewHome = {
 
 						var row = Octopus.getRow('h');
 						var hostN = $("#name"+row).val();
-						$("#row"+row).remove();
+						$("#hrow"+row).remove();
 
 						//where it was setted up restore the defaul value
 						$("button:contains("+hostN+")").html("Hosts/Devices"+
@@ -839,7 +837,7 @@ var ViewHome = {
 
 						deleteFollowingChildren(row, 'u');
 						releaseHS($(".btnHC"+row+rowSupport).text());
-						$("#huId"+row+"0").remove();
+						$("#hurow"+row+"0").remove();
 						$("button:contains("+hubN+")").html("Host/Devices"+
 							"<span class='caret'> </span>");
 
@@ -881,12 +879,12 @@ var ViewHome = {
 						releaseHS($(".btnHC" + last2_1 + "" + last1).text());
 
 						var PortToEliminate = $(".btnHI" + last2_1 + "" + last1).text();
-						$("#huId" + last2_1 + last1).remove();
+						$("#hurow" + last2_1 + last1).remove();
 
 						if (!isNaN(PortToEliminate)) {
 							Octopus.releaseHubPort(last2_1, PortToEliminate);
 						}
-						$("#huIdrow" + last2_1 + last1).remove();
+						//$("#huIdrow" + last2_1 + last1).remove();
 
 						//show the add and delete button of the previous row
 						last1--;
@@ -943,7 +941,7 @@ var ViewHome = {
 				var devicesHtml ="<li class='dropdown-submenu'><a tabindex='-1' href='javascript:return false;'>Hosts</a>"+
 						"<ul class='dropdown-menu scrollable-menu'>";
 				for (var i=0;i < children; i++){
-					if($("#row"+i).hasClass("notSelectedH")){
+					if($("#hrow"+i).hasClass("notSelectedH")){
 
 						var nameH = $("#name"+i).val();
 						devicesHtml = devicesHtml+"<li>"+
@@ -1085,8 +1083,8 @@ var ViewHome = {
 				else{
 
 					var hostPart=getHostPart(currentSelected);
-					$("#row"+hostPart).removeClass("notSelectedH");
-					$("#row"+hostPart).addClass("SelectedH");
+					$("#hrow"+hostPart).removeClass("notSelectedH");
+					$("#hrow"+hostPart).addClass("SelectedH");
 
 				}
 
@@ -1284,7 +1282,7 @@ var ViewHome = {
 
 		//reset all hosts in tab Host
 		var resetHost = function(){
-			var idFirst = $("#row0");
+			var idFirst = $("#hrow0");
 			for (var i = Octopus.getRow('h'); i >= 0; i--){
 				$("#delete_rowH").trigger("click");
 			}
@@ -1364,7 +1362,6 @@ var ViewHome = {
 			resetSwitch();
 			resetVlan();
 			resetHub();
-			console.log("Switch Number "+Octopus.getRow('s'));
 		});
 
 		//create the xml to send to server
@@ -1404,7 +1401,6 @@ var ViewHome = {
 
 
 				var sname = $("#sname"+switchIdP).val();
-				console.log("Name Switch :"+ switchIdP +"0 "+sname);
 
 				ConfigurationXml = ConfigurationXml+"\t\t"+ XmlViewCreator.element("Name",sname)+"\n\t\t<Ports>\n";
 				var portNumber = 0;
@@ -1474,7 +1470,7 @@ var ViewHome = {
 					var hubInterface = hubIdP+""+j;
 
 					//if row exists
-					if ($("#huId"+hubInterface).length) {
+					if ($("#hurow"+hubInterface).length) {
 						var hPort = $(".btnHI"+hubInterface).text();
 
 						var selectedConnection = $("#dropdownHT" + hubInterface).parent().find("button").text();
