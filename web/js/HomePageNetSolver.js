@@ -405,7 +405,7 @@ var ViewHome = {
 
 						// Add the compiled html to the page
 						$('#'+appendTo).append(theCompiledHtml);
-						console.log("Number Switch when inserts "+Octopus.getRow('s'));
+						
 						
 						break;
 					case "add_rowS" :
@@ -456,7 +456,7 @@ var ViewHome = {
 
 						vlanAvailable("btnSV"+row+rowSupport);
 						assignVlan("dropdownSV"+row+rowSupport);
-						console.log("INsert switch "+row);
+						
 						Octopus.insertSwitch(row);
 
 						break;
@@ -1087,8 +1087,7 @@ var ViewHome = {
 					$("#hrow"+hostPart).addClass("SelectedH");
 
 				}
-
-				console.log("currentSelected "+currentSelected);
+				
 				if (isInTabSwitch){
 					//setting the new value of the button
 					$("."+"btnSD"+lastC+":first-child").html(currentSelected+"<span class='caret'> </span>");
@@ -1559,7 +1558,6 @@ var ViewHome = {
 
 
 			xhr.send(hostConfigurationXml);
-			//console.log(hostConfigurationXml);
 		});
 		
 	}

@@ -6,5 +6,6 @@ Supponendo di avere i seguenti dati : -number- 2
 2) La rete  -network- , costituita da -hosts- 
 -networkProbleme-  
 3) -switch- 
-4) -vlans-  
+4) -vlans- 
+ 
 Fonire una possibile "struttura" di rete, configurando correttamente host, switch e vlans.

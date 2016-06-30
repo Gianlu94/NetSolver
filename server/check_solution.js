@@ -90,7 +90,6 @@ functionUse = {
 						}
 
 					}
-					console.log(htmlResponseSupport);
 
 					if (hostArrayDuplicate.length != 0) {
 						for (var i = 0; i < hostArrayDuplicate.length; i++) {

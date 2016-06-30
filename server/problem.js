@@ -462,7 +462,6 @@ module.exports = {
 					}
 					else {
 						TypeLink.Ul--;
-						console.log("Typelink "+TypeLink.Ul);
 					}
 				}
 				else{
