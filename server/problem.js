@@ -303,7 +303,7 @@ module.exports = {
 			htmlResponse = htmlResponse + "<li> ERROR : Type Connnection not defined</li>";
 		}
 		if ((connectTo=="Hosts/Devices")||(connectTo=="Hosts")||(connectTo=="Switches")||(connectTo == "Hub")){
-			htmlResponse = htmlResponse + "<li> ERROR : Not connect to defined</li>";
+			htmlResponse = htmlResponse + "<li> ERROR : Connect to not defined</li>";
 		}
 		else {
 			if(connectTo.indexOf("Port")>-1){
