@@ -343,9 +343,7 @@ var ViewHome = {
 		 */
 		var assignValueByDropDown = function (id,btnCl){
 
-			console.log ("ID "+id + " btnCL "+btnCl);
 			$("#"+id+ " li a").click(function(e){
-				//e.preventDefault();
 				switch (btnCl){
 					//if I press the difficulty button -> set the new current difficulty
 					case "btnD" :
@@ -388,7 +386,7 @@ var ViewHome = {
 						
 						// Define our data object
 						var context={
-							"rowId": "row"+row,
+							"rowId": "hrow"+row,
 							"idH": "name"+row,
 							"nameH": "nam"+row,
 							"valueH": "Host_"+row,
@@ -407,7 +405,7 @@ var ViewHome = {
 
 						// Add the compiled html to the page
 						$('#'+appendTo).append(theCompiledHtml);
-						console.log("Number Switch when inserts "+Octopus.getRow('s'));
+						
 						
 						break;
 					case "add_rowS" :
@@ -458,7 +456,7 @@ var ViewHome = {
 
 						vlanAvailable("btnSV"+row+rowSupport);
 						assignVlan("dropdownSV"+row+rowSupport);
-						console.log("INsert switch "+row);
+						
 						Octopus.insertSwitch(row);
 
 						break;
@@ -504,7 +502,7 @@ var ViewHome = {
 
 						// Define our data object
 						var context={
-							"hubId": "huId"+row+rowSupport,
+							"hubId": "hurow"+row+rowSupport,
 							"hName": "hName"+row+rowSupport,
 							"valueU": "Hub_"+row,
 							"btnHI": "btnHI"+row+rowSupport,
@@ -524,7 +522,7 @@ var ViewHome = {
 						$("#"+appendTo).append(theCompiledHtml);
 
 						//settings for the new row
-						addSubRow("add_srow_hub"+row+rowSupport,"huId"+row+rowSupport, 'u');
+						addSubRow("add_srow_hub"+row+rowSupport,"hurow"+row+rowSupport, 'u');
 						assignValueByDropDown("dropdownHT"+row+rowSupport,"btnHT"+row+rowSupport);
 
 						portsAvailable("btnHI" + row + rowSupport, 'u');
@@ -554,7 +552,7 @@ var ViewHome = {
 		};
 
 		//function to get switch number (without port)
-		var getSwitchPart = function(length,id){
+		var getDevicePart = function(length,id){
 			if (length == 2){
 				var last2 = id.slice(-2);
 				return last2[0];
@@ -593,7 +591,7 @@ var ViewHome = {
 				switch (device) {
 					case 's' :
 						var rowD;
-						var last2_1 = getSwitchPart(length, id);
+						var last2_1 = getDevicePart(length, id);
 						var last1 = parseInt(id.slice(-1));
 
 						if (last1 == -1) {
@@ -654,15 +652,12 @@ var ViewHome = {
 						}
 						break;
 					case 'u':
-						console.log("Length HUb "+length);
-						var last2_1 = getSwitchPart(length, id);
+						var last2_1 = getDevicePart(length, id);
 						var last1 = parseInt(id.slice(-1));
 
 						if (last1 == -1) {
 							last1++;
 						}
-						console.log("last2_1 "+last2_1);
-						console.log("last1 "+last1);
 
 						if (last1 < 7) {
 							$("#add_srow_hub" + last2_1 + last1).hide();
@@ -677,7 +672,7 @@ var ViewHome = {
 
 							// Define our data object
 							var context = {
-								"hubId": "huId"+last2_1+last1,
+								"hubId": "hurow"+last2_1+last1,
 								"btnHI": "btnHI"+last2_1+last1,
 								"btnHT": "btnHT"+last2_1+last1,
 								"btnHC": "btnHC"+last2_1+last1,
@@ -696,15 +691,14 @@ var ViewHome = {
 							last1--;
 							$("#delete_srow_hub" + last2_1 + last1).hide();
 
-							$(theCompiledHtml).insertAfter("#huId" + last2_1 + last1);
+							$(theCompiledHtml).insertAfter("#hurow" + last2_1 + last1);
 							last1++;
 
 							//settings for subrow
-							addSubRow("add_srow_hub" + last2_1 + last1, "huId" + last2_1 + last1, 'u');
+							addSubRow("add_srow_hub" + last2_1 + last1, "hurow" + last2_1 + last1, 'u');
 							deleteSubRow("delete_srow_hub" + last2_1 + last1, 'u');
 
 
-							console.log("LASTsub " +last2_1+last1);
 							assignValueByDropDown("dropdownHT" + last2_1 + last1, "btnHT" + last2_1 + last1);
 
 							portsAvailable("btnHI" + last2_1 + last1, 'u');
@@ -713,13 +707,7 @@ var ViewHome = {
 							seeDevice("btnHC"+last2_1+last1, 'u');
 							assignConnnect("dropdownHC"+last2_1+last1, 'u');
 
-							/*
-							seeDevice("btnSD" + last2_1 + last1);
-							assignConnnect("dropdownSD" + last2_1 + last1);
 
-							vlanAvailable("btnSV" + last2_1 + last1);
-							assignVlan("dropdownSV" + last2_1 + last1);
-							*/
 						}
 						break;
 					default : break;
@@ -737,7 +725,7 @@ var ViewHome = {
 
 					//find switch and its port (to release)
 					var lengthS = getPartLength(switchPort[0]);
-					var last2S = getSwitchPart(lengthS,switchPort[0]);
+					var last2S = getDevicePart(lengthS,switchPort[0]);
 					var port = switchPort[1];
 
 					var portN = port.charAt(port.indexOf('_')+1);
@@ -776,11 +764,11 @@ var ViewHome = {
 					}
 					break;
 				case 'u':
-					while ($("#huId"+lastC).length){
+					while ($("#hurow"+lastC).length){
 
 						releaseHS($(".btnHC"+lastC).text());
 
-						$("#huId"+lastC).remove();
+						$("#hurow"+lastC).remove();
 						last1++;
 						lastC = row + "" +last1;
 					}
@@ -802,7 +790,7 @@ var ViewHome = {
 
 						var row = Octopus.getRow('h');
 						var hostN = $("#name"+row).val();
-						$("#row"+row).remove();
+						$("#hrow"+row).remove();
 
 						//where it was setted up restore the defaul value
 						$("button:contains("+hostN+")").html("Hosts/Devices"+
@@ -817,7 +805,6 @@ var ViewHome = {
 						var switchN = $("#sname"+row).val();
 						var rowSupport = row-row;
 
-						console.log("SWITCH NAME "+switchN);
 
 						//delete all subrows connect to a switch
 						deleteFollowingChildren(row, 's');
@@ -833,7 +820,12 @@ var ViewHome = {
 						break;
 					case "delete_rowV" :
 						var row = Octopus.getRow('v');
+						var vlanN = $("#vName"+row).val();
+
 						$("#vlrow"+row).remove();
+
+						$("button:contains("+vlanN+")").html("Host/Devices"+
+							"<span class='caret'> </span>");
 						Octopus.deleteVlan(row);
 						Octopus.decrement('v');
 					case "delete_rowHu" :
@@ -841,12 +833,11 @@ var ViewHome = {
 						var rowSupport = row-row;
 						var hubN = $("#hName"+row+rowSupport).val();
 
-						console.log("HUB NAME "+hubN);
 
 
 						deleteFollowingChildren(row, 'u');
 						releaseHS($(".btnHC"+row+rowSupport).text());
-						$("#huId"+row+"0").remove();
+						$("#hurow"+row+"0").remove();
 						$("button:contains("+hubN+")").html("Host/Devices"+
 							"<span class='caret'> </span>");
 
@@ -864,7 +855,7 @@ var ViewHome = {
 			$("#"+id).click(function(e){
 				e.preventDefault();
 				var length = getPartLength(id);
-				var last2_1 = getSwitchPart(length, id);
+				var last2_1 = getDevicePart(length, id);
 				var last1 = parseInt(id.slice(-1));
 				switch(device) {
 					case 's' :
@@ -872,7 +863,7 @@ var ViewHome = {
 						releaseHS($(".btnSD" + last2_1 + "" + last1).text());
 
 						var PortToEliminate = $(".btnSP" + last2_1 + "" + last1).text();
-						console.log("PORTTO ELIMINATE "+PortToEliminate);
+
 						if (!isNaN(PortToEliminate)) {
 							Octopus.releaseSwitchPort(last2_1, PortToEliminate);
 						}
@@ -884,17 +875,16 @@ var ViewHome = {
 						$("#delete_row_connection" + last2_1 + last1).show();
 						break;
 					case 'u':
-						console.log("HERE  ");
-						//var PortToEliminate = $(".btnSP" + last2_1 + "" + last1).text();
+
 						releaseHS($(".btnHC" + last2_1 + "" + last1).text());
 
 						var PortToEliminate = $(".btnHI" + last2_1 + "" + last1).text();
-						$("#huId" + last2_1 + last1).remove();
+						$("#hurow" + last2_1 + last1).remove();
 
 						if (!isNaN(PortToEliminate)) {
 							Octopus.releaseHubPort(last2_1, PortToEliminate);
 						}
-						$("#huIdrow" + last2_1 + last1).remove();
+						//$("#huIdrow" + last2_1 + last1).remove();
 
 						//show the add and delete button of the previous row
 						last1--;
@@ -904,7 +894,35 @@ var ViewHome = {
 					default : break;
 				}
 			});
-		}
+		};
+
+
+		//function to create rows for the Connect To Field
+		var createRowConnectTo =  function (id, device){
+
+			devicesHtml = "";
+			switch (device){
+				case 's' :
+					var ports = Octopus.getSwitchPorts(id);
+					for (var j = 0; j < ports.length; j++) {
+
+						devicesHtml = devicesHtml + "<li><a tabindex='-1' href='javascript:return false;' data-value='" +
+							id + "" + ports[j] + "'>Switch_" + id + " : Port_" + ports[j] + "</a></li>";
+					}
+					break;
+				case 'u':
+					var ports = Octopus.getHubPorts(id);
+					for (var j = 0; j < ports.length; j++) {
+
+						devicesHtml = devicesHtml + "<li><a tabindex='-1' href='javascript:return false;' data-value='" +
+							id + "" + ports[j] + "'>Hub_" + id + " : Port_" + ports[j] + "</a></li>";
+					}
+					break;
+				default : break;
+			}
+			return devicesHtml;
+
+		};
 		
 		//fuction to see the list of the available devices (in the connect to section)
 		var seeDevice = function(id, device){
@@ -912,19 +930,18 @@ var ViewHome = {
 				//number hosts
 				var children = document.getElementById("hostConfiguration").children.length;
 				var length = getPartLength(id);
-				var last2_1 = getSwitchPart(length,id);
+				var last2_1 = getDevicePart(length,id);
 				var last1 = parseInt(id.slice(-1));
 
 
 
 				$("."+id).parent().find("ul").empty();
 
-				console.log("VALUE************"+ $("."+id).parent().find("ul") );
 				//HostPart : create menù with available hosts
 				var devicesHtml ="<li class='dropdown-submenu'><a tabindex='-1' href='javascript:return false;'>Hosts</a>"+
 						"<ul class='dropdown-menu scrollable-menu'>";
 				for (var i=0;i < children; i++){
-					if($("#row"+i).hasClass("notSelectedH")){
+					if($("#hrow"+i).hasClass("notSelectedH")){
 
 						var nameH = $("#name"+i).val();
 						devicesHtml = devicesHtml+"<li>"+
@@ -940,27 +957,18 @@ var ViewHome = {
 				href='javascript:return false;'>Switches</a><ul class='dropdown-menu scrollable-menu'>";
 				for (var i = 0; i < Octopus.getNumberOfSwitch(); i++ ){
 					var idSwitch = Octopus.getSwitchId(i);
-					//console.log("************** NUMEBERSWITCH"+ Octopus.getNumberOfSwitch());
 					//getting the available ports of a different switch
 					if (device.indexOf('s') > -1) {
 						if (idSwitch != last2_1) {
 
-							var ports = Octopus.getSwitchPorts(idSwitch);
-							for (var j = 0; j < ports.length; j++) {
-
-								devicesHtml = devicesHtml + "<li><a tabindex='-1' href='javascript:return false;' data-value='" +
-									idSwitch + "" + ports[j] + "'>Switch_" + idSwitch + " : Port_" + ports[j] + "</a></li>";
-							}
+							devicesHtml = devicesHtml + createRowConnectTo(idSwitch, 's');
 
 						}
 					}
 					else{
-						var ports = Octopus.getSwitchPorts(idSwitch);
-						for (var j = 0; j < ports.length; j++) {
 
-							devicesHtml = devicesHtml + "<li><a tabindex='-1' href='javascript:return false;' data-value='" +
-								idSwitch + "" + ports[j] + "'>Switch_" + idSwitch + " : Port_" + ports[j] + "</a></li>";
-						}
+						devicesHtml = devicesHtml + createRowConnectTo(idSwitch,'s');
+
 					}
 				}
 
@@ -971,27 +979,17 @@ var ViewHome = {
 				for (var i = 0; i < Octopus.getNumberOfHub(); i++ ){
 					var idHub = Octopus.getHubId(i);
 					if (device.indexOf('u') > -1) {
-						console.log("I'M IN HUB");
+
 						//getting the available ports of a different hub
 						if (idHub != last2_1) {
-							console.log("YES WE CAN");
-							var ports = Octopus.getHubPorts(idHub);
-							console.log("PORTS LENGTH "+ports.length);
-							for (var j = 0; j < ports.length; j++) {
-								console.log("HUB "+idHub +" PORT "+ports[j]);
-								devicesHtml = devicesHtml + "<li><a tabindex='-1' href='javascript:return false;' data-value='" +
-									idHub + "" + ports[j] + "'>Hub_" + idHub + " : Port_" + ports[j] + "</a></li>";
-							}
+
+							devicesHtml = devicesHtml + createRowConnectTo(idHub,'u');
 
 						}
 					}
 					else{
-						var ports = Octopus.getHubPorts(idHub);
-						for (var j = 0; j < ports.length; j++) {
 
-							devicesHtml = devicesHtml + "<li><a tabindex='-1' href='javascript:return false;' data-value='" +
-								idHub + "" + ports[j] + "'>Hub_" + idHub + " : Port_" + ports[j] + "</a></li>";
-						}
+						devicesHtml = devicesHtml + createRowConnectTo(idHub,'u');
 
 					}
 				}
@@ -1009,7 +1007,7 @@ var ViewHome = {
 
 				//extract last characters of the id
 				var length = getPartLength(id);
-				var last2 = getSwitchPart(length,id);
+				var last2 = getDevicePart(length,id);
 				var last1 = id.slice(-1);
 				var lastC = last2+""+last1;
 				var isSwitchPrevious = false;
@@ -1033,10 +1031,7 @@ var ViewHome = {
 
 				if (previouSelected.indexOf("Switch") > -1) isSwitchPrevious = true;
 				if (currentSelected.indexOf("Switch") > -1) isSwitchCurrent = true;
-				/*console.log("ISSWTICH "+ isSwitchPrevious);
-				console.log("ISSWTICH "+ isSwitchCurrent);
-				console.log("ISINTAbWSWTICH "+ isInTabSwitch);
-				console.log("PREVIOUSSELETCED"+ previouSelected);*/
+
 
 
 
@@ -1047,14 +1042,14 @@ var ViewHome = {
 
 						//find switch and its port
 						var lengthS = getPartLength(arraySplit[0]);
-						var last2S = getSwitchPart(length,arraySplit[0]);
+						var last2S = getDevicePart(length,arraySplit[0]);
 						var port = arraySplit[1];
 						var portN = port.charAt(port.indexOf('_')+1);
 						if (isSwitchPrevious) {
 							Octopus.releaseSwitchPort(last2S, portN);
 						}
 						else{
-							console.log("rwelease HUB PORT lasts2s "+last2S+" portN "+portN);
+
 							Octopus.releaseHubPort(last2S,portN);
 						}
 
@@ -1072,7 +1067,7 @@ var ViewHome = {
 					//set port of switch state busy
 					arraySplit = currentSelected.split(":");
 					lengthS = getPartLength(arraySplit[0]);
-					last2S = getSwitchPart(length,arraySplit[0]);
+					last2S = getDevicePart(length,arraySplit[0]);
 					port = arraySplit[1];
 					portN = port.charAt(port.indexOf('_')+1);
 
@@ -1080,7 +1075,6 @@ var ViewHome = {
 						Octopus.setSwitchPort(last2S, portN);
 					}
 					else {
-						console.log("SET HUB PORT lasts2s "+last2S+" portN "+portN);
 						Octopus.setHubPort(last2S, portN);
 					}
 
@@ -1089,12 +1083,11 @@ var ViewHome = {
 				else{
 
 					var hostPart=getHostPart(currentSelected);
-					$("#row"+hostPart).removeClass("notSelectedH");
-					$("#row"+hostPart).addClass("SelectedH");
+					$("#hrow"+hostPart).removeClass("notSelectedH");
+					$("#hrow"+hostPart).addClass("SelectedH");
 
 				}
-
-				console.log("currentSelected "+currentSelected);
+				
 				if (isInTabSwitch){
 					//setting the new value of the button
 					$("."+"btnSD"+lastC+":first-child").html(currentSelected+"<span class='caret'> </span>");
@@ -1105,11 +1098,6 @@ var ViewHome = {
 					$("."+"btnHC"+lastC+":first-child").html(currentSelected+"<span class='caret'> </span>");
 					$("."+"btnHC"+lastC+":first-child").val(currentSelected);
 				}
-				/*
-				//setting the new value of the button
-				$("."+"btnSD"+lastC+":first-child").html($(this).text()+"<span class='caret'> </span>");
-				$("."+"btnSD"+lastC+":first-child").val($(this).text());
-				*/
 
 
 			});
@@ -1121,7 +1109,7 @@ var ViewHome = {
 			$("."+id).click(function(){
 
 				var length = getPartLength(id);
-				var last2_1 = getSwitchPart(length,id);
+				var last2_1 = getDevicePart(length,id);
 				switch (device) {
 					case 's' :
 						//get the available ports given the id of the switch
@@ -1177,10 +1165,10 @@ var ViewHome = {
 		//function to set port from ports' list
 		var assignPort = function(id, device){
 			$("#"+id).on("click","li a", function(){
-				console.log("QUIIIIIIIIIIII");
+
 				var previousPort = $("#" + id).parent().find("button").text();
 				var length = getPartLength(id);
-				var last2 = getSwitchPart(length, id);
+				var last2 = getDevicePart(length, id);
 				var last1 = id.slice(-1);
 				var lastC = last2 + "" + last1;
 				var newPort;
@@ -1203,11 +1191,9 @@ var ViewHome = {
 						if (!isNaN(previousPort)) {
 							Octopus.releaseHubPort(last2, previousPort);
 						}
-						console.log("***********PREVIOUSPORT "+previousPort);
 
 						newPort = $(this).text();
 						Octopus.setHubPort(last2, newPort);
-						console.log("***********last2 "+last2 + " NEWPORT "+newPort);
 						$("." + "btnHI" + lastC + ":first-child").html(newPort + "<span class='caret'> </span>");
 						$("." + "btnHI" + lastC + ":first-child").val(newPort);
 
@@ -1222,7 +1208,7 @@ var ViewHome = {
 			$("."+id).click(function(){
 
 				var length = getPartLength(id);
-				var last2_1 = getSwitchPart(length,id);
+				var last2_1 = getDevicePart(length,id);
 
 				//clean previous vlans (View)
 				$("."+id).parent().find("ul").empty();
@@ -1259,16 +1245,13 @@ var ViewHome = {
 		var assignVlan = function(id){
 			$("#"+id).on("click","li a", function(){
 
-				//var newVlan = $("#"+id).parent().find("button").text();
-
 				var length = getPartLength(id);
-				var last2 = getSwitchPart(length,id);
+				var last2 = getDevicePart(length,id);
 				var last1 = id.slice(-1);
 				var lastC = last2+""+last1;
 
 
 				var newVlan = $(this).text();
-				//Octopus.setSwitchPort(last2,newPort);
 
 				$("."+"btnSV"+lastC+":first-child").html(newVlan+"<span class='caret'> </span>");
 				$("."+"btnSV"+lastC+":first-child").val(newVlan);
@@ -1298,7 +1281,7 @@ var ViewHome = {
 
 		//reset all hosts in tab Host
 		var resetHost = function(){
-			var idFirst = $("#row0");
+			var idFirst = $("#hrow0");
 			for (var i = Octopus.getRow('h'); i >= 0; i--){
 				$("#delete_rowH").trigger("click");
 			}
@@ -1378,14 +1361,13 @@ var ViewHome = {
 			resetSwitch();
 			resetVlan();
 			resetHub();
-			console.log("Switch Number "+Octopus.getRow('s'));
 		});
 
 		//create the xml to send to server
 		var createXml = function(){
 			//HOST PART
 			var children = document.getElementById("hostConfiguration").children.length-1;
-			console.log("NUMber HOst "+children);
+
 
 			var ConfigurationXml;
 			ConfigurationXml="<UserSolution>\n<Hosts>\n<Number>"+children+"</Number>\n";
@@ -1416,31 +1398,22 @@ var ViewHome = {
 				ConfigurationXml = ConfigurationXml + "\n\t<Switch>\n";
 				var switchIdP = Octopus.getSwitchId(i);
 
-				console.log("ID to Xml "+switchIdP);
-				//var lengthS = getPartLength(switchIdP);
-				//var last2S = getSwitchPart(length,switchIdP);
-
-				//get switch's info
-				//var row = Octopus.getRow('s');
 
 				var sname = $("#sname"+switchIdP).val();
-				console.log("Name Switch :"+ switchIdP +"0 "+sname);
-				//var Ports = Octopus.getSwitchBusyPorts(switchIdP);
 
 				ConfigurationXml = ConfigurationXml+"\t\t"+ XmlViewCreator.element("Name",sname)+"\n\t\t<Ports>\n";
 				var portNumber = 0;
 				var exit = false;
 				for (var j = 0; j < 8 && !exit; j++){
 					var switchPort = switchIdP+""+j;
-					console.log("SWITCHPORT "+switchPort);
+
 					if ($("#srow"+switchPort).length) {
 						var sport = $(".btnSP"+switchPort).text();
-						//console.log("Switch "+switchIdP+j+" Port"+ sport);
+
 						var selectedConnection = $("#dropdownST" + switchIdP + j).parent().find("button").text();
 						var connectTo = $("#dropdownSD" + switchIdP + j).parent().find("button").text();
 						var vlan = $("#dropdownSV" + switchIdP + j).parent().find("button").text();
-						console.log("********Port " + selectedConnection);
-						console.log("********Port2 " + connectTo);
+
 						ConfigurationXml = ConfigurationXml + "\t\t\t<Port>\n\t\t\t\t" + XmlViewCreator.element("Number", sport.trim()) +
 							"\n\t\t\t\t" + XmlViewCreator.element("TypeConnection", selectedConnection.trim()) +
 							"\n\t\t\t\t" + XmlViewCreator.element("ConnectTo", connectTo) +
@@ -1496,7 +1469,7 @@ var ViewHome = {
 					var hubInterface = hubIdP+""+j;
 
 					//if row exists
-					if ($("#huId"+hubInterface).length) {
+					if ($("#hurow"+hubInterface).length) {
 						var hPort = $(".btnHI"+hubInterface).text();
 
 						var selectedConnection = $("#dropdownHT" + hubInterface).parent().find("button").text();
@@ -1519,9 +1492,6 @@ var ViewHome = {
 			ConfigurationXml = ConfigurationXml+"\n</Hubs>\n</UserSolution>";
 
 
-
-			//hostConfigurationXml = hostConfigurationXml+"</Hosts>";
-			console.log(ConfigurationXml);
 			return ConfigurationXml;
 		};
 
@@ -1530,17 +1500,20 @@ var ViewHome = {
 			if (ViewHome.param) {
 				$("#panelYourSolution").show();
 				var xhr = new XMLHttpRequest();
-				xhr.open('GET', "http://localhost:3000/Tracer/?data=" + JSON.stringify({'difficulty': ViewHome.param}), true);
+				xhr.open('GET', "http://localhost:3000/Tracks/?data=" + JSON.stringify({'difficulty': ViewHome.param}), true);
 				xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 
 				//display the problem after received it
 				xhr.addEventListener("readystatechange", processRequest, false);
 				function processRequest(e) {
-					console.log("CLIENT received respone");
-					console.log("xhr responsetext " + xhr.responseText);
-					if (xhr.readyState == 4 && xhr.status == 200) {
-						$("#extended").empty();
-						$("#extended").append(xhr.responseText);
+					if (xhr.readyState == 4) {
+						if (xhr.status == 200) {
+							$("#extended").empty();
+							$("#extended").append(xhr.responseText);
+						}
+						else if (xhr.status == 500){
+							alert(xhr.responseText);
+						}
 					}
 				}
 				xhr.send();
@@ -1557,32 +1530,34 @@ var ViewHome = {
 
 			xhr.addEventListener("readystatechange", processRequest, false);
 			function processRequest(e) {
-				if (xhr.readyState == 4 && xhr.status == 200) {
+				if (xhr.readyState == 4) {
+					if (xhr.status == 200) {
+						//no focus
+						$("#hostH").removeClass("active");
+						$("#hostsDe").removeClass("active");
+						$("#switchH").removeClass("active");
+						$("#switchDe").removeClass("active");
+						$("#vlanH").removeClass("active");
+						$("#vlanDe").removeClass("active");
+						$("#hubH").removeClass("active");
+						$("#hubDe").removeClass("active");
 
-					//no focus
-					$("#hostH").removeClass("active");
-					$("#hostsDe").removeClass("active");
-					$("#switchH").removeClass("active");
-					$("#switchDe").removeClass("active");
-					$("#vlanH").removeClass("active");
-					$("#vlanDe").removeClass("active");
-					$("#hubH").removeClass("active");
-					$("#hubDe").removeClass("active");
+						//give focus to report section
+						$("#reportH").addClass("active");
+						$("#reportDe").addClass("active");
 
-					//give focus to report section
-					$("#reportH").addClass("active");
-					$("#reportDe").addClass("active");
-
-					//show server's response
-					console.log("Server Response ",xhr.responseText);
-					$("#reportDe").empty();
-					$("#reportDe").html(xhr.responseText);
+						//show server's response
+						$("#reportDe").empty();
+						$("#reportDe").html(xhr.responseText);
+					}
+					else if (xhr.status == 500){
+						alert(xhr.responseText);
+					}
 				}	
 			}
 
 
 			xhr.send(hostConfigurationXml);
-			console.log(hostConfigurationXml);
 		});
 		
 	}

@@ -2,8 +2,8 @@
 <Problem>
     <Number>1</Number>
     <NetworkProblem>
-        <Network>192.168.200.000/27</Network>
+        <Network>192.168.100.000/28</Network>
         <Hosts>2</Hosts>
     </NetworkProblem>
-    <Switch>3</Switch>
+    <Switch>2</Switch>
 </Problem>
