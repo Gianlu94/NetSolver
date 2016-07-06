@@ -7,7 +7,11 @@ var path = require("path");
 var url = require("url");
 var fs = require("fs");
 var XmlWriter = require('xml-writer');
+
+//My modules
 var networkProblem = require("./problem.js");
+var generateData = require("./generate_data.js");
+var errorCostant = require("./error_constant.js");
 
 
 var networkGiven = [];
@@ -16,7 +20,7 @@ module.exports = {
 
 	problemPath : "",
 
-	createXmlProblem : function(arrayXml, difficultyP){
+	createXmlProblem : function(arrayXml, difficultyP, res){
 		var xw = new XmlWriter(true);
 		xw.startDocument();
 		xw.startElement('Problem');
@@ -67,8 +71,10 @@ module.exports = {
 		xw.endElement();
 		xw.endDocument();
 		fs.writeFile(__dirname+difficultyP, xw.toString(), function (err) {
-			if (err) return console.log(err);
-			console.log("Creation oks");
+			if (err) {
+				res.writeHead(500, {'Content-Type': 'text/html'});
+				res.end(errorCostant.internalServerError, "utf-8");
+			}
 		});
 		
 	},
@@ -98,7 +104,6 @@ module.exports = {
 		var randomNetworkToSend;
 		while (!foundNetwork) {
 			var randomNetworkToSend = parseInt(Math.random() * 3);
-			console.log("I would like to send network in position " + randomNetworkToSend);
 			
 			if (!module.exports.networkAlreadyGiven(networkProblem.normalizeNetworkAddress(arrayN[randomNetworkToSend]))){
 				foundNetwork = true;
@@ -108,35 +113,37 @@ module.exports = {
 		return arrayN[randomNetworkToSend];
 	},
 
-	/*This function selects the trace of problem to send to the student (related to
+	/*This function selects the trace of the problem to send to the student (related to
 	  the difficulty he gave) and creates support array.
 	 */
 	difficultyFile : function (difficulty, req, res){
 
 		networkGiven.length = 0;
-		console.log("PARAM "+ difficulty);
+		
 		var randomFileToSend;
 		switch (difficulty){
 			case '1' :
 				randomFileToSend = parseInt(((Math.random() * 3) + 1));
-				console.log("RandomFileTo send" + randomFileToSend);
 				break;
 			case '2' :
 				randomFileToSend = parseInt(((Math.random() * 1) + 1));
-				console.log("RandomFileTo send" + randomFileToSend);
 				break;
 			default : break;
 		}
-		fs.readFile(path.join(__dirname+"/../Traces/Trace"+difficulty+"/trac"+randomFileToSend+".txt"), function(err1, file1) {
-			module.exports.problemPath="/../Traces/Trace"+difficulty+"/trac"+randomFileToSend+".xml";
+		fs.readFile(path.join(__dirname+"/../Tracks/Track"+difficulty+"/track"+randomFileToSend+".txt"), function(err1, file1) {
+			module.exports.problemPath="/../Tracks/Track"+difficulty+"/track"+randomFileToSend+".xml";
 			if(err1) {
 				// write an error response or nothing here
+				res.writeHead(500, {'Content-Type': 'text/html'});
+				res.end(errorCostant.internalServerError, "utf-8");
 				return;
 			}
 			else {
 				fs.readFile(path.join(__dirname+"/../ServerRes/NetworkAddress.txt"), function(err2, file2) {
 					if (err2){
 						// write an error response or nothing here
+						res.writeHead(500, {'Content-Type': 'text/html'});
+						res.end(errorCostant.internalServerError, "utf-8");
 						return;
 					}
 					else {
@@ -162,12 +169,12 @@ module.exports = {
 									array[i + 1] = "";
 									break;
 								case "-hosts-" :
-									var numberHosts = Math.floor((Math.random() * 1) + 2);
+									var numberHosts = generateData.generateHost(difficulty, randomFileToSend);
 									array[i] = numberHosts + " hosts";
 									arrayXml = arrayXml + " -hosts " + array[i];
 									break;
 								case "-switch-" :
-									var numberSwitch = Math.floor((Math.random() * 3) + 1);
+									var numberSwitch = generateData.generateSwitch(difficulty, randomFileToSend);
 									array[i] = numberSwitch + " switch";
 									arrayXml = arrayXml + " -switch " + array[i];
 									break;
@@ -177,7 +184,7 @@ module.exports = {
 									break;
 								case "-hub-" :
 									//to demostrate work
-									var numberHub = 1
+									var numberHub = generateData.generateHub(difficulty, randomFileToSend);
 									array[i] = numberHub + " hub";
 									arrayXml = arrayXml + " -hubs " + array[i];
 									break;
@@ -197,7 +204,7 @@ module.exports = {
 							}
 							arrayClient = arrayClient + " " + array[i];
 						}
-						module.exports.createXmlProblem(arrayXml.split(" "), module.exports.problemPath);
+						module.exports.createXmlProblem(arrayXml.split(" "), module.exports.problemPath, res);
 						res.writeHead(200, {'Content-Type': 'text/html'});
 						res.end(arrayClient.toString(), "utf-8");
 					}

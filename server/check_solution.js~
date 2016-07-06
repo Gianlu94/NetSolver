@@ -12,6 +12,7 @@ var xpath = require("xpath");
 var networkProblem = require("./problem.js");
 var creationProblem = require("./create_problems.js");
 var receivedSolution =  require("./received_solution.js");
+var errorCostant = require("./error_constant.js");
 
 module.exports = {
 
@@ -19,18 +20,17 @@ module.exports = {
 		var htmlResponse ="<h3>List of errors </h3>";
 		var parser = new DOMParser();
 		var userSFile = parser.parseFromString(req.body, "application/xml");
-		console.log("DIFFICULTY FILE " + difficultyP);
 		switch (difficultyP) {
-			case "/../Traks/Trak1/trac1.xml":
+			case "/../Tracks/Track1/track1.xml":
 				functionUse.checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,true,false,false,false);
 				break;
-			case "/../Traks/Trak1/trak2.xml":
+			case "/../Tracks/Track1/track2.xml":
 				functionUse.checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true,false,false);
 				break;
-			case "/../Traks/Trak1/trak3.xml":
+			case "/../Tracks/Track1/track3.xml":
 				functionUse.checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,false,false,true);
 				break;
-			case "/../Traks/Trak2/trak1.xml":
+			case "/../Tracks/Track2/track1.xml":
 				functionUse.checkProcedure(parser,userSFile,difficultyP,htmlResponse,res,false,true,true,false);
 				break;
 			default :
@@ -44,9 +44,11 @@ functionUse = {
 							  executeVlanCheck, executeHubCheck) {
 		var passed = false;
 		var htmlResponseSupport = "";
-		console.log("checkdpath " + path.join(__dirname +difficultyProblemFile));
+	
 		fs.readFile(path.join(__dirname +difficultyProblemFile), function (err, file) {
 			if (err) {
+				res.writeHead(500, {'Content-Type': 'text/html'});
+				res.end(errorCostant.internalServerError, "utf-8");
 				// write an error response or nothing here
 				return;
 			} else {
@@ -88,7 +90,6 @@ functionUse = {
 						}
 
 					}
-					console.log(htmlResponseSupport);
 
 					if (hostArrayDuplicate.length != 0) {
 						for (var i = 0; i < hostArrayDuplicate.length; i++) {
@@ -175,7 +176,7 @@ functionUse = {
 						
 						devicesConnected.push(portConnectTo[j].firstChild.data);
 						arrayVlanConnected.push(vlanConnected[j].firstChild.data);
-						htmlResponseSupport=networkProblem.checkIfSwitchIsSetted(portsN[j].firstChild.data,portType[j].firstChild.data,portConnectTo[j].firstChild.data,htmlResponseSupport);
+						htmlResponseSupport=networkProblem.checkIfDeviceIsSetted(portsN[j].firstChild.data,portType[j].firstChild.data,portConnectTo[j].firstChild.data,htmlResponseSupport);
 					}
 					if (htmlResponseSupport.indexOf("ERROR")>-1){
 						errorFound = true;
@@ -204,7 +205,7 @@ functionUse = {
 	
 				}
 				else if (checkVlan){
-					//Insert Chek on Hub
+					//Insert check on hub
 					functionUse.checkVlans(doc, userSFile, htmlResponse, res, devicesConnected, arrayVlanConnected);
 				}
 				else if (executeCheckHub){
@@ -320,7 +321,7 @@ functionUse = {
 						var portConnectTo = receivedSolution.getHubPortsConnectTo(userSFile);
 						
 						devicesConnected.push(portConnectTo[j].firstChild.data);
-						htmlResponseSupport=networkProblem.checkIfSwitchIsSetted(portsN[j].firstChild.data,portType[j].firstChild.data,portConnectTo[j].firstChild.data,htmlResponseSupport);
+						htmlResponseSupport=networkProblem.checkIfDeviceIsSetted(portsN[j].firstChild.data,portType[j].firstChild.data,portConnectTo[j].firstChild.data,htmlResponseSupport);
 					}
 					if (htmlResponseSupport.indexOf("ERROR")>-1){
 						errorFound = true;
