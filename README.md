@@ -1,5 +1,6 @@
 NetSolver
 =========
+NetSolver is a web platform whose aim is to support students during the learning of the network concepts. In order to do so it implements a classic learning mechanism based on the proposal of problems, collecting students solution and given students feedback by sending them a report that contains the possible errors that they made.
 
 From network requirements to a complete plan.
 
